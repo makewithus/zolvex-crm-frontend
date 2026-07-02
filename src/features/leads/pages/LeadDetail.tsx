@@ -12,32 +12,119 @@ import { Input } from '@/components/ui/input';
 import { Card, CardContent } from '@/components/ui/card';
 import { LoadingState } from '@/components/ui-custom/LoadingState';
 import { EmptyState } from '@/components/ui-custom/EmptyState';
-import { useLeads, useAddLeadNote } from '../hooks/useLeads';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { useLeads, useAddLeadNote, useUpdateLead } from '../hooks/useLeads';
 
 export const LeadDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const { data: leads, isLoading } = useLeads();
   const addNoteMutation = useAddLeadNote();
+  const updateMutation = useUpdateLead();
   const [noteText, setNoteText] = useState('');
+  
+  const [isStageOpen, setIsStageOpen] = useState(false);
+  const [isAssignOpen, setIsAssignOpen] = useState(false);
+  const [isLostOpen, setIsLostOpen] = useState(false);
+  const [isNoteOpen, setIsNoteOpen] = useState(false);
+  
+  const [newStage, setNewStage] = useState('');
+  const [assignedTo, setAssignedTo] = useState('');
+  const [lostReasonId, setLostReasonId] = useState('');
 
   const lead = leads?.find((l: any) => l.id === id);
 
   if (isLoading) return <PageContainer><LoadingState text="Loading Lead..." /></PageContainer>;
   if (!lead) return <PageContainer><EmptyState title="Not Found" description="This lead could not be found." /></PageContainer>;
 
-  const handleAddNote = (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleAddNote = () => {
     if (!noteText.trim()) return;
     addNoteMutation.mutate({ id: lead.id, note_text: noteText }, {
-      onSuccess: () => setNoteText('')
+      onSuccess: () => {
+        setNoteText('');
+        setIsNoteOpen(false);
+      }
+    });
+  };
+
+  const handleUpdateStage = () => {
+    if (!newStage) return;
+    updateMutation.mutate({ id: lead.id, data: { status: newStage } }, {
+      onSuccess: () => {
+        setIsStageOpen(false);
+        setNewStage('');
+      }
+    });
+  };
+
+  const handleAssign = () => {
+    if (!assignedTo) return;
+    updateMutation.mutate({ id: lead.id, data: { assigned_to: assignedTo } }, {
+      onSuccess: () => {
+        setIsAssignOpen(false);
+        setAssignedTo('');
+      }
+    });
+  };
+
+  const handleMarkLost = () => {
+    if (!lostReasonId) return;
+    updateMutation.mutate({ id: lead.id, data: { status: 'Lost', lost_reason_id: lostReasonId } }, {
+      onSuccess: () => {
+        setIsLostOpen(false);
+        setLostReasonId('');
+      }
     });
   };
 
   return (
     <PageContainer>
       <PageHeader title={lead.name || 'Unknown Lead'} description={`Phone: ${lead.phone}`}>
-        <Button variant="outline" onClick={() => navigate(`/leads/${lead.id}/edit`)}>Edit Lead</Button>
+        <div className="flex flex-wrap items-center gap-2">
+          
+          <Dialog open={isStageOpen} onOpenChange={setIsStageOpen}>
+            <DialogTrigger asChild><Button variant="outline" size="sm">Change Stage</Button></DialogTrigger>
+            <DialogContent>
+              <DialogHeader><DialogTitle>Change Stage</DialogTitle></DialogHeader>
+              <div className="space-y-4 py-4">
+                <select className="w-full h-9 rounded-md border px-3 text-sm bg-background" value={newStage} onChange={e => setNewStage(e.target.value)}>
+                  <option value="">Select Stage...</option>
+                  <option value="New">New</option>
+                  <option value="Contacted">Contacted</option>
+                  <option value="FollowUp">FollowUp</option>
+                  <option value="Qualified">Qualified</option>
+                  <option value="QuotationSent">QuotationSent</option>
+                  <option value="Booked">Booked</option>
+                </select>
+                <Button onClick={handleUpdateStage} disabled={!newStage || updateMutation.isPending} className="w-full">Confirm Transition</Button>
+              </div>
+            </DialogContent>
+          </Dialog>
+
+          <Dialog open={isAssignOpen} onOpenChange={setIsAssignOpen}>
+            <DialogTrigger asChild><Button variant="outline" size="sm">Assign Lead</Button></DialogTrigger>
+            <DialogContent>
+              <DialogHeader><DialogTitle>Assign Lead</DialogTitle></DialogHeader>
+              <div className="space-y-4 py-4">
+                <Input placeholder="Enter Staff UUID..." value={assignedTo} onChange={e => setAssignedTo(e.target.value)} />
+                <Button onClick={handleAssign} disabled={!assignedTo || updateMutation.isPending} className="w-full">Assign Lead</Button>
+              </div>
+            </DialogContent>
+          </Dialog>
+
+          <Dialog open={isLostOpen} onOpenChange={setIsLostOpen}>
+            <DialogTrigger asChild><Button variant="destructive" size="sm">Mark Lost</Button></DialogTrigger>
+            <DialogContent>
+              <DialogHeader><DialogTitle>Mark Lead as Lost</DialogTitle></DialogHeader>
+              <div className="space-y-4 py-4">
+                <Input placeholder="Enter Lost Reason UUID..." value={lostReasonId} onChange={e => setLostReasonId(e.target.value)} />
+                <Button variant="destructive" onClick={handleMarkLost} disabled={!lostReasonId || updateMutation.isPending} className="w-full">Confirm Lost</Button>
+              </div>
+            </DialogContent>
+          </Dialog>
+          
+          <Button variant="default" size="sm" onClick={() => navigate(`/leads/${lead.id}/edit`)}>Edit</Button>
+        </div>
       </PageHeader>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -56,7 +143,18 @@ export const LeadDetail = () => {
           </Section>
 
           <Section>
-            <SectionHeader title="Notes" />
+            <SectionHeader title="Notes">
+              <Dialog open={isNoteOpen} onOpenChange={setIsNoteOpen}>
+                <DialogTrigger asChild><Button variant="outline" size="sm">Add Note</Button></DialogTrigger>
+                <DialogContent>
+                  <DialogHeader><DialogTitle>Add Note</DialogTitle></DialogHeader>
+                  <div className="space-y-4 py-4">
+                    <Input placeholder="Type a note..." value={noteText} onChange={e => setNoteText(e.target.value)} />
+                    <Button onClick={handleAddNote} disabled={!noteText.trim() || addNoteMutation.isPending} className="w-full">Submit Note</Button>
+                  </div>
+                </DialogContent>
+              </Dialog>
+            </SectionHeader>
             <Card>
               <CardContent className="p-4 space-y-4">
                 <div className="space-y-4 max-h-64 overflow-y-auto">
@@ -73,12 +171,6 @@ export const LeadDetail = () => {
                   ))
                 )}
               </div>
-              <form onSubmit={handleAddNote} className="flex gap-2 pt-2 border-t mt-2">
-                <Input value={noteText} onChange={e => setNoteText(e.target.value)} placeholder="Type a note..." className="flex-1" />
-                <Button type="submit" disabled={addNoteMutation.isPending || !noteText.trim()}>
-                  {addNoteMutation.isPending ? 'Adding...' : 'Add Note'}
-                </Button>
-              </form>
               </CardContent>
             </Card>
           </Section>
