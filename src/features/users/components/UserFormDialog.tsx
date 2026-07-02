@@ -9,6 +9,7 @@ import { userSchema, UserFormData } from '../schemas/user.schema';
 import { FormGroup } from '@/components/ui-custom/FormGroup';
 import { FormGrid } from '@/components/ui-custom/FormGrid';
 import { useRoles } from '@/features/roles/hooks/useRoles';
+import { useCities } from '@/features/cities/hooks/useCities';
 
 export const UserFormDialog = () => {
   const [open, setOpen] = useState(false);
@@ -16,6 +17,8 @@ export const UserFormDialog = () => {
   const createUser = useCreateUser();
   const { data: rolesResponse } = useRoles();
   const roles = rolesResponse?.data || [];
+  const { data: citiesResponse } = useCities();
+  const cities = citiesResponse?.data || [];
 
   const { register, handleSubmit, formState: { errors }, reset } = useForm<UserFormData>({
     resolver: zodResolver(userSchema)
@@ -75,6 +78,18 @@ export const UserFormDialog = () => {
 
             <FormGroup label="Password" error={errors.password?.message}>
               <Input type="password" {...register('password')} />
+            </FormGroup>
+
+            <FormGroup label="Location" error={errors.city_id?.message}>
+              <select 
+                {...register('city_id')}
+                className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+              >
+                <option value="">Global Access (All Cities)</option>
+                {cities.map(c => (
+                  <option key={c.id} value={c.id}>{c.name}</option>
+                ))}
+              </select>
             </FormGroup>
           </FormGrid>
 

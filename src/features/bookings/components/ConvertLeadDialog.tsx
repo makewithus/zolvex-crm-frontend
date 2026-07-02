@@ -45,10 +45,14 @@ export const ConvertLeadDialog = ({ lead, isOpen, onClose }: Props) => {
   const onSubmit = (data: ConvertLeadToBookingFormData) => {
     if (!lead) return;
 
-    // Convert to ISO string explicitly
+    // Combine date and time slot into a single valid ISO datetime
+    const dateStr = data.scheduled_date.split('T')[0]; // Ensure it's just YYYY-MM-DD
+    const timeStr = data.slot || '00:00';
+    const combinedDateTime = new Date(`${dateStr}T${timeStr}:00`);
+
     const payload = {
       ...data,
-      scheduled_date: new Date(data.scheduled_date).toISOString()
+      scheduled_date: combinedDateTime.toISOString()
     };
 
     convertMutation.mutate(

@@ -12,21 +12,25 @@ export const DispatchDashboard = () => {
   const navigate = useNavigate();
 
   const columns = [
-    { header: 'Job ID', accessorKey: 'job_id' },
+    { key: 'job_id', header: 'Job ID', cell: (row: any) => row.job_id },
     { 
+      key: 'datetime',
       header: 'Date & Time', 
       cell: (row: any) => format(new Date(row.scheduled_start), 'MMM dd, yyyy HH:mm') 
     },
     { 
+      key: 'technician',
       header: 'Technician', 
       cell: (row: any) => row.assignedUser ? row.assignedUser.name : <span className="text-muted-foreground italic">Unassigned</span>
     },
-    { header: 'Priority', cell: (row: any) => <Badge variant="outline">{row.priority}</Badge> },
+    { key: 'priority', header: 'Priority', cell: (row: any) => <Badge variant="outline">{row.priority}</Badge> },
     { 
+      key: 'status',
       header: 'Status', 
       cell: (row: any) => <Badge>{row.status}</Badge> 
     },
     {
+      key: 'actions',
       header: 'Actions',
       cell: (row: any) => (
         <div className="flex gap-2">
@@ -50,7 +54,8 @@ export const DispatchDashboard = () => {
       <div className="bg-card rounded-lg border shadow-sm">
         <DataTable 
           data={jobs || []} 
-          columns={columns} 
+          columns={columns}
+          keyExtractor={(row: any) => row.id}
           isLoading={isLoading} 
           searchPlaceholder="Search jobs..."
         />

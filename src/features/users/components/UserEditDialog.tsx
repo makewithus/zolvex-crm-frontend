@@ -11,6 +11,7 @@ import { FormGrid } from '@/components/ui-custom/FormGrid';
 import { useRoles } from '@/features/roles/hooks/useRoles';
 import { User } from '../types/user.types';
 import { toast } from 'sonner';
+import { useCities } from '@/features/cities/hooks/useCities';
 
 interface UserEditDialogProps {
   user: User | null;
@@ -23,6 +24,8 @@ export const UserEditDialog = ({ user, open, onOpenChange }: UserEditDialogProps
   const updateUser = useUpdateUser();
   const { data: rolesResponse } = useRoles();
   const roles = rolesResponse?.data || [];
+  const { data: citiesResponse } = useCities();
+  const cities = citiesResponse?.data || [];
 
   const { register, handleSubmit, formState: { errors, isDirty }, reset } = useForm<UpdateUserFormData>({
     resolver: zodResolver(updateUserSchema),
@@ -30,6 +33,7 @@ export const UserEditDialog = ({ user, open, onOpenChange }: UserEditDialogProps
       name: user?.name || '',
       phone: user?.phone || '',
       role_id: user?.role?.id || '',
+      city_id: user?.city?.id || '',
       is_active: user?.is_active ?? true
     }
   });
@@ -40,6 +44,7 @@ export const UserEditDialog = ({ user, open, onOpenChange }: UserEditDialogProps
         name: user.name || '',
         phone: user.phone || '',
         role_id: user.role?.id || '',
+        city_id: user.city?.id || '',
         is_active: user.is_active ?? true
       });
     }
@@ -114,6 +119,18 @@ export const UserEditDialog = ({ user, open, onOpenChange }: UserEditDialogProps
               >
                 <option value="true">Active</option>
                 <option value="false">Inactive</option>
+              </select>
+            </FormGroup>
+
+            <FormGroup label="Location" error={errors.city_id?.message}>
+              <select 
+                {...register('city_id')}
+                className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+              >
+                <option value="">Global Access (All Cities)</option>
+                {cities.map(c => (
+                  <option key={c.id} value={c.id}>{c.name}</option>
+                ))}
               </select>
             </FormGroup>
           </FormGrid>
