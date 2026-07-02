@@ -5,6 +5,8 @@ import { Login } from '@/pages/Login';
 import { Cities } from '@/pages/Cities';
 import { Users } from '@/pages/Users';
 import { Roles } from '@/pages/Roles';
+import { Services } from '@/pages/Services';
+import { PricingRules } from '@/pages/PricingRules';
 
 // Placeholder wrapper. Auth protection to be implemented in Phase 1.
 const PrivateRoute = ({ children }: { children: React.ReactNode }) => {
@@ -24,6 +26,8 @@ export const AppRoutes = () => {
         <Route path="cities" element={<Cities />} />
         <Route path="users" element={<Users />} />
         <Route path="roles" element={<Roles />} />
+        <Route path="services" element={<Services />} />
+        <Route path="pricing-rules" element={<PricingRules />} />
       </Route>
     </Routes>
   );
