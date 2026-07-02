@@ -11,7 +11,7 @@ import { PricingRulesList } from '@/features/pricing-rules';
 import { LeadList, LeadDetail, LeadForm } from '@/features/leads';
 import CustomerList from '@/features/customers/pages/CustomerList';
 import CustomerDetail from '@/features/customers/pages/CustomerDetail';
-
+import { ComingSoon } from '@/components/ui-custom/ComingSoon';
 const PrivateRoute = ({ children }: { children: React.ReactNode }) => {
   const token = localStorage.getItem('token');
   if (!token) {
@@ -41,6 +41,15 @@ export const AppRoutes = () => {
         <Route path="leads/:id/edit" element={<LeadForm />} />
         <Route path="customers" element={<CustomerList />} />
         <Route path="customers/:id" element={<CustomerDetail />} />
+        
+        {/* Placeholders */}
+        <Route path="bookings" element={<ComingSoon title="Bookings" />} />
+        <Route path="jobs" element={<ComingSoon title="Jobs" />} />
+        <Route path="calendar" element={<ComingSoon title="Calendar" />} />
+        <Route path="invoices" element={<ComingSoon title="Invoices" />} />
+        <Route path="payments" element={<ComingSoon title="Payments" />} />
+        <Route path="reports" element={<ComingSoon title="Reports" />} />
+        <Route path="settings" element={<ComingSoon title="System Settings" />} />
       </Route>
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
