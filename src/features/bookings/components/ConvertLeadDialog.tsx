@@ -27,7 +27,7 @@ export const ConvertLeadDialog = ({ lead, isOpen, onClose }: Props) => {
     if (isOpen) {
       reset({
         scheduled_date: new Date().toISOString().split('T')[0],
-        slot: 'Morning (10 AM - 1 PM)',
+        slot: '10:00',
         address_line_1: '',
         address_line_2: '',
         area: '',
@@ -83,7 +83,7 @@ export const ConvertLeadDialog = ({ lead, isOpen, onClose }: Props) => {
               </div>
               <div className="space-y-2">
                 <label className="text-sm font-medium">Time Slot</label>
-                <Input placeholder="e.g. 10:00 AM" {...register('slot')} />
+                <Input type="time" {...register('slot')} />
                 {errors.slot && <p className="text-xs text-destructive">{errors.slot.message as string}</p>}
               </div>
             </div>
