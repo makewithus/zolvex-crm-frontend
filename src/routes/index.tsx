@@ -7,7 +7,7 @@ import { CitiesList } from '@/features/cities';
 import { UsersList } from '@/features/users';
 import { RolesList } from '@/features/roles';
 import { ServicesList } from '@/features/services';
-import { PricingRules } from '@/pages/PricingRules';
+import { PricingRulesList } from '@/features/pricing-rules';
 import { LeadList, LeadDetail, LeadForm } from '@/features/leads';
 import CustomerList from '@/features/customers/pages/CustomerList';
 import CustomerDetail from '@/features/customers/pages/CustomerDetail';
@@ -34,7 +34,7 @@ export const AppRoutes = () => {
         <Route path="users" element={<UsersList />} />
         <Route path="roles" element={<RolesList />} />
         <Route path="services" element={<ServicesList />} />
-        <Route path="pricing-rules" element={<PricingRules />} />
+        <Route path="pricing-rules" element={<PricingRulesList />} />
         <Route path="leads" element={<LeadList />} />
         <Route path="leads/new" element={<LeadForm />} />
         <Route path="leads/:id" element={<LeadDetail />} />
