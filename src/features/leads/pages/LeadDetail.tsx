@@ -15,6 +15,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { useLead, useAddLeadNote, useUpdateLead } from '../hooks/useLeads';
 import { LeadStatus } from '../types/lead.types';
 import { ConvertLeadDialog } from '@/features/bookings/components/ConvertLeadDialog';
+import { toast } from 'sonner';
 
 export const LeadDetail = () => {
   const { id } = useParams();
@@ -41,8 +42,12 @@ export const LeadDetail = () => {
     if (!noteText.trim()) return;
     addNoteMutation.mutate({ id: lead.id, note_text: noteText }, {
       onSuccess: () => {
+        toast.success('Note added successfully');
         setNoteText('');
         setIsNoteOpen(false);
+      },
+      onError: (error: any) => {
+        toast.error(error.response?.data?.message || 'Failed to add note');
       }
     });
   };
@@ -51,8 +56,12 @@ export const LeadDetail = () => {
     if (!newStage) return;
     updateMutation.mutate({ id: lead.id, data: { status: newStage } }, {
       onSuccess: () => {
+        toast.success('Stage updated successfully');
         setIsStageOpen(false);
         setNewStage('');
+      },
+      onError: (error: any) => {
+        toast.error(error.response?.data?.message || 'Failed to update stage');
       }
     });
   };
@@ -61,8 +70,12 @@ export const LeadDetail = () => {
     if (!assignedTo) return;
     updateMutation.mutate({ id: lead.id, data: { assigned_to: assignedTo } }, {
       onSuccess: () => {
+        toast.success('Lead assigned successfully');
         setIsAssignOpen(false);
         setAssignedTo('');
+      },
+      onError: (error: any) => {
+        toast.error(error.response?.data?.message || 'Failed to assign lead');
       }
     });
   };
