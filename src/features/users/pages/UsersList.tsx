@@ -8,10 +8,15 @@ import { UserFormDialog } from '../components/UserFormDialog';
 import { Button } from '@/components/ui/button';
 import { MapPin, Shield, MoreHorizontal, Edit, Lock } from 'lucide-react';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
-
+import { useState } from 'react';
+import { UserEditDialog } from '../components/UserEditDialog';
+import { ResetPasswordDialog } from '../components/ResetPasswordDialog';
 export const UsersList = () => {
   const { data: usersResponse, isLoading, isError, error } = useUsers();
   const users = usersResponse?.data || [];
+  
+  const [editingUser, setEditingUser] = useState<User | null>(null);
+  const [resetPasswordUser, setResetPasswordUser] = useState<User | null>(null);
 
   const columns: Column<User>[] = [
     { 
@@ -63,7 +68,7 @@ export const UsersList = () => {
       key: 'actions',
       header: 'Actions',
       align: 'right',
-      cell: () => (
+      cell: (row) => (
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="ghost" className="h-8 w-8 p-0">
@@ -71,10 +76,10 @@ export const UsersList = () => {
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
-            <DropdownMenuItem className="cursor-pointer">
+            <DropdownMenuItem className="cursor-pointer" onClick={() => setEditingUser(row)}>
               <Edit className="h-4 w-4 mr-2" /> Edit Profile
             </DropdownMenuItem>
-            <DropdownMenuItem className="cursor-pointer">
+            <DropdownMenuItem className="cursor-pointer text-destructive focus:text-destructive" onClick={() => setResetPasswordUser(row)}>
               <Lock className="h-4 w-4 mr-2" /> Reset Password
             </DropdownMenuItem>
           </DropdownMenuContent>
@@ -110,6 +115,16 @@ export const UsersList = () => {
         searchPlaceholder="Search staff by name or phone..."
         emptyStateTitle="No staff found"
         emptyStateDescription="Get started by adding a new user to the system."
+      />
+      <UserEditDialog 
+        user={editingUser} 
+        open={!!editingUser} 
+        onOpenChange={(open) => !open && setEditingUser(null)} 
+      />
+      <ResetPasswordDialog 
+        user={resetPasswordUser} 
+        open={!!resetPasswordUser} 
+        onOpenChange={(open) => !open && setResetPasswordUser(null)} 
       />
     </PageContainer>
   );
