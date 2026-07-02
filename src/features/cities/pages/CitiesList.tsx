@@ -8,10 +8,14 @@ import { CityFormDialog } from '../components/CityFormDialog';
 import { Building2, Map, Users, MoreHorizontal, Edit, Settings } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import { useState } from 'react';
+import { CityEditDialog } from '../components/CityEditDialog';
 
 export const CitiesList = () => {
   const { data: citiesResponse, isLoading, isError, error } = useCities();
   const cities = citiesResponse?.data || [];
+  
+  const [editingCity, setEditingCity] = useState<City | null>(null);
 
   const columns: Column<City>[] = [
     { 
@@ -60,7 +64,7 @@ export const CitiesList = () => {
       key: 'actions',
       header: 'Actions',
       align: 'right',
-      cell: () => (
+      cell: (row) => (
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="ghost" className="h-8 w-8 p-0">
@@ -68,10 +72,10 @@ export const CitiesList = () => {
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
-            <DropdownMenuItem className="cursor-pointer">
+            <DropdownMenuItem className="cursor-pointer" onClick={() => setEditingCity(row)}>
               <Edit className="h-4 w-4 mr-2" /> Edit Region
             </DropdownMenuItem>
-            <DropdownMenuItem className="cursor-pointer">
+            <DropdownMenuItem className="cursor-pointer" disabled>
               <Settings className="h-4 w-4 mr-2" /> Pricing Config
             </DropdownMenuItem>
           </DropdownMenuContent>
@@ -107,6 +111,11 @@ export const CitiesList = () => {
         searchPlaceholder="Search regions..."
         emptyStateTitle="No regions found"
         emptyStateDescription="Get started by defining your first operational city."
+      />
+      <CityEditDialog 
+        city={editingCity} 
+        open={!!editingCity} 
+        onOpenChange={(open) => !open && setEditingCity(null)} 
       />
     </PageContainer>
   );

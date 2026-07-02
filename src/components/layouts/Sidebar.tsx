@@ -11,8 +11,6 @@ export const Sidebar = () => {
   const location = useLocation();
 
   const isAllowed = (route: string) => {
-    // Customers isn't in registry yet, hardcode permission check for now
-    if (route === '/customers' || route === '/bookings' || route === '/jobs' || route === '/calendar' || route === '/invoices' || route === '/payments' || route === '/reports' || route === '/settings') return true;
     const feat = FEATURE_REGISTRY.find(f => f.route === route);
     return feat ? feat.requiredRoles.includes(userRole) : false;
   };

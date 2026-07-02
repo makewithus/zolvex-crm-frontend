@@ -8,10 +8,16 @@ import { PricingRuleFormDialog } from '../components/PricingRuleFormDialog';
 import { Button } from '@/components/ui/button';
 import { MapPin, Briefcase, ListTree, DollarSign, MoreHorizontal, Edit, Trash2 } from 'lucide-react';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import { useState } from 'react';
+import { PricingRuleEditDialog } from '../components/PricingRuleEditDialog';
+import { PricingRuleDeleteDialog } from '../components/PricingRuleDeleteDialog';
 
 export const PricingRulesList = () => {
   const { data: pricingRulesResponse, isLoading, isError, error } = usePricingRules();
   const pricingRules = pricingRulesResponse?.data || [];
+  
+  const [editingRule, setEditingRule] = useState<PricingRule | null>(null);
+  const [deletingRule, setDeletingRule] = useState<PricingRule | null>(null);
 
   const columns: Column<PricingRule>[] = [
     { 
@@ -68,7 +74,7 @@ export const PricingRulesList = () => {
       key: 'actions',
       header: 'Actions',
       align: 'right',
-      cell: () => (
+      cell: (row) => (
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="ghost" className="h-8 w-8 p-0">
@@ -76,10 +82,10 @@ export const PricingRulesList = () => {
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
-            <DropdownMenuItem className="cursor-pointer">
+            <DropdownMenuItem className="cursor-pointer" onClick={() => setEditingRule(row)}>
               <Edit className="h-4 w-4 mr-2" /> Adjust Pricing
             </DropdownMenuItem>
-            <DropdownMenuItem className="cursor-pointer text-destructive focus:bg-destructive/10 focus:text-destructive">
+            <DropdownMenuItem className="cursor-pointer text-destructive focus:bg-destructive/10 focus:text-destructive" onClick={() => setDeletingRule(row)}>
               <Trash2 className="h-4 w-4 mr-2" /> Delete Rule
             </DropdownMenuItem>
           </DropdownMenuContent>
@@ -115,6 +121,16 @@ export const PricingRulesList = () => {
         searchPlaceholder="Search pricing configurations..."
         emptyStateTitle="No pricing rules configured"
         emptyStateDescription="Set up rules to override base pricing for specific regions or variants."
+      />
+      <PricingRuleEditDialog 
+        rule={editingRule} 
+        open={!!editingRule} 
+        onOpenChange={(open) => !open && setEditingRule(null)} 
+      />
+      <PricingRuleDeleteDialog 
+        rule={deletingRule} 
+        open={!!deletingRule} 
+        onOpenChange={(open) => !open && setDeletingRule(null)} 
       />
     </PageContainer>
   );

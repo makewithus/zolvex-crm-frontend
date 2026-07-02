@@ -3,13 +3,34 @@ import { Button } from '../ui/button';
 import { Input } from '../ui/input';
 import { Search, Bell, ChevronRight, User as UserIcon, LogOut } from 'lucide-react';
 import { logout } from '@/features/auth';
+import { FEATURE_REGISTRY } from '@/config/features';
 
 export const Header = () => {
   const location = useLocation();
   const pathnames = location.pathname.split('/').filter(x => x);
 
-  // Generate simple breadcrumbs (excluding UUIDs if they look like ones)
-  const breadcrumbs = pathnames.filter(p => !p.includes('-')).map(p => p.charAt(0).toUpperCase() + p.slice(1));
+  // Generate meaningful breadcrumbs
+  const breadcrumbs = pathnames.map((segment, index) => {
+    // Reconstruct the path up to this segment to match against FEATURE_REGISTRY
+    const partialPath = '/' + pathnames.slice(0, index + 1).join('/');
+    
+    // Check if there is an exact feature match
+    const feature = FEATURE_REGISTRY.find(f => f.route === partialPath);
+    if (feature) return feature.name;
+
+    // Handle common keywords
+    if (segment.toLowerCase() === 'new') return 'New';
+    if (segment.toLowerCase() === 'edit') return 'Edit';
+
+    // Handle UUIDs or long IDs
+    const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+    if (uuidRegex.test(segment) || segment.length > 20) {
+      return 'Details';
+    }
+
+    // Fallback: capitalize the segment
+    return segment.charAt(0).toUpperCase() + segment.slice(1).replace(/-/g, ' ');
+  });
 
   return (
     <header className="sticky top-0 z-40 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80 shadow-sm">

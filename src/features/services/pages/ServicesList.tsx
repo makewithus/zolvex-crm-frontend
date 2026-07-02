@@ -8,10 +8,14 @@ import { ServiceFormDialog } from '../components/ServiceFormDialog';
 import { Button } from '@/components/ui/button';
 import { Briefcase, Layers, MoreHorizontal, Edit, DollarSign } from 'lucide-react';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import { useState } from 'react';
+import { ServiceEditDialog } from '../components/ServiceEditDialog';
 
 export const ServicesList = () => {
   const { data: servicesResponse, isLoading, isError, error } = useServices();
   const services = servicesResponse?.data || [];
+  
+  const [editingService, setEditingService] = useState<Service | null>(null);
 
   const columns: Column<Service>[] = [
     { 
@@ -63,7 +67,7 @@ export const ServicesList = () => {
       key: 'actions',
       header: 'Actions',
       align: 'right',
-      cell: () => (
+      cell: (row) => (
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="ghost" className="h-8 w-8 p-0">
@@ -71,7 +75,7 @@ export const ServicesList = () => {
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
-            <DropdownMenuItem className="cursor-pointer">
+            <DropdownMenuItem className="cursor-pointer" onClick={() => setEditingService(row)}>
               <Edit className="h-4 w-4 mr-2" /> Edit Service
             </DropdownMenuItem>
           </DropdownMenuContent>
@@ -107,6 +111,11 @@ export const ServicesList = () => {
         searchPlaceholder="Search services..."
         emptyStateTitle="No services defined"
         emptyStateDescription="Create a base service to start configuring pricing."
+      />
+      <ServiceEditDialog 
+        service={editingService} 
+        open={!!editingService} 
+        onOpenChange={(open) => !open && setEditingService(null)} 
       />
     </PageContainer>
   );
