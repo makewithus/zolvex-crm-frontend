@@ -5,10 +5,12 @@ import {
   CreditCard, PieChart, UsersIcon
 } from 'lucide-react';
 import { FEATURE_REGISTRY } from '@/config/features';
+import { useSidebar } from './MainLayout';
 
 export const Sidebar = () => {
   const userRole = localStorage.getItem('userRole') || 'Super Admin';
   const location = useLocation();
+  const { isCollapsed } = useSidebar();
 
   const isAllowed = (route: string) => {
     const feat = FEATURE_REGISTRY.find(f => f.route === route);
@@ -59,40 +61,46 @@ export const Sidebar = () => {
   ];
 
   return (
-    <aside className="w-[var(--sidebar-width)] border-r bg-sidebar flex-shrink-0 hidden lg:block overflow-y-auto">
-      <div className="flex h-full flex-col py-6">
-        <div className="px-6 mb-8 flex items-center gap-2 text-sidebar-foreground">
-          <div className="h-8 w-8 bg-primary rounded-md flex items-center justify-center font-bold text-primary-foreground shadow-sm">Z</div>
-          <span className="font-bold text-xl tracking-tight">ZOLVEX</span>
-        </div>
+      <aside className={`border-r bg-sidebar flex-shrink-0 hidden lg:block overflow-y-auto transition-all duration-300 ease-in-out ${isCollapsed ? 'w-[70px]' : 'w-[var(--sidebar-width)]'}`}>
+        <div className="flex h-full flex-col py-6">
+          <div className={`px-4 mb-8 flex items-center gap-2 text-sidebar-foreground ${isCollapsed ? 'justify-center' : 'px-6'}`}>
+            <div className="h-8 w-8 bg-primary rounded-md flex-shrink-0 flex items-center justify-center font-bold text-primary-foreground shadow-sm">Z</div>
+            {!isCollapsed && <span className="font-bold text-xl tracking-tight transition-opacity duration-300">ZOLVEX</span>}
+          </div>
 
-        <nav className="flex-1 space-y-8 px-4 pb-12">
+          <nav className="flex-1 space-y-8 px-3 pb-12">
           {SECTIONS.map((section) => {
             const allowedItems = section.items.filter(item => isAllowed(item.route));
             if (allowedItems.length === 0) return null;
 
             return (
               <div key={section.title} className="space-y-2">
-                <h4 className="px-3 text-xs font-semibold text-sidebar-foreground/50 tracking-wider uppercase">
-                  {section.title}
-                </h4>
+                {!isCollapsed && (
+                  <h4 className="px-3 text-xs font-semibold text-sidebar-foreground/50 tracking-wider uppercase whitespace-nowrap overflow-hidden text-ellipsis">
+                    {section.title}
+                  </h4>
+                )}
+                {isCollapsed && <div className="h-4" />}
                 <div className="space-y-1">
                   {allowedItems.map((item) => {
                     const isActive = location.pathname === item.route || (item.route !== '/' && location.pathname.startsWith(item.route));
-                    return (
+                    const navItem = (
                       <Link
                         key={item.name}
                         to={item.route}
-                        className={`group flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition-all ${
+                        title={isCollapsed ? item.name : undefined}
+                        className={`group flex items-center gap-3 rounded-md py-2 font-medium transition-all ${isCollapsed ? 'justify-center px-0' : 'px-3'} ${
                           isActive 
                             ? 'bg-primary/10 text-primary' 
                             : 'text-sidebar-foreground/80 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground'
                         }`}
                       >
-                        <item.icon className={`h-4 w-4 ${isActive ? 'text-primary' : 'text-sidebar-foreground/50 group-hover:text-sidebar-accent-foreground'}`} />
-                        {item.name}
+                        <item.icon className={`flex-shrink-0 h-5 w-5 ${isActive ? 'text-primary' : 'text-sidebar-foreground/50 group-hover:text-sidebar-accent-foreground'}`} />
+                        {!isCollapsed && <span className="text-sm whitespace-nowrap">{item.name}</span>}
                       </Link>
                     );
+
+                    return navItem;
                   })}
                 </div>
               </div>

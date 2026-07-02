@@ -32,7 +32,9 @@ export const RolesList = () => {
         <span className="text-muted-foreground text-sm">
           {row.name === 'Super Admin' ? 'Full system access and configuration.' : 
            row.name === 'City Manager' ? 'Regional branch and staff oversight.' : 
-           row.name === 'Support Agent' ? 'Customer service and lead handling.' : 'Standard functional access.'}
+           row.name === 'Support Agent' ? 'Customer service, leads, and bookings.' :
+           row.name === 'Field Staff' ? 'Job execution and schedule management.' :
+           row.name === 'Finance' ? 'Invoicing, payments, and financial reporting.' : 'Standard functional access.'}
         </span>
       )
     },
@@ -42,7 +44,7 @@ export const RolesList = () => {
       cell: (row) => (
         <div className="flex items-center gap-2 text-sm">
           <Users className="h-4 w-4 text-muted-foreground" />
-          <span className="font-medium">{row.name === 'Super Admin' ? '1' : 'Pending'}</span>
+          <span className="font-medium">{row._count?.users || 0}</span>
         </div>
       )
     },
