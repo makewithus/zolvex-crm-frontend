@@ -3,6 +3,9 @@ export interface CustomerLead {
   source: string;
   status: string;
   created_at: string;
+  service?: {
+    name: string;
+  };
 }
 
 export interface Customer {

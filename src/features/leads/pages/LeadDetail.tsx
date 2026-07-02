@@ -170,7 +170,7 @@ export const LeadDetail = () => {
                     <div key={note.id} className="text-sm border-b pb-2 last:border-0">
                       <p className="text-foreground">{note.note_text}</p>
                       <p className="text-xs text-muted-foreground mt-1 font-medium">
-                        {note.created_by?.name || 'Unknown'} <span className="font-normal opacity-75 ml-2">{new Date(note.created_at).toLocaleString()}</span>
+                        {note.createdBy?.name || 'Unknown'} <span className="font-normal opacity-75 ml-2">{new Date(note.created_at).toLocaleString()}</span>
                       </p>
                     </div>
                   ))

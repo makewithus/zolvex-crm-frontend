@@ -21,6 +21,7 @@ import { CustomerLead } from '../types/customer.types';
 import { CalendarIcon } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { Badge } from '@/components/ui/badge';
+import { toast } from 'sonner';
 
 export default function CustomerDetail() {
   const { id } = useParams<{ id: string }>();
@@ -58,7 +59,11 @@ export default function CustomerDetail() {
       }
     }, {
       onSuccess: () => {
+        toast.success('Customer profile updated');
         setIsEditDialogOpen(false);
+      },
+      onError: (error: any) => {
+        toast.error(error.response?.data?.message || 'Failed to update customer');
       }
     });
   };
@@ -134,7 +139,7 @@ export default function CustomerDetail() {
                 {customer.leads && customer.leads.length > 0 ? customer.leads.map((lead: CustomerLead) => (
                   <div key={lead.id} className="p-3 bg-secondary/50 rounded-lg flex justify-between items-center cursor-pointer hover:bg-secondary" onClick={() => navigate(`/leads/${lead.id}`)}>
                     <div>
-                      <p className="font-medium text-sm">Lead: {lead.id.substring(0, 8)}</p>
+                      <p className="font-medium text-sm">Lead: {lead.service?.name || 'General Inquiry'}</p>
                       <p className="text-xs text-muted-foreground">{lead.source}</p>
                     </div>
                     <StatusBadge status={lead.status === 'Lost' ? 'error' : lead.status === 'Booked' ? 'success' : 'info'} label={lead.status} />

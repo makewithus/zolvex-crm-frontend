@@ -5,7 +5,7 @@ export interface LeadNote {
   id: string;
   note_text: string;
   created_at: string;
-  created_by: {
+  createdBy?: {
     name: string;
   };
 }
