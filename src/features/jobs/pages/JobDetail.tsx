@@ -6,13 +6,21 @@ import { Button } from '@/components/ui/button';
 import { format } from 'date-fns';
 import { ArrowLeft, Clock, MapPin, User, FileText, Camera } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { useUsers } from '@/features/users/hooks/useUsers';
+import { useAssignJob } from '../hooks/useJobs';
 
 export const JobDetail = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { data: job, isLoading } = useJob(id!);
   const updateStatus = useUpdateJobStatus();
+  const assignJob = useAssignJob();
+  const { data: usersResponse } = useUsers();
   
+  const [isAssignOpen, setIsAssignOpen] = useState(false);
+  const [assignedTo, setAssignedTo] = useState('');
+
   const userRole = localStorage.getItem('userRole') || 'Super Admin';
   const isFieldStaff = userRole === 'Field Staff';
 
@@ -111,10 +119,35 @@ export const JobDetail = () => {
                 <div>
                   <p className="font-medium">{job.assignedUser.name}</p>
                   <p className="text-sm text-slate-500">{job.assignedUser.phone}</p>
+                  <Button variant="link" className="p-0 h-auto mt-2 text-primary" onClick={() => setIsAssignOpen(true)}>Reassign</Button>
                 </div>
               ) : (
-                <p className="text-slate-500 italic">Unassigned</p>
+                <div>
+                  <p className="text-slate-500 italic mb-2">Unassigned</p>
+                  <Button variant="outline" size="sm" onClick={() => setIsAssignOpen(true)}>Assign Technician</Button>
+                </div>
               )}
+
+              <Dialog open={isAssignOpen} onOpenChange={setIsAssignOpen}>
+                <DialogContent>
+                  <DialogHeader><DialogTitle>Assign Technician</DialogTitle></DialogHeader>
+                  <div className="space-y-4 py-4">
+                    <select className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50" value={assignedTo} onChange={e => setAssignedTo(e.target.value)}>
+                      <option value="">Select Technician...</option>
+                      {usersResponse?.data?.map((u: any) => (
+                        <option key={u.id} value={u.id}>{u.name} ({u.role?.name || 'User'})</option>
+                      ))}
+                    </select>
+                    <Button 
+                      onClick={() => assignJob.mutate({ id: job.id, data: { assigned_user_id: assignedTo } }, { onSuccess: () => setIsAssignOpen(false) })} 
+                      disabled={!assignedTo || assignJob.isPending} 
+                      className="w-full"
+                    >
+                      Confirm Assignment
+                    </Button>
+                  </div>
+                </DialogContent>
+              </Dialog>
             </div>
           )}
 
