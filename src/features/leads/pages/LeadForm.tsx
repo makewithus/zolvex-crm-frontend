@@ -14,6 +14,8 @@ import { leadFormSchema, leadUpdateSchema, LeadFormInput, LeadUpdateInput } from
 import { useCreateLead, useUpdateLead, useLead } from '../hooks/useLeads';
 import { useCities } from '@/features/cities/hooks/useCities';
 import { useServices } from '@/features/services/hooks/useServices';
+import { useUsers } from '@/features/users/hooks/useUsers';
+import { toast } from 'sonner';
 
 export const LeadForm = () => {
   const { id } = useParams();
@@ -27,6 +29,8 @@ export const LeadForm = () => {
   const updateMutation = useUpdateLead();
   const { data: citiesResponse } = useCities();
   const { data: servicesResponse } = useServices();
+  const { data: usersResponse } = useUsers();
+  const users = usersResponse?.data || [];
 
   const form = useForm<LeadFormInput & LeadUpdateInput>({
     resolver: zodResolver(isEdit ? leadUpdateSchema : leadFormSchema) as unknown as Resolver<LeadFormInput & LeadUpdateInput>,
@@ -44,11 +48,23 @@ export const LeadForm = () => {
   const onSubmit = (data: LeadFormInput & LeadUpdateInput) => {
     if (isEdit) {
       updateMutation.mutate({ id: id as string, data: data as LeadUpdateInput }, {
-        onSuccess: () => navigate(`/leads/${id}`)
+        onSuccess: () => {
+          toast.success('Lead updated successfully');
+          navigate(`/leads/${id}`);
+        },
+        onError: (error: any) => {
+          toast.error(error.response?.data?.message || 'Failed to update lead');
+        }
       });
     } else {
       createMutation.mutate(data as LeadFormInput, {
-        onSuccess: () => navigate('/leads')
+        onSuccess: () => {
+          toast.success('Lead created successfully');
+          navigate('/leads');
+        },
+        onError: (error: any) => {
+          toast.error(error.response?.data?.message || 'Failed to create lead');
+        }
       });
     }
   };
@@ -113,8 +129,13 @@ export const LeadForm = () => {
                       <option value="Lost">Lost</option>
                     </select>
                   </FormGroup>
-                  <FormGroup label="Assigned To (User ID)" error={form.formState.errors.assigned_to?.message as string}>
-                    <Input {...form.register('assigned_to')} placeholder="UUID of user" />
+                  <FormGroup label="Assigned To" error={form.formState.errors.assigned_to?.message as string}>
+                    <select {...form.register('assigned_to')} className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 transition-colors shadow-sm">
+                      <option value="">Unassigned</option>
+                      {users.map((u: any) => (
+                        <option key={u.id} value={u.id}>{u.name} ({u.role?.name || 'User'})</option>
+                      ))}
+                    </select>
                   </FormGroup>
                 </>
               )}

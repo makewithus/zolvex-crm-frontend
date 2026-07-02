@@ -16,12 +16,15 @@ import { useLead, useAddLeadNote, useUpdateLead } from '../hooks/useLeads';
 import { LeadStatus } from '../types/lead.types';
 import { ConvertLeadDialog } from '@/features/bookings/components/ConvertLeadDialog';
 import { toast } from 'sonner';
+import { useUsers } from '@/features/users/hooks/useUsers';
 
 export const LeadDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const { data: leadResponse, isLoading } = useLead(id || '');
   const lead = leadResponse?.data;
+  const { data: usersResponse } = useUsers();
+  const users = usersResponse?.data || [];
   
   const addNoteMutation = useAddLeadNote();
   const updateMutation = useUpdateLead();
@@ -114,7 +117,12 @@ export const LeadDetail = () => {
             <DialogContent>
               <DialogHeader><DialogTitle>Assign Lead</DialogTitle></DialogHeader>
               <div className="space-y-4 py-4">
-                <Input placeholder="Enter Staff UUID..." value={assignedTo} onChange={e => setAssignedTo(e.target.value)} />
+                <select className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 transition-colors shadow-sm" value={assignedTo} onChange={e => setAssignedTo(e.target.value)}>
+                  <option value="">Select Staff Member...</option>
+                  {users.map((u: any) => (
+                    <option key={u.id} value={u.id}>{u.name} ({u.role?.name || 'User'})</option>
+                  ))}
+                </select>
                 <Button onClick={handleAssign} disabled={!assignedTo || updateMutation.isPending} className="w-full">Assign Lead</Button>
               </div>
             </DialogContent>
