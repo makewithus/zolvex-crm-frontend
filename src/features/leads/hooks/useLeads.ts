@@ -8,6 +8,14 @@ export const useLeads = () => {
   });
 };
 
+export const useLead = (id: string) => {
+  return useQuery({
+    queryKey: ['leads', id],
+    queryFn: () => api.getLeadById(id),
+    enabled: !!id,
+  });
+};
+
 export const useCreateLead = () => {
   const queryClient = useQueryClient();
   return useMutation({
@@ -22,8 +30,9 @@ export const useUpdateLead = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: api.updateLead,
-    onSuccess: () => {
+    onSuccess: (_, variables) => {
       queryClient.invalidateQueries({ queryKey: ['leads'] });
+      queryClient.invalidateQueries({ queryKey: ['leads', variables.id] });
     }
   });
 };
@@ -32,8 +41,8 @@ export const useAddLeadNote = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: api.addLeadNote,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['leads'] });
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({ queryKey: ['leads', variables.id] });
     }
   });
 };

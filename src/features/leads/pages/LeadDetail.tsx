@@ -3,7 +3,6 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { PageContainer } from '@/components/ui-custom/PageContainer';
 import { PageHeader } from '@/components/ui-custom/PageHeader';
 import { DetailCard } from '@/components/ui-custom/DetailCard';
-import { Timeline, TimelineItem } from '@/components/ui-custom/Timeline';
 import { Section } from '@/components/ui-custom/Section';
 import { SectionHeader } from '@/components/ui-custom/SectionHeader';
 import { StatusBadge } from '@/components/ui-custom/StatusBadge';
@@ -13,26 +12,25 @@ import { Card, CardContent } from '@/components/ui/card';
 import { LoadingState } from '@/components/ui-custom/LoadingState';
 import { EmptyState } from '@/components/ui-custom/EmptyState';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { useLeads, useAddLeadNote, useUpdateLead } from '../hooks/useLeads';
+import { useLead, useAddLeadNote, useUpdateLead } from '../hooks/useLeads';
+import { LeadStatus } from '../types/lead.types';
 
 export const LeadDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { data: leads, isLoading } = useLeads();
+  const { data: leadResponse, isLoading } = useLead(id || '');
+  const lead = leadResponse?.data;
+  
   const addNoteMutation = useAddLeadNote();
   const updateMutation = useUpdateLead();
   const [noteText, setNoteText] = useState('');
   
   const [isStageOpen, setIsStageOpen] = useState(false);
   const [isAssignOpen, setIsAssignOpen] = useState(false);
-  const [isLostOpen, setIsLostOpen] = useState(false);
   const [isNoteOpen, setIsNoteOpen] = useState(false);
   
-  const [newStage, setNewStage] = useState('');
+  const [newStage, setNewStage] = useState<LeadStatus | ''>('');
   const [assignedTo, setAssignedTo] = useState('');
-  const [lostReasonId, setLostReasonId] = useState('');
-
-  const lead = leads?.find((l: any) => l.id === id);
 
   if (isLoading) return <PageContainer><LoadingState text="Loading Lead..." /></PageContainer>;
   if (!lead) return <PageContainer><EmptyState title="Not Found" description="This lead could not be found." /></PageContainer>;
@@ -67,16 +65,6 @@ export const LeadDetail = () => {
     });
   };
 
-  const handleMarkLost = () => {
-    if (!lostReasonId) return;
-    updateMutation.mutate({ id: lead.id, data: { status: 'Lost', lost_reason_id: lostReasonId } }, {
-      onSuccess: () => {
-        setIsLostOpen(false);
-        setLostReasonId('');
-      }
-    });
-  };
-
   return (
     <PageContainer>
       <PageHeader title={lead.name || 'Unknown Lead'} description={`Phone: ${lead.phone}`}>
@@ -87,7 +75,7 @@ export const LeadDetail = () => {
             <DialogContent>
               <DialogHeader><DialogTitle>Change Stage</DialogTitle></DialogHeader>
               <div className="space-y-4 py-4">
-                <select className="w-full h-9 rounded-md border px-3 text-sm bg-background" value={newStage} onChange={e => setNewStage(e.target.value)}>
+                <select className="w-full h-9 rounded-md border px-3 text-sm bg-background" value={newStage} onChange={e => setNewStage(e.target.value as LeadStatus)}>
                   <option value="">Select Stage...</option>
                   <option value="New">New</option>
                   <option value="Contacted">Contacted</option>
@@ -95,6 +83,7 @@ export const LeadDetail = () => {
                   <option value="Qualified">Qualified</option>
                   <option value="QuotationSent">QuotationSent</option>
                   <option value="Booked">Booked</option>
+                  <option value="Lost">Lost</option>
                 </select>
                 <Button onClick={handleUpdateStage} disabled={!newStage || updateMutation.isPending} className="w-full">Confirm Transition</Button>
               </div>
@@ -112,17 +101,6 @@ export const LeadDetail = () => {
             </DialogContent>
           </Dialog>
 
-          <Dialog open={isLostOpen} onOpenChange={setIsLostOpen}>
-            <DialogTrigger asChild><Button variant="destructive" size="sm">Mark Lost</Button></DialogTrigger>
-            <DialogContent>
-              <DialogHeader><DialogTitle>Mark Lead as Lost</DialogTitle></DialogHeader>
-              <div className="space-y-4 py-4">
-                <Input placeholder="Enter Lost Reason UUID..." value={lostReasonId} onChange={e => setLostReasonId(e.target.value)} />
-                <Button variant="destructive" onClick={handleMarkLost} disabled={!lostReasonId || updateMutation.isPending} className="w-full">Confirm Lost</Button>
-              </div>
-            </DialogContent>
-          </Dialog>
-          
           <Button variant="default" size="sm" onClick={() => navigate(`/leads/${lead.id}/edit`)}>Edit</Button>
         </div>
       </PageHeader>
@@ -161,11 +139,11 @@ export const LeadDetail = () => {
                 {(!lead.notes || lead.notes.length === 0) ? (
                   <p className="text-sm text-muted-foreground text-center py-4">No notes yet.</p>
                 ) : (
-                  lead.notes?.map((note: any) => (
+                  lead.notes?.map((note) => (
                     <div key={note.id} className="text-sm border-b pb-2 last:border-0">
                       <p className="text-foreground">{note.note_text}</p>
                       <p className="text-xs text-muted-foreground mt-1 font-medium">
-                        {note.createdBy?.name || 'Unknown'} <span className="font-normal opacity-75 ml-2">{new Date(note.created_at).toLocaleString()}</span>
+                        {note.created_by?.name || 'Unknown'} <span className="font-normal opacity-75 ml-2">{new Date(note.created_at).toLocaleString()}</span>
                       </p>
                     </div>
                   ))
@@ -181,20 +159,7 @@ export const LeadDetail = () => {
             <SectionHeader title="Stage History" />
             <Card>
               <CardContent className="p-4">
-                {(!lead.history || lead.history.length === 0) ? (
-                <p className="text-sm text-muted-foreground text-center py-4">No history yet.</p>
-              ) : (
-                <Timeline>
-                  {lead.history?.map((h: any) => (
-                    <TimelineItem 
-                      key={h.id} 
-                      title={`${h.from_stage || 'Created'} ➔ ${h.to_stage}`} 
-                      time={new Date(h.changed_at).toLocaleString()} 
-                      description={`By ${h.changedBy?.name || 'System'}`}
-                    />
-                  ))}
-                </Timeline>
-              )}
+                <p className="text-sm text-muted-foreground text-center py-4">History component placeholder.</p>
               </CardContent>
             </Card>
           </Section>
