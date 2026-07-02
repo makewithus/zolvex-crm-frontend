@@ -50,6 +50,13 @@ export default {
         lg: 'var(--radius)',
         md: 'calc(var(--radius) - 2px)',
         sm: 'calc(var(--radius) - 4px)'
+      },
+      spacing: {
+        sidebar: 'var(--sidebar-width)',
+        header: 'var(--header-height)'
+      },
+      maxWidth: {
+        page: 'var(--page-max-width)'
       }
     }
   },

@@ -1,25 +1,34 @@
-import { Link } from 'react-router-dom';
-import { NAVIGATION_LINKS } from '@/config/navigation';
+import { Link, useLocation } from 'react-router-dom';
+import { FEATURE_REGISTRY } from '@/config/features';
 
 export const Sidebar = () => {
-  // Simulating user role for Phase 1A Role-Based Visibility (RBAC)
-  const userRole = localStorage.getItem('userRole') || 'Super Admin'; 
+  const userRole = localStorage.getItem('userRole') || 'Super Admin';
+  const location = useLocation();
+
+  const visibleFeatures = FEATURE_REGISTRY
+    .filter((f) => f.sidebarVisibility && f.requiredRoles.includes(userRole))
+    .sort((a, b) => a.order - b.order);
 
   return (
-    <aside className="w-64 border-r bg-background hidden md:block">
+    <aside className="w-[var(--sidebar-width)] border-r bg-card hidden md:block">
       <div className="flex h-full flex-col py-4">
         <nav className="flex-1 space-y-1 px-4">
-          {NAVIGATION_LINKS
-            .filter((link) => link.roles.includes(userRole))
-            .map((link) => (
+          {visibleFeatures.map((feature) => {
+            const isActive = location.pathname === feature.route;
+            return (
               <Link
-                key={link.name}
-                to={link.path}
-                className="block rounded-md px-3 py-2 text-sm font-medium hover:bg-muted text-muted-foreground"
+                key={feature.id}
+                to={feature.route}
+                className={`block rounded-md px-3 py-2 text-sm font-medium transition-colors ${
+                  isActive 
+                    ? 'bg-primary text-primary-foreground' 
+                    : 'text-muted-foreground hover:bg-muted hover:text-foreground'
+                }`}
               >
-                {link.name}
+                {feature.name}
               </Link>
-          ))}
+            );
+          })}
         </nav>
       </div>
     </aside>
