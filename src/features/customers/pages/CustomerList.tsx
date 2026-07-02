@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useCustomers } from '../hooks/useCustomers';
 import { DataTable, Column } from '@/components/ui-custom/DataTable';
@@ -14,12 +14,15 @@ export default function CustomerList() {
   const [searchQuery, setSearchQuery] = useState('');
   const [page, setPage] = useState(1);
 
-  const filteredCustomers = (customers || []).filter((customer: Customer) =>
-    (customer.name && customer.name.toLowerCase().includes(searchQuery.toLowerCase())) ||
-    customer.phone.includes(searchQuery)
-  );
+  const filteredCustomers = useMemo(() => {
+    const custs = customers || [];
+    return custs.filter((customer: Customer) =>
+      (customer.name && customer.name.toLowerCase().includes(searchQuery.toLowerCase())) ||
+      customer.phone.includes(searchQuery)
+    );
+  }, [customers, searchQuery]);
 
-  const columns: Column<any>[] = [
+  const columns: Column<Customer>[] = [
     {
       key: 'name',
       header: 'Name',

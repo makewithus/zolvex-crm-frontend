@@ -1,4 +1,7 @@
 import { useParams, useNavigate } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { useForm, Resolver } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
 import { useCustomer, useUpdateCustomer } from '../hooks/useCustomers';
 import { PageHeader } from '@/components/ui-custom/PageHeader';
 import { PageContainer } from '@/components/ui-custom/PageContainer';
@@ -9,11 +12,12 @@ import { StatusBadge } from '@/components/ui-custom/StatusBadge';
 import { Section } from '@/components/ui-custom/Section';
 import { SectionHeader } from '@/components/ui-custom/SectionHeader';
 import { Button } from '@/components/ui/button';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import { Card, CardContent } from '@/components/ui/card';
-import { useState, useEffect } from 'react';
+import { FormGroup } from '@/components/ui-custom/FormGroup';
+import { customerFormSchema, CustomerFormInput } from '../schemas/customer.schema';
+import { CustomerLead } from '../types/customer.types';
 
 export default function CustomerDetail() {
   const { id } = useParams<{ id: string }>();
@@ -22,28 +26,32 @@ export default function CustomerDetail() {
   const { mutate: updateCustomer, isPending: isUpdating } = useUpdateCustomer();
 
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
-  const [editName, setEditName] = useState('');
-  const [editIsRepeat, setEditIsRepeat] = useState(false);
-  const [editTags, setEditTags] = useState('');
+
+  const form = useForm<CustomerFormInput>({
+    resolver: zodResolver(customerFormSchema) as unknown as Resolver<CustomerFormInput>,
+    defaultValues: { name: '', is_repeat_customer: false, tags: '' }
+  });
 
   useEffect(() => {
     if (customer) {
-      setEditName(customer.name || '');
-      setEditIsRepeat(customer.is_repeat_customer);
-      setEditTags(customer.tags?.join(', ') || '');
+      form.reset({
+        name: customer.name || '',
+        is_repeat_customer: customer.is_repeat_customer,
+        tags: customer.tags?.join(', ') || ''
+      });
     }
-  }, [customer]);
+  }, [customer, form]);
 
-  if (isLoading) return <PageContainer><LoadingState text="Loading customer details..." /></PageContainer>;
-  if (isError || !customer) return <PageContainer><EmptyState title="Customer Not Found" description="This customer does not exist." /></PageContainer>;
-
-  const handleEditSubmit = () => {
+  const handleEditSubmit = (data: CustomerFormInput) => {
+    if (!customer) return;
+    
+    // Convert CustomerFormInput back to UpdateCustomerInput for API
     updateCustomer({
       id: customer.id,
       data: {
-        name: editName || null,
-        is_repeat_customer: editIsRepeat,
-        tags: editTags.split(',').map(t => t.trim()).filter(Boolean),
+        name: data.name,
+        is_repeat_customer: data.is_repeat_customer,
+        tags: data.tags ? (data.tags as unknown as string).split(',').map(t => t.trim()).filter(Boolean) : [],
       }
     }, {
       onSuccess: () => {
@@ -51,6 +59,9 @@ export default function CustomerDetail() {
       }
     });
   };
+
+  if (isLoading) return <PageContainer><LoadingState text="Loading customer details..." /></PageContainer>;
+  if (isError || !customer) return <PageContainer><EmptyState title="Customer Not Found" description="This customer does not exist." /></PageContainer>;
 
   return (
     <PageContainer>
@@ -68,24 +79,25 @@ export default function CustomerDetail() {
               <DialogHeader>
                 <DialogTitle>Edit Customer Profile</DialogTitle>
               </DialogHeader>
-              <div className="space-y-4 py-4">
-                <div className="space-y-2">
-                  <Label>Name</Label>
-                  <Input value={editName} onChange={e => setEditName(e.target.value)} placeholder="Customer Name" />
-                </div>
+              <form onSubmit={form.handleSubmit(handleEditSubmit)} className="space-y-4 py-4">
+                <FormGroup label="Name" error={form.formState.errors.name?.message as string}>
+                  <Input {...form.register('name')} placeholder="Customer Name" />
+                </FormGroup>
+
                 <div className="flex items-center space-x-2 pt-2">
-                  <input type="checkbox" id="repeat-cust" checked={editIsRepeat} onChange={e => setEditIsRepeat(e.target.checked)} className="w-4 h-4" />
-                  <Label htmlFor="repeat-cust">Repeat Customer</Label>
+                  <input type="checkbox" id="repeat-cust" {...form.register('is_repeat_customer')} className="w-4 h-4" />
+                  <label htmlFor="repeat-cust" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">Repeat Customer</label>
                 </div>
-                <div className="space-y-2 pt-2">
-                  <Label>Tags (comma separated)</Label>
-                  <Input value={editTags} onChange={e => setEditTags(e.target.value)} placeholder="VIP, Urgent, etc." />
+
+                <FormGroup label="Tags (comma separated)" error={form.formState.errors.tags?.message as string}>
+                  <Input {...form.register('tags')} placeholder="VIP, Urgent, etc." />
+                </FormGroup>
+                
+                <div className="flex justify-end gap-2 pt-4">
+                  <Button type="button" variant="outline" onClick={() => setIsEditDialogOpen(false)}>Cancel</Button>
+                  <Button type="submit" disabled={isUpdating}>{isUpdating ? 'Saving...' : 'Save Changes'}</Button>
                 </div>
-              </div>
-              <DialogFooter>
-                <Button variant="outline" onClick={() => setIsEditDialogOpen(false)}>Cancel</Button>
-                <Button onClick={handleEditSubmit} disabled={isUpdating}>{isUpdating ? 'Saving...' : 'Save Changes'}</Button>
-              </DialogFooter>
+              </form>
             </DialogContent>
           </Dialog>
         </div>
@@ -116,7 +128,7 @@ export default function CustomerDetail() {
             <SectionHeader title={`Related Leads (${customer.leads?.length || 0})`} />
             <Card>
               <CardContent className="p-4 space-y-3">
-                {customer.leads && customer.leads.length > 0 ? customer.leads.map((lead: any) => (
+                {customer.leads && customer.leads.length > 0 ? customer.leads.map((lead: CustomerLead) => (
                   <div key={lead.id} className="p-3 bg-secondary/50 rounded-lg flex justify-between items-center cursor-pointer hover:bg-secondary" onClick={() => navigate(`/leads/${lead.id}`)}>
                     <div>
                       <p className="font-medium text-sm">Lead: {lead.id.substring(0, 8)}</p>

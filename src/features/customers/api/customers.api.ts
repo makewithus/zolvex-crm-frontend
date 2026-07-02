@@ -11,7 +11,7 @@ export const getCustomerById = async (id: string): Promise<Customer> => {
   return data.data;
 };
 
-export const updateCustomer = async (id: string, customerData: UpdateCustomerInput): Promise<Customer> => {
+export const updateCustomer = async (id: string, customerData: Partial<UpdateCustomerInput>): Promise<Customer> => {
   const { data } = await apiClient.patch(`/customers/${id}`, customerData);
   return data.data;
 };
