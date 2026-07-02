@@ -14,6 +14,7 @@ import { EmptyState } from '@/components/ui-custom/EmptyState';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { useLead, useAddLeadNote, useUpdateLead } from '../hooks/useLeads';
 import { LeadStatus } from '../types/lead.types';
+import { ConvertLeadDialog } from '@/features/bookings/components/ConvertLeadDialog';
 
 export const LeadDetail = () => {
   const { id } = useParams();
@@ -31,6 +32,7 @@ export const LeadDetail = () => {
   
   const [newStage, setNewStage] = useState<LeadStatus | ''>('');
   const [assignedTo, setAssignedTo] = useState('');
+  const [isConvertOpen, setIsConvertOpen] = useState(false);
 
   if (isLoading) return <PageContainer><LoadingState text="Loading Lead..." /></PageContainer>;
   if (!lead) return <PageContainer><EmptyState title="Not Found" description="This lead could not be found." /></PageContainer>;
@@ -70,6 +72,10 @@ export const LeadDetail = () => {
       <PageHeader title={lead.name || 'Unknown Lead'} description={`Phone: ${lead.phone}`}>
         <div className="flex flex-wrap items-center gap-2">
           
+          {lead.status !== 'Booked' && lead.status !== 'Lost' && (
+            <Button onClick={() => setIsConvertOpen(true)} className="bg-primary hover:bg-primary/90">Convert to Booking</Button>
+          )}
+
           <Dialog open={isStageOpen} onOpenChange={setIsStageOpen}>
             <DialogTrigger asChild><Button variant="outline" size="sm">Change Stage</Button></DialogTrigger>
             <DialogContent>
@@ -165,6 +171,12 @@ export const LeadDetail = () => {
           </Section>
         </div>
       </div>
+
+      <ConvertLeadDialog
+        lead={lead}
+        isOpen={isConvertOpen}
+        onClose={() => setIsConvertOpen(false)}
+      />
     </PageContainer>
   );
 };

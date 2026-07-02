@@ -12,6 +12,8 @@ import { LeadList, LeadDetail, LeadForm } from '@/features/leads';
 import CustomerList from '@/features/customers/pages/CustomerList';
 import CustomerDetail from '@/features/customers/pages/CustomerDetail';
 import { ComingSoon } from '@/components/ui-custom/ComingSoon';
+import { BookingsList } from '@/features/bookings/pages/BookingsList';
+import { BookingDetail } from '@/features/bookings/pages/BookingDetail';
 const PrivateRoute = ({ children }: { children: React.ReactNode }) => {
   const token = localStorage.getItem('token');
   if (!token) {
@@ -42,8 +44,11 @@ export const AppRoutes = () => {
         <Route path="customers" element={<CustomerList />} />
         <Route path="customers/:id" element={<CustomerDetail />} />
         
+        {/* Bookings */}
+        <Route path="bookings" element={<BookingsList />} />
+        <Route path="bookings/:id" element={<BookingDetail />} />
+
         {/* Placeholders */}
-        <Route path="bookings" element={<ComingSoon title="Bookings" />} />
         <Route path="jobs" element={<ComingSoon title="Jobs" />} />
         <Route path="calendar" element={<ComingSoon title="Calendar" />} />
         <Route path="invoices" element={<ComingSoon title="Invoices" />} />

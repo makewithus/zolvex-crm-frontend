@@ -14,6 +14,7 @@ export const customerSchema = z.object({
   is_repeat_customer: z.boolean(),
   tags: z.array(z.string()).optional(),
   leads: z.array(customerLeadSchema).optional(),
+  bookings: z.array(z.any()).optional(),
 });
 
 export type Customer = z.infer<typeof customerSchema>;

@@ -18,6 +18,9 @@ import { Card, CardContent } from '@/components/ui/card';
 import { FormGroup } from '@/components/ui-custom/FormGroup';
 import { customerFormSchema, CustomerFormInput } from '../schemas/customer.schema';
 import { CustomerLead } from '../types/customer.types';
+import { CalendarIcon } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { Badge } from '@/components/ui/badge';
 
 export default function CustomerDetail() {
   const { id } = useParams<{ id: string }>();
@@ -155,12 +158,29 @@ export default function CustomerDetail() {
           </Section>
 
           <Section>
-            <SectionHeader title="Previous Bookings (Future)" />
+            <SectionHeader title="Previous Bookings" />
             <Card>
-              <CardContent className="p-8">
-                <div className="flex items-center justify-center bg-secondary/30 border border-dashed border-border rounded-md h-24">
-                  <p className="text-sm text-muted-foreground text-center">Previous Bookings Placeholder<br/>(To be populated via relationships)</p>
-                </div>
+              <CardContent className="p-6">
+                {!customer.bookings || customer.bookings.length === 0 ? (
+                  <div className="flex flex-col items-center justify-center py-6 text-center border border-dashed rounded-lg">
+                    <CalendarIcon className="h-8 w-8 text-muted-foreground/30 mb-2" />
+                    <p className="text-sm font-medium">No bookings found</p>
+                  </div>
+                ) : (
+                  <div className="space-y-3">
+                    {customer.bookings.map((booking: any) => (
+                      <div key={booking.id} className="flex justify-between items-center border-b pb-3 last:border-0 last:pb-0">
+                        <div>
+                          <Link to={`/bookings/${booking.id}`} className="font-medium text-sm text-primary hover:underline block">
+                            {booking.booking_id}
+                          </Link>
+                          <p className="text-xs text-muted-foreground">{new Date(booking.scheduled_date).toLocaleDateString()} - {booking.service_name}</p>
+                        </div>
+                        <Badge variant="outline">{booking.status}</Badge>
+                      </div>
+                    ))}
+                  </div>
+                )}
               </CardContent>
             </Card>
           </Section>

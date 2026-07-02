@@ -14,6 +14,7 @@ export interface Customer {
   created_at: string;
   updated_at: string;
   leads?: CustomerLead[];
+  bookings?: any[];
 }
 
 export interface CustomersResponse {
