@@ -1,7 +1,8 @@
 import { useLocation } from 'react-router-dom';
 import { Button } from '../ui/button';
 import { Input } from '../ui/input';
-import { Search, Bell, ChevronRight, User as UserIcon } from 'lucide-react';
+import { Search, Bell, ChevronRight, User as UserIcon, LogOut } from 'lucide-react';
+import { logout } from '@/features/auth';
 
 export const Header = () => {
   const location = useLocation();
@@ -49,12 +50,15 @@ export const Header = () => {
           {/* User Profile */}
           <div className="flex items-center gap-3 pl-1">
             <div className="hidden text-right md:block">
-              <p className="text-sm font-medium leading-none">Admin User</p>
-              <p className="text-xs text-muted-foreground mt-1">Super Admin</p>
+              <p className="text-sm font-medium leading-none">{localStorage.getItem('userName') || 'User'}</p>
+              <p className="text-xs text-muted-foreground mt-1">{localStorage.getItem('userRole') || 'Staff'}</p>
             </div>
-            <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center text-primary cursor-pointer hover:bg-primary/20 transition-colors">
+            <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center text-primary">
               <UserIcon className="h-4 w-4" />
             </div>
+            <Button variant="ghost" size="icon" onClick={logout} className="text-muted-foreground hover:text-destructive transition-colors ml-2" title="Log out">
+              <LogOut className="h-4 w-4" />
+            </Button>
           </div>
         </div>
       </div>

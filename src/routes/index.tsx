@@ -1,7 +1,8 @@
 import { Routes, Route } from 'react-router-dom';
 import { AppShell } from '@/components/ui-custom/AppShell';
 import { Dashboard } from '@/pages/Dashboard';
-import { Login } from '@/pages/Login';
+import { Login } from '@/features/auth';
+import { Navigate } from 'react-router-dom';
 import { Cities } from '@/pages/Cities';
 import { Users } from '@/pages/Users';
 import { Roles } from '@/pages/Roles';
@@ -11,8 +12,11 @@ import { LeadList, LeadDetail, LeadForm } from '@/features/leads';
 import CustomerList from '@/features/customers/pages/CustomerList';
 import CustomerDetail from '@/features/customers/pages/CustomerDetail';
 
-// Placeholder wrapper. Auth protection to be implemented in Phase 1.
 const PrivateRoute = ({ children }: { children: React.ReactNode }) => {
+  const token = localStorage.getItem('token');
+  if (!token) {
+    return <Navigate to="/login" replace />;
+  }
   return <>{children}</>;
 };
 
