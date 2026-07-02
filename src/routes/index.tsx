@@ -1,5 +1,5 @@
 import { Routes, Route } from 'react-router-dom';
-import { AppShell } from '@/components/ui-custom/AppShell';
+import { MainLayout } from '@/components/layouts/MainLayout';
 import { Dashboard } from '@/pages/Dashboard';
 import { Login } from '@/features/auth';
 import { Navigate } from 'react-router-dom';
@@ -30,7 +30,7 @@ export const AppRoutes = () => {
       <Route path="/login" element={<Login />} />
       <Route path="/" element={
         <PrivateRoute>
-          <AppShell />
+          <MainLayout />
         </PrivateRoute>
       }>
         <Route index element={<Dashboard />} />

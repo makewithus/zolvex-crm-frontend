@@ -5,11 +5,13 @@ import { Badge } from '@/components/ui/badge';
 import { ArrowLeft, Calendar, FileText, MapPin, User } from 'lucide-react';
 import { useState } from 'react';
 import { BookingCancelDialog } from '../components/BookingCancelDialog';
+import { useCreateJob } from '@/features/jobs/hooks/useJobs';
 
 export const BookingDetail = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { data: booking, isLoading, isError } = useBooking(id!);
+  const createJob = useCreateJob();
   
   const [isCancelOpen, setIsCancelOpen] = useState(false);
 
@@ -43,9 +45,20 @@ export const BookingDetail = () => {
         
         <div className="ml-auto flex items-center gap-2">
           {booking.status !== 'Cancelled' && booking.status !== 'Completed' && (
-            <Button variant="destructive" onClick={() => setIsCancelOpen(true)}>
-              Cancel Booking
-            </Button>
+            <>
+              {booking.status !== 'Assigned' && booking.status !== 'InProgress' && (
+                <Button 
+                  variant="default" 
+                  onClick={() => createJob.mutate({ bookingId: booking.id, priority: 'Normal' })}
+                  disabled={createJob.isPending}
+                >
+                  {createJob.isPending ? 'Generating...' : 'Generate Job'}
+                </Button>
+              )}
+              <Button variant="destructive" onClick={() => setIsCancelOpen(true)}>
+                Cancel Booking
+              </Button>
+            </>
           )}
         </div>
       </div>
