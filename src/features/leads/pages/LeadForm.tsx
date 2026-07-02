@@ -12,6 +12,8 @@ import { Input } from '@/components/ui/input';
 import { Card, CardContent } from '@/components/ui/card';
 import { leadFormSchema, leadUpdateSchema, LeadFormInput, LeadUpdateInput } from '../schemas/lead.schema';
 import { useCreateLead, useUpdateLead, useLead } from '../hooks/useLeads';
+import { useCities } from '@/features/cities/hooks/useCities';
+import { useServices } from '@/features/services/hooks/useServices';
 
 export const LeadForm = () => {
   const { id } = useParams();
@@ -23,6 +25,8 @@ export const LeadForm = () => {
 
   const createMutation = useCreateLead();
   const updateMutation = useUpdateLead();
+  const { data: citiesResponse } = useCities();
+  const { data: servicesResponse } = useServices();
 
   const form = useForm<LeadFormInput & LeadUpdateInput>({
     resolver: zodResolver(isEdit ? leadUpdateSchema : leadFormSchema) as unknown as Resolver<LeadFormInput & LeadUpdateInput>,
@@ -76,6 +80,22 @@ export const LeadForm = () => {
                       <option value="ManualEntry">Manual Entry</option>
                       <option value="Justdial">Justdial</option>
                       <option value="Referrals">Referrals</option>
+                    </select>
+                  </FormGroup>
+                  <FormGroup label="City" error={form.formState.errors.city_id?.message as string}>
+                    <select {...form.register('city_id')} className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 transition-colors shadow-sm">
+                      <option value="">Select a city...</option>
+                      {citiesResponse?.data?.map((city: any) => (
+                        <option key={city.id} value={city.id}>{city.name}</option>
+                      ))}
+                    </select>
+                  </FormGroup>
+                  <FormGroup label="Service" error={form.formState.errors.service_id?.message as string}>
+                    <select {...form.register('service_id')} className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 transition-colors shadow-sm">
+                      <option value="">Select a service...</option>
+                      {servicesResponse?.data?.map((service: any) => (
+                        <option key={service.id} value={service.id}>{service.name}</option>
+                      ))}
                     </select>
                   </FormGroup>
                 </>
