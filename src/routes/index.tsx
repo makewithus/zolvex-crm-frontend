@@ -8,6 +8,8 @@ import { Roles } from '@/pages/Roles';
 import { Services } from '@/pages/Services';
 import { PricingRules } from '@/pages/PricingRules';
 import { LeadList, LeadDetail, LeadForm } from '@/features/leads';
+import CustomerList from '@/features/customers/pages/CustomerList';
+import CustomerDetail from '@/features/customers/pages/CustomerDetail';
 
 // Placeholder wrapper. Auth protection to be implemented in Phase 1.
 const PrivateRoute = ({ children }: { children: React.ReactNode }) => {
@@ -33,6 +35,8 @@ export const AppRoutes = () => {
         <Route path="leads/new" element={<LeadForm />} />
         <Route path="leads/:id" element={<LeadDetail />} />
         <Route path="leads/:id/edit" element={<LeadForm />} />
+        <Route path="customers" element={<CustomerList />} />
+        <Route path="customers/:id" element={<CustomerDetail />} />
       </Route>
     </Routes>
   );
