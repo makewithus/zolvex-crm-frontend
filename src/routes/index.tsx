@@ -42,6 +42,7 @@ export const AppRoutes = () => {
         <Route path="customers" element={<CustomerList />} />
         <Route path="customers/:id" element={<CustomerDetail />} />
       </Route>
+      <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   );
 };
