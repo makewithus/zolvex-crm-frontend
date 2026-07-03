@@ -116,7 +116,7 @@ export const FEATURE_REGISTRY: FeatureDefinition[] = [
     name: 'Calendar',
     route: '/calendar',
     sidebarVisibility: true,
-    requiredRoles: ['Super Admin', 'City Manager', 'Support Agent', 'Field Staff'],
+    requiredRoles: ['Super Admin', 'City Manager', 'Support Agent'],
     pageTitle: 'Calendar',
     category: 'Operations',
     order: 60,
