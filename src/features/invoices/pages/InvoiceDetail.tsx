@@ -7,7 +7,8 @@ import { useCurrentUser } from '@/features/auth';
 import { format } from 'date-fns';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft, Download, Send, CheckCircle2, FileText, Activity } from 'lucide-react';
+import { ArrowLeft, Download, Send, CheckCircle2, FileText, Activity, CreditCard } from 'lucide-react';
+import { RecordPaymentDialog } from '../../payments/components/RecordPaymentDialog';
 
 export const InvoiceDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -15,6 +16,7 @@ export const InvoiceDetail: React.FC = () => {
   const { mutate: updateStatus, isPending: isUpdating } = useUpdateInvoiceStatus();
   const { mutate: downloadPdf, isPending: isDownloading } = useDownloadPdf();
   const { data: user } = useCurrentUser();
+  const [isPaymentDialogOpen, setIsPaymentDialogOpen] = React.useState(false);
 
   if (isLoading) {
     return (
@@ -38,6 +40,7 @@ export const InvoiceDetail: React.FC = () => {
   }
 
   const canIssue = ['Super Admin', 'Finance', 'City Manager'].includes(user?.role.name || '') && invoice.status === 'Draft';
+  const canRecordPayment = ['Super Admin', 'Finance', 'City Manager'].includes(user?.role.name || '') && invoice.status === 'Issued' && Number(invoice.balance_due) > 0;
 
   const handleIssue = () => {
     if (window.confirm('Are you sure you want to issue this invoice? It will become immutable.')) {
@@ -202,6 +205,17 @@ export const InvoiceDetail: React.FC = () => {
                 <span className="text-gray-500">Balance Due</span>
                 <span className="font-bold text-red-600">₹{Number(invoice.balance_due).toLocaleString('en-IN')}</span>
               </div>
+              {canRecordPayment && (
+                <div className="pt-3 border-t border-gray-100 mt-1">
+                  <Button 
+                    className="w-full flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white"
+                    onClick={() => setIsPaymentDialogOpen(true)}
+                  >
+                    <CreditCard className="w-4 h-4" />
+                    Record Payment
+                  </Button>
+                </div>
+              )}
             </CardContent>
           </Card>
 
@@ -239,6 +253,14 @@ export const InvoiceDetail: React.FC = () => {
           </Card>
         </div>
       </div>
+      
+      {isPaymentDialogOpen && (
+        <RecordPaymentDialog
+          isOpen={isPaymentDialogOpen}
+          onClose={() => setIsPaymentDialogOpen(false)}
+          invoice={invoice}
+        />
+      )}
     </div>
   );
 };
