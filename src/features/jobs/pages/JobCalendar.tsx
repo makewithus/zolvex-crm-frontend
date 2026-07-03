@@ -7,7 +7,7 @@ import { JOB_STATUS_COLORS } from '../constants/job-colors';
 import { format, parseISO, startOfDay, endOfDay } from 'date-fns';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { ChevronLeft, ChevronRight, Search } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Search, Globe } from 'lucide-react';
 import { Job } from '../types/job.types';
 
 // Calendar Config
@@ -18,6 +18,10 @@ const PIXELS_PER_MINUTE = 2; // e.g., 60 mins = 120px
 export const JobCalendar = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
+  
+  // Timezone Info
+  const userTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+  const isDev = import.meta.env.DEV;
 
   // URL state
   const currentDateParam = searchParams.get('date') || format(new Date(), 'yyyy-MM-dd');
@@ -131,6 +135,10 @@ export const JobCalendar = () => {
         </div>
 
         <div className="flex items-center gap-4">
+          <div className="flex items-center gap-2 text-sm text-slate-500 bg-slate-50 px-3 py-1.5 rounded-full border border-slate-200">
+            <Globe className="h-4 w-4 text-slate-400" />
+            <span>Schedule shown in <strong>{userTimezone}</strong> local time</span>
+          </div>
           <div className="relative">
             <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-slate-400" />
             <Input 
@@ -176,6 +184,17 @@ export const JobCalendar = () => {
               <div className="h-12 border-b border-slate-200 bg-slate-50 flex items-center justify-center font-semibold text-slate-700 sticky top-0 z-10 shadow-sm">
                 Unassigned ({unassignedJobs.length})
               </div>
+              
+              {/* Empty State Debug Banner */}
+              {jobs.length === 0 && (
+                <div className="absolute top-8 left-1/2 -translate-x-1/2 whitespace-nowrap z-20 pointer-events-none">
+                  <div className="bg-slate-800 text-slate-100 text-sm px-4 py-2 rounded-full shadow-lg text-center">
+                    <p>No jobs scheduled for {format(parseISO(currentDateParam), 'EEEE, MMM d')}.</p>
+                    {isDev && <p className="text-xs text-slate-400 mt-1">Dev Info: Jobs may exist outside this local date boundary due to timezone conversion.</p>}
+                  </div>
+                </div>
+              )}
+              
               <div className="relative" style={{ height: `${(END_HOUR - START_HOUR + 1) * 60 * PIXELS_PER_MINUTE}px` }}>
                 {/* Grid Lines */}
                 {hours.map(h => (
