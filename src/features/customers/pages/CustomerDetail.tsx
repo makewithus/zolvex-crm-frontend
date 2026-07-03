@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 import { useForm, Resolver } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useCustomer, useUpdateCustomer } from '../hooks/useCustomers';
+import { useCustomerInvoices } from '../../invoices/hooks/useInvoices';
 import { PageHeader } from '@/components/ui-custom/PageHeader';
 import { PageContainer } from '@/components/ui-custom/PageContainer';
 import { DetailCard } from '@/components/ui-custom/DetailCard';
@@ -18,7 +19,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { FormGroup } from '@/components/ui-custom/FormGroup';
 import { customerFormSchema, CustomerFormInput } from '../schemas/customer.schema';
 import { CustomerLead } from '../types/customer.types';
-import { CalendarIcon } from 'lucide-react';
+import { CalendarIcon, FileText } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { Badge } from '@/components/ui/badge';
 import { toast } from 'sonner';
@@ -27,6 +28,7 @@ export default function CustomerDetail() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { data: customer, isLoading, isError } = useCustomer(id as string);
+  const { data: invoices, isLoading: isLoadingInvoices } = useCustomerInvoices(id as string);
   const { mutate: updateCustomer, isPending: isUpdating } = useUpdateCustomer();
 
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
@@ -152,12 +154,35 @@ export default function CustomerDetail() {
 
         <div className="space-y-6">
           <Section>
-            <SectionHeader title="Service History (Future)" />
+            <SectionHeader title="Financial Invoices" />
             <Card>
-              <CardContent className="p-8">
-                <div className="flex items-center justify-center bg-secondary/30 border border-dashed border-border rounded-md h-24">
-                  <p className="text-sm text-muted-foreground text-center">Service History Placeholder<br/>(To be populated via relationships)</p>
-                </div>
+              <CardContent className="p-6">
+                {isLoadingInvoices ? (
+                  <div className="flex justify-center p-4">Loading invoices...</div>
+                ) : !invoices || invoices.length === 0 ? (
+                  <div className="flex flex-col items-center justify-center py-6 text-center border border-dashed rounded-lg">
+                    <FileText className="h-8 w-8 text-muted-foreground/30 mb-2" />
+                    <p className="text-sm font-medium">No invoices found</p>
+                  </div>
+                ) : (
+                  <div className="space-y-3">
+                    {invoices.map((inv: any) => (
+                      <div key={inv.id} className="flex justify-between items-center border-b pb-3 last:border-0 last:pb-0">
+                        <div>
+                          <Link to={`/invoices/${inv.id}`} className="font-medium text-sm text-primary hover:underline block">
+                            {inv.invoice_number}
+                          </Link>
+                          <p className="text-xs text-muted-foreground">
+                            {new Date(inv.issue_date).toLocaleDateString()} • ₹{Number(inv.final_amount).toLocaleString('en-IN')}
+                          </p>
+                        </div>
+                        <Badge variant="outline" className={inv.status === 'Draft' ? 'bg-gray-50' : 'bg-blue-50 text-blue-700'}>
+                          {inv.status}
+                        </Badge>
+                      </div>
+                    ))}
+                  </div>
+                )}
               </CardContent>
             </Card>
           </Section>
