@@ -4,6 +4,7 @@ import { useForm, Resolver } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useCustomer, useUpdateCustomer } from '../hooks/useCustomers';
 import { useCustomerInvoices } from '../../invoices/hooks/useInvoices';
+import { usePayments } from '../../payments/hooks/usePayments';
 import { PageHeader } from '@/components/ui-custom/PageHeader';
 import { PageContainer } from '@/components/ui-custom/PageContainer';
 import { DetailCard } from '@/components/ui-custom/DetailCard';
@@ -19,7 +20,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { FormGroup } from '@/components/ui-custom/FormGroup';
 import { customerFormSchema, CustomerFormInput } from '../schemas/customer.schema';
 import { CustomerLead } from '../types/customer.types';
-import { CalendarIcon, FileText } from 'lucide-react';
+import { CalendarIcon, FileText, CreditCard } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { Badge } from '@/components/ui/badge';
 import { toast } from 'sonner';
@@ -29,6 +30,7 @@ export default function CustomerDetail() {
   const navigate = useNavigate();
   const { data: customer, isLoading, isError } = useCustomer(id as string);
   const { data: invoices, isLoading: isLoadingInvoices } = useCustomerInvoices(id as string);
+  const { data: payments, isLoading: isLoadingPayments } = usePayments({ customer_id: id });
   const { mutate: updateCustomer, isPending: isUpdating } = useUpdateCustomer();
 
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
@@ -72,6 +74,10 @@ export default function CustomerDetail() {
 
   if (isLoading) return <PageContainer><LoadingState text="Loading customer details..." /></PageContainer>;
   if (isError || !customer) return <PageContainer><EmptyState title="Customer Not Found" description="This customer does not exist." /></PageContainer>;
+
+  const totalInvoiced = invoices?.reduce((sum, inv: any) => sum + Number(inv.final_amount), 0) || 0;
+  const totalPaid = invoices?.reduce((sum, inv: any) => sum + Number(inv.amount_paid || 0), 0) || 0;
+  const outstanding = invoices?.reduce((sum, inv: any) => sum + Number(inv.balance_due || 0), 0) || 0;
 
   return (
     <PageContainer>
@@ -154,6 +160,67 @@ export default function CustomerDetail() {
 
         <div className="space-y-6">
           <Section>
+            <SectionHeader title="Financial Ledger" />
+            <div className="grid grid-cols-3 gap-4 mb-6">
+              <Card className="bg-blue-50/50 border-blue-100">
+                <CardContent className="p-4 flex flex-col justify-center items-center text-center">
+                  <span className="text-xs font-semibold text-blue-600 uppercase tracking-wider mb-1">Total Invoiced</span>
+                  <span className="text-xl font-bold text-blue-900">₹{totalInvoiced.toLocaleString('en-IN')}</span>
+                </CardContent>
+              </Card>
+              <Card className="bg-emerald-50/50 border-emerald-100">
+                <CardContent className="p-4 flex flex-col justify-center items-center text-center">
+                  <span className="text-xs font-semibold text-emerald-600 uppercase tracking-wider mb-1">Total Paid</span>
+                  <span className="text-xl font-bold text-emerald-900">₹{totalPaid.toLocaleString('en-IN')}</span>
+                </CardContent>
+              </Card>
+              <Card className="bg-red-50/50 border-red-100">
+                <CardContent className="p-4 flex flex-col justify-center items-center text-center">
+                  <span className="text-xs font-semibold text-red-600 uppercase tracking-wider mb-1">Outstanding</span>
+                  <span className="text-xl font-bold text-red-900">₹{outstanding.toLocaleString('en-IN')}</span>
+                </CardContent>
+              </Card>
+            </div>
+
+            <Card className="mb-6">
+              <div className="p-4 border-b border-gray-100 bg-gray-50/50">
+                <h3 className="text-sm font-semibold">Payment History</h3>
+              </div>
+              <CardContent className="p-4">
+                {isLoadingPayments ? (
+                  <div className="flex justify-center p-4 text-sm text-muted-foreground">Loading payments...</div>
+                ) : !payments || payments.length === 0 ? (
+                  <div className="flex flex-col items-center justify-center py-4 text-center">
+                    <CreditCard className="h-8 w-8 text-muted-foreground/30 mb-2" />
+                    <p className="text-xs font-medium text-muted-foreground">No payments recorded</p>
+                  </div>
+                ) : (
+                  <div className="space-y-3">
+                    {payments.map((payment: any) => (
+                      <div key={payment.id} className="flex justify-between items-center border-b pb-3 last:border-0 last:pb-0">
+                        <div>
+                          <div className="font-medium text-sm text-primary">
+                            {payment.payment_number}
+                          </div>
+                          <p className="text-xs text-muted-foreground">
+                            {new Date(payment.payment_date).toLocaleDateString()} • {payment.payment_method}
+                          </p>
+                        </div>
+                        <div className="text-right">
+                          <div className="font-medium text-sm text-emerald-600">
+                            ₹{Number(payment.amount).toLocaleString('en-IN')}
+                          </div>
+                          <Badge variant="outline" className={payment.payment_status === 'Completed' ? 'bg-emerald-50 text-emerald-700 text-[10px]' : 'bg-amber-50 text-amber-700 text-[10px]'}>
+                            {payment.payment_status}
+                          </Badge>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+
             <SectionHeader title="Financial Invoices" />
             <Card>
               <CardContent className="p-6">
