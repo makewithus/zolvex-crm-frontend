@@ -34,3 +34,8 @@ export const cancelBooking = async (id: string, cancel_reason: string) => {
   const response = await api.patch(`/bookings/${id}/cancel`, { cancel_reason });
   return response.data.data;
 };
+
+export const rescheduleBooking = async (id: string, data: { scheduled_date: string; slot?: string }) => {
+  const response = await api.patch(`/bookings/${id}/reschedule`, data);
+  return response.data.data;
+};

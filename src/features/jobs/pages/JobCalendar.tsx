@@ -1,8 +1,9 @@
-import { useMemo } from 'react';
-import { useSearchParams, useNavigate } from 'react-router-dom';
+import { useMemo, useState, useEffect } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { useCalendarJobs } from '../hooks/useJobs';
 import { PageHeader } from '@/components/ui-custom/PageHeader';
 import { CalendarKPIs } from '../components/CalendarKPIs';
+import { QuickEditJobDialog } from '../components/QuickEditJobDialog';
 import { JOB_STATUS_COLORS } from '../constants/job-colors';
 import { format, parseISO, startOfDay, endOfDay } from 'date-fns';
 import { Input } from '@/components/ui/input';
@@ -18,11 +19,19 @@ const PIXELS_PER_MINUTE = 2;
 
 export const JobCalendar = () => {
   const [searchParams, setSearchParams] = useSearchParams();
-  const navigate = useNavigate();
 
   // Timezone indicator
   const userTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
   const isDev = import.meta.env.DEV;
+
+  const [editingJob, setEditingJob] = useState<Job | null>(null);
+
+  const [currentTime, setCurrentTime] = useState(new Date());
+
+  useEffect(() => {
+    const interval = setInterval(() => setCurrentTime(new Date()), 60000);
+    return () => clearInterval(interval);
+  }, []);
 
   // URL-synced state
   const currentDateParam = searchParams.get('date') || format(new Date(), 'yyyy-MM-dd');
@@ -114,7 +123,7 @@ export const JobCalendar = () => {
       <div
         key={job.id}
         // Priority 3: Cancelled cards are non-interactive (no onClick, no hover ring)
-        onClick={isCancelled ? undefined : () => navigate(`/jobs/${job.id}`)}
+        onClick={isCancelled ? undefined : () => setEditingJob(job)}
         role={isCancelled ? undefined : 'button'}
         aria-label={isCancelled ? `Cancelled: ${job.job_id}` : `Open ${job.job_id}`}
         className={[
@@ -154,6 +163,11 @@ export const JobCalendar = () => {
   };
 
   const gridHeight = (END_HOUR - START_HOUR + 1) * 60 * PIXELS_PER_MINUTE;
+
+  const isToday = format(parseISO(currentDateParam), 'yyyy-MM-dd') === format(new Date(), 'yyyy-MM-dd');
+  const currentMinutesFromStart = (currentTime.getHours() - START_HOUR) * 60 + currentTime.getMinutes();
+  const showCurrentTimeLine = isToday && currentTime.getHours() >= START_HOUR && currentTime.getHours() <= END_HOUR;
+  const currentTimeTop = currentMinutesFromStart * PIXELS_PER_MINUTE;
 
   return (
     <div className="p-6 h-[calc(100vh-64px)] flex flex-col">
@@ -241,6 +255,14 @@ export const JobCalendar = () => {
                     {h.toString().padStart(2, '0')}:00
                   </div>
                 ))}
+                {showCurrentTimeLine && (
+                  <div 
+                    className="absolute w-full text-right pr-2 text-xs text-red-500 font-bold -mt-2"
+                    style={{ top: `${currentTimeTop}px` }}
+                  >
+                    {format(currentTime, 'HH:mm')}
+                  </div>
+                )}
               </div>
             </div>
 
@@ -264,6 +286,14 @@ export const JobCalendar = () => {
                 {hours.map(h => (
                   <div key={h} className="absolute w-full border-t border-slate-100" style={{ top: `${(h - START_HOUR) * 60 * PIXELS_PER_MINUTE}px` }} />
                 ))}
+                {showCurrentTimeLine && (
+                  <div 
+                    className="absolute w-full border-t-2 border-red-500 z-20 pointer-events-none" 
+                    style={{ top: `${currentTimeTop}px` }} 
+                  >
+                    <div className="absolute -left-1 -top-1.5 w-3 h-3 bg-red-500 rounded-full"></div>
+                  </div>
+                )}
                 {unassignedJobs.map(renderJobCard)}
               </div>
             </div>
@@ -278,6 +308,12 @@ export const JobCalendar = () => {
                   {hours.map(h => (
                     <div key={h} className="absolute w-full border-t border-slate-100" style={{ top: `${(h - START_HOUR) * 60 * PIXELS_PER_MINUTE}px` }} />
                   ))}
+                  {showCurrentTimeLine && (
+                    <div 
+                      className="absolute w-full border-t-2 border-red-500 z-20 pointer-events-none" 
+                      style={{ top: `${currentTimeTop}px` }} 
+                    />
+                  )}
                   {lane.jobs.map(renderJobCard)}
                 </div>
               </div>
@@ -285,6 +321,12 @@ export const JobCalendar = () => {
           </div>
         )}
       </div>
+
+      <QuickEditJobDialog 
+        job={editingJob} 
+        isOpen={!!editingJob} 
+        onClose={() => setEditingJob(null)} 
+      />
     </div>
   );
 };

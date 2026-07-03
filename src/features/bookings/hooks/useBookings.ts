@@ -52,3 +52,22 @@ export const useCancelBooking = () => {
     },
   });
 };
+
+export const useRescheduleBooking = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({ id, data }: { id: string; data: { scheduled_date: string; slot?: string } }) => bookingApi.rescheduleBooking(id, data),
+    onSuccess: (_, variables) => {
+      toast.success('Booking rescheduled successfully');
+      queryClient.invalidateQueries({ queryKey: ['bookings'] });
+      queryClient.invalidateQueries({ queryKey: ['booking', variables.id] });
+      queryClient.invalidateQueries({ queryKey: ['jobs'] });
+      queryClient.invalidateQueries({ queryKey: ['calendarJobs'] });
+      queryClient.invalidateQueries({ queryKey: ['dashboard'] });
+    },
+    onError: (error: any) => {
+      toast.error(error.response?.data?.message || 'Failed to reschedule booking');
+    },
+  });
+};

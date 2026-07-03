@@ -22,6 +22,7 @@ export const JobDetail = () => {
 
   const userRole = localStorage.getItem('userRole') || 'Super Admin';
   const isFieldStaff = userRole === 'Field Staff';
+  const canAssign = userRole === 'Super Admin' || userRole === 'City Manager';
 
   if (isLoading) return <div className="p-6">Loading...</div>;
   if (!job) return <div className="p-6">Job not found</div>;
@@ -111,7 +112,7 @@ export const JobDetail = () => {
 
         {/* Sidebar / Secondary Info */}
         <div className="space-y-6">
-          {!isFieldStaff && (
+          {canAssign && (
             <div className="bg-white rounded-xl p-5 shadow-sm border">
               <h3 className="font-semibold mb-4 flex items-center gap-2"><User className="text-primary h-5 w-5"/> Assignment</h3>
               {job.assignedUser ? (
