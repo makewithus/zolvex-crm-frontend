@@ -91,7 +91,7 @@ export const PricingRuleFormDialog = () => {
             <Input type="number" step="0.01" min="0" placeholder="0.00" {...register('base_price', { valueAsNumber: true })} />
           </FormGroup>
 
-          <FormGrid className="grid-cols-3">
+          <FormGrid columns={3}>
             <FormGroup label="CGST (%)" error={errors.cgst_percent?.message}>
               <Input type="number" step="0.01" min="0" defaultValue={9} {...register('cgst_percent', { valueAsNumber: true })} />
             </FormGroup>
