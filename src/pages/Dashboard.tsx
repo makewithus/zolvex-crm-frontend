@@ -1,30 +1,107 @@
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Users, TrendingUp, DollarSign, Calendar, Plus, Activity, Star, ChevronRight, Server, ShieldCheck, Mail, Database, Zap } from 'lucide-react';
+import { Users, TrendingUp, DollarSign, Calendar, Plus, Activity, ChevronRight, Briefcase } from 'lucide-react';
 import { PageHeader } from '@/components/ui-custom/PageHeader';
 import { PageContainer } from '@/components/ui-custom/PageContainer';
 import { StatusBadge } from '@/components/ui-custom/StatusBadge';
 import { useNavigate } from 'react-router-dom';
-import { useLeads } from '@/features/leads/hooks/useLeads';
+import { useQuery } from '@tanstack/react-query';
+import {
+  getDashboardKPIs,
+  getDashboardActivity,
+  getUpcomingBookings,
+  getDashboardRevenue,
+} from '@/features/auth/api/dashboard.api';
 import { FEATURE_REGISTRY } from '@/config/features';
+import { format } from 'date-fns';
 
 export const Dashboard = () => {
   const navigate = useNavigate();
   const userRole = localStorage.getItem('userRole') || 'Super Admin';
-  const { data: leadsResponse } = useLeads();
-  const recentLeads = (leadsResponse?.data || []).slice(0, 5);
 
   const hasAccess = (route: string) => {
     const feat = FEATURE_REGISTRY.find(f => f.route === route);
     return feat ? feat.requiredRoles.includes(userRole) : false;
   };
 
+  const canSeeRevenue = ['Super Admin', 'Finance'].includes(userRole);
+
+  const { data: kpis, isLoading: kpisLoading } = useQuery({
+    queryKey: ['dashboard', 'kpis'],
+    queryFn: getDashboardKPIs,
+    staleTime: 60000,
+  });
+
+  const { data: activity = [], isLoading: activityLoading } = useQuery({
+    queryKey: ['dashboard', 'activity'],
+    queryFn: () => getDashboardActivity(8),
+    staleTime: 60000,
+  });
+
+  const { data: upcomingBookings = [], isLoading: bookingsLoading } = useQuery({
+    queryKey: ['dashboard', 'upcoming-bookings'],
+    queryFn: getUpcomingBookings,
+    staleTime: 60000,
+  });
+
+  const { data: revenue } = useQuery({
+    queryKey: ['dashboard', 'revenue'],
+    queryFn: getDashboardRevenue,
+    enabled: canSeeRevenue,
+    staleTime: 60000,
+  });
+
+  const kpiCards = [
+    {
+      label: 'Total Leads',
+      value: kpis?.total_leads ?? '—',
+      icon: Users,
+      color: 'text-blue-600',
+      bg: 'bg-blue-500/10',
+      show: hasAccess('/leads'),
+    },
+    {
+      label: 'Customers',
+      value: kpis?.total_customers ?? '—',
+      icon: Users,
+      color: 'text-purple-600',
+      bg: 'bg-purple-500/10',
+      show: hasAccess('/customers'),
+    },
+    {
+      label: 'Active Bookings',
+      value: kpis?.active_bookings ?? '—',
+      icon: Calendar,
+      color: 'text-orange-600',
+      bg: 'bg-orange-500/10',
+      show: hasAccess('/bookings'),
+    },
+    {
+      label: 'Jobs Today',
+      value: kpis?.jobs_today ?? '—',
+      icon: Briefcase,
+      color: 'text-indigo-600',
+      bg: 'bg-indigo-500/10',
+      show: hasAccess('/jobs'),
+    },
+    {
+      label: 'Revenue (MTD)',
+      value: canSeeRevenue
+        ? (revenue ? `₹${Number(revenue.mtd_revenue).toLocaleString('en-IN')}` : '—')
+        : null,
+      icon: DollarSign,
+      color: 'text-emerald-600',
+      bg: 'bg-emerald-500/10',
+      show: canSeeRevenue,
+    },
+  ].filter(c => c.show && c.value !== null);
+
   return (
     <PageContainer>
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-2">
-        <PageHeader 
-          title="Overview" 
-          description="Monitor your CRM pipeline, bookings, and revenue metrics." 
+        <PageHeader
+          title="Overview"
+          description="Live view of your CRM pipeline, bookings, and operations."
         />
         <div className="flex gap-2">
           {hasAccess('/leads') && (
@@ -33,257 +110,152 @@ export const Dashboard = () => {
             </Button>
           )}
           {hasAccess('/bookings') && (
-            <Button variant="outline" size="sm" className="gap-2">
-              <Calendar className="h-4 w-4" /> New Booking
+            <Button variant="outline" size="sm" className="gap-2" onClick={() => navigate('/bookings')}>
+              <Calendar className="h-4 w-4" /> Bookings
             </Button>
           )}
         </div>
       </div>
-      
-      {/* KPI Row */}
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4 mb-6">
-        {hasAccess('/leads') && (
-          <Card className="shadow-sm border-border/40 hover:shadow-md transition-all">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium text-muted-foreground">Total Leads</CardTitle>
-              <div className="p-2 bg-blue-500/10 rounded-full">
-                <Users className="h-4 w-4 text-blue-600" />
-              </div>
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold tracking-tight">1,248</div>
-              <p className="text-xs text-emerald-600 font-medium flex items-center mt-1">
-                <TrendingUp className="h-3 w-3 mr-1" /> +12% from last month
-              </p>
-            </CardContent>
-          </Card>
-        )}
-        
-        {hasAccess('/customers') && (
-          <Card className="shadow-sm border-border/40 hover:shadow-md transition-all">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium text-muted-foreground">Customers</CardTitle>
-              <div className="p-2 bg-purple-500/10 rounded-full">
-                <Star className="h-4 w-4 text-purple-600" />
-              </div>
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold tracking-tight">856</div>
-              <p className="text-xs text-emerald-600 font-medium flex items-center mt-1">
-                <TrendingUp className="h-3 w-3 mr-1" /> +5% from last month
-              </p>
-            </CardContent>
-          </Card>
-        )}
 
-        {hasAccess('/bookings') && (
-          <Card className="shadow-sm border-border/40 hover:shadow-md transition-all">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium text-muted-foreground">Active Bookings</CardTitle>
-              <div className="p-2 bg-orange-500/10 rounded-full">
-                <Calendar className="h-4 w-4 text-orange-600" />
-              </div>
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold tracking-tight">142</div>
-              <p className="text-xs text-orange-600 font-medium flex items-center mt-1">
-                <Zap className="h-3 w-3 mr-1" /> 12 require assignment
-              </p>
-            </CardContent>
-          </Card>
-        )}
-
-        {hasAccess('/reports') && (
-          <Card className="shadow-sm border-border/40 hover:shadow-md transition-all">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium text-muted-foreground">Revenue (MTD)</CardTitle>
-              <div className="p-2 bg-emerald-500/10 rounded-full">
-                <DollarSign className="h-4 w-4 text-emerald-600" />
-              </div>
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold tracking-tight">$45,231</div>
-              <p className="text-xs text-emerald-600 font-medium flex items-center mt-1">
-                <TrendingUp className="h-3 w-3 mr-1" /> +18% vs last month
-              </p>
-            </CardContent>
-          </Card>
-        )}
-      </div>
-
-      <div className="grid gap-6 md:grid-cols-12 mb-6">
-        
-        {/* Main Charts Area */}
-        {hasAccess('/reports') && (
-          <Card className="md:col-span-8 shadow-sm border-border/40">
-            <CardHeader className="pb-2">
-              <CardTitle className="text-base">Revenue Overview</CardTitle>
-              <CardDescription>Monthly recurring and transactional revenue</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="h-[250px] w-full flex items-end justify-between gap-2 pt-4">
-                {/* CSS Bar Chart Placeholder */}
-                {[40, 55, 30, 70, 85, 45, 60, 95, 80, 100, 75, 90].map((val, i) => (
-                  <div key={i} className="relative flex flex-col justify-end items-center flex-1 h-full group">
-                    <div className="w-full bg-primary/20 rounded-t-md transition-all duration-300 group-hover:bg-primary/50 relative" style={{ height: `${val}%` }}>
-                      <div className="absolute -top-8 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 bg-foreground text-background text-xs px-2 py-1 rounded shadow-lg pointer-events-none transition-opacity z-10 whitespace-nowrap">
-                        ${(val * 450).toLocaleString()}
-                      </div>
-                    </div>
-                    <span className="text-[10px] text-muted-foreground mt-2 block w-full text-center border-t pt-2 font-medium">
-                      {['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'][i]}
-                    </span>
+      {/* Live KPI Row */}
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-5 mb-6">
+        {kpisLoading
+          ? Array.from({ length: 4 }).map((_, i) => (
+              <Card key={i} className="shadow-sm border-border/40 animate-pulse">
+                <CardContent className="pt-6">
+                  <div className="h-8 bg-muted rounded w-16 mb-2" />
+                  <div className="h-4 bg-muted rounded w-24" />
+                </CardContent>
+              </Card>
+            ))
+          : kpiCards.map(({ label, value, icon: Icon, color, bg }) => (
+              <Card key={label} className="shadow-sm border-border/40 hover:shadow-md transition-all">
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-sm font-medium text-muted-foreground">{label}</CardTitle>
+                  <div className={`p-2 ${bg} rounded-full`}>
+                    <Icon className={`h-4 w-4 ${color}`} />
                   </div>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
-        )}
-
-        {/* System Health */}
-        {hasAccess('/settings') && (
-          <Card className={`md:col-span-4 shadow-sm border-border/40 flex flex-col ${!hasAccess('/reports') ? 'md:col-span-12' : ''}`}>
-            <CardHeader className="pb-2">
-              <CardTitle className="text-base">System Health</CardTitle>
-              <CardDescription>Infrastructure & Services</CardDescription>
-            </CardHeader>
-            <CardContent className="flex-1 flex flex-col justify-center">
-              <div className="space-y-4">
-                <div className="flex items-center justify-between p-3 bg-secondary/30 rounded-lg border border-border/50">
-                  <div className="flex items-center gap-3">
-                    <div className="p-2 bg-emerald-500/10 rounded-full"><Database className="h-4 w-4 text-emerald-600" /></div>
-                    <span className="text-sm font-medium">Database (Prisma)</span>
-                  </div>
-                  <StatusBadge status="success" label="Operational" />
-                </div>
-                <div className="flex items-center justify-between p-3 bg-secondary/30 rounded-lg border border-border/50">
-                  <div className="flex items-center gap-3">
-                    <div className="p-2 bg-emerald-500/10 rounded-full"><Server className="h-4 w-4 text-emerald-600" /></div>
-                    <span className="text-sm font-medium">API Server</span>
-                  </div>
-                  <StatusBadge status="success" label="Operational" />
-                </div>
-                <div className="flex items-center justify-between p-3 bg-secondary/30 rounded-lg border border-border/50">
-                  <div className="flex items-center gap-3">
-                    <div className="p-2 bg-emerald-500/10 rounded-full"><ShieldCheck className="h-4 w-4 text-emerald-600" /></div>
-                    <span className="text-sm font-medium">Authentication</span>
-                  </div>
-                  <StatusBadge status="success" label="Operational" />
-                </div>
-                <div className="flex items-center justify-between p-3 bg-secondary/30 rounded-lg border border-border/50">
-                  <div className="flex items-center gap-3">
-                    <div className="p-2 bg-blue-500/10 rounded-full"><Mail className="h-4 w-4 text-blue-600" /></div>
-                    <span className="text-sm font-medium">Email Gateway</span>
-                  </div>
-                  <StatusBadge status="info" label="Processing" />
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        )}
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold tracking-tight">{value}</div>
+                </CardContent>
+              </Card>
+            ))}
       </div>
 
       <div className="grid gap-6 md:grid-cols-12">
-        {/* Latest Leads */}
-        {hasAccess('/leads') && (
-          <Card className="md:col-span-8 shadow-sm border-border/40">
+        {/* Recent Activity — live from BookingHistory + JobHistory */}
+        <Card className="md:col-span-8 shadow-sm border-border/40">
+          <CardHeader className="pb-2">
+            <CardTitle className="text-base flex items-center gap-2">
+              <Activity className="h-4 w-4 text-primary" /> Recent Activity
+            </CardTitle>
+            <CardDescription>Live audit trail from bookings and jobs</CardDescription>
+          </CardHeader>
+          <CardContent>
+            {activityLoading ? (
+              <div className="space-y-3">
+                {Array.from({ length: 5 }).map((_, i) => (
+                  <div key={i} className="h-10 bg-muted rounded animate-pulse" />
+                ))}
+              </div>
+            ) : activity.length === 0 ? (
+              <div className="flex flex-col items-center justify-center py-10 text-center bg-secondary/20 rounded-lg border border-dashed">
+                <Activity className="h-8 w-8 text-muted-foreground mb-3 opacity-50" />
+                <p className="text-sm text-muted-foreground">No recent activity</p>
+              </div>
+            ) : (
+              <div className="space-y-3">
+                {activity.map((item: any, i: number) => (
+                  <div key={i} className="flex items-start gap-3 py-2 border-b last:border-0">
+                    <div className={`p-1.5 rounded-md border ${item.type === 'booking' ? 'text-blue-600 bg-blue-500/10 border-blue-200' : 'text-indigo-600 bg-indigo-500/10 border-indigo-200'}`}>
+                      {item.type === 'booking' ? <Calendar className="h-3.5 w-3.5" /> : <Briefcase className="h-3.5 w-3.5" />}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-xs font-medium leading-tight truncate">{item.label}</p>
+                      <p className="text-[10px] text-muted-foreground">
+                        {format(new Date(item.at), 'dd MMM, h:mm a')}
+                      </p>
+                    </div>
+                    {item.to && <StatusBadge status="default" label={item.to} />}
+                  </div>
+                ))}
+              </div>
+            )}
+          </CardContent>
+        </Card>
+
+        {/* Upcoming Bookings — live from DB */}
+        {hasAccess('/bookings') && (
+          <Card className="md:col-span-4 shadow-sm border-border/40">
             <CardHeader className="flex flex-row items-center justify-between pb-2">
               <div>
-                <CardTitle className="text-base">Latest Leads</CardTitle>
-                <CardDescription>Recently acquired prospects</CardDescription>
+                <CardTitle className="text-base">Upcoming Bookings</CardTitle>
+                <CardDescription>Next 48 hours</CardDescription>
               </div>
-              <Button variant="ghost" size="sm" onClick={() => navigate('/leads')}>View All</Button>
+              <Button variant="ghost" size="sm" onClick={() => navigate('/bookings')}>
+                View All <ChevronRight className="h-3 w-3 ml-1" />
+              </Button>
             </CardHeader>
             <CardContent>
-              {recentLeads.length > 0 ? (
-                <div className="rounded-md border overflow-hidden">
-                  <table className="w-full text-sm">
-                    <thead className="bg-muted/50 text-muted-foreground">
-                      <tr>
-                        <th className="px-4 py-3 text-left font-medium">Contact</th>
-                        <th className="px-4 py-3 text-left font-medium">Source</th>
-                        <th className="px-4 py-3 text-left font-medium">Stage</th>
-                        <th className="px-4 py-3 text-right font-medium">Action</th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y">
-                      {recentLeads.map((lead) => (
-                        <tr key={lead.id} className="hover:bg-muted/30 transition-colors">
-                          <td className="px-4 py-3">
-                            <div className="font-medium">{lead.name || 'Unknown'}</div>
-                            <div className="text-xs text-muted-foreground">{lead.phone}</div>
-                          </td>
-                          <td className="px-4 py-3">
-                            <StatusBadge status="default" label={lead.source} />
-                          </td>
-                          <td className="px-4 py-3">
-                            <StatusBadge status={lead.status === 'Lost' ? 'error' : lead.status === 'Booked' ? 'success' : 'info'} label={lead.status} />
-                          </td>
-                          <td className="px-4 py-3 text-right">
-                            <Button variant="ghost" size="sm" onClick={() => navigate(`/leads/${lead.id}`)}>View</Button>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
+              {bookingsLoading ? (
+                <div className="space-y-2">
+                  {Array.from({ length: 3 }).map((_, i) => (
+                    <div key={i} className="h-12 bg-muted rounded animate-pulse" />
+                  ))}
+                </div>
+              ) : upcomingBookings.length === 0 ? (
+                <div className="flex flex-col items-center justify-center py-8 text-center bg-secondary/20 rounded-lg border border-dashed">
+                  <Calendar className="h-7 w-7 text-muted-foreground mb-2 opacity-50" />
+                  <p className="text-xs text-muted-foreground">No upcoming bookings in the next 48 hours</p>
                 </div>
               ) : (
-                <div className="flex flex-col items-center justify-center py-10 text-center bg-secondary/20 rounded-lg border border-dashed">
-                  <Users className="h-8 w-8 text-muted-foreground mb-3 opacity-50" />
-                  <h3 className="font-semibold text-sm">No recent leads</h3>
-                  <p className="text-xs text-muted-foreground mt-1">Your pipeline is currently empty.</p>
+                <div className="space-y-2">
+                  {upcomingBookings.map((b: any) => (
+                    <div
+                      key={b.id}
+                      className="flex items-center justify-between p-2 rounded-lg border bg-secondary/20 hover:bg-secondary/40 cursor-pointer transition-colors"
+                      onClick={() => navigate(`/bookings/${b.id}`)}
+                    >
+                      <div className="min-w-0">
+                        <p className="text-xs font-medium truncate">{b.customer_name || 'Customer'}</p>
+                        <p className="text-[10px] text-muted-foreground truncate">{b.service_name}</p>
+                      </div>
+                      <div className="text-right shrink-0 ml-2">
+                        <p className="text-[10px] font-medium">{format(new Date(b.scheduled_date), 'dd MMM')}</p>
+                        <p className="text-[10px] text-muted-foreground">{format(new Date(b.scheduled_date), 'h:mm a')}</p>
+                      </div>
+                    </div>
+                  ))}
                 </div>
               )}
             </CardContent>
           </Card>
         )}
+      </div>
 
-        {/* Upcoming Bookings & Activity */}
-        <div className={`${hasAccess('/leads') ? 'md:col-span-4' : 'md:col-span-12 grid md:grid-cols-2 gap-6'} space-y-6`}>
-          {hasAccess('/bookings') && (
-            <Card className="shadow-sm border-border/40 h-full">
-              <CardHeader className="pb-2">
-                <CardTitle className="text-base">Upcoming Bookings</CardTitle>
-                <CardDescription>Next 48 hours</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="flex flex-col items-center justify-center py-8 text-center bg-secondary/20 rounded-lg border border-dashed">
-                  <Calendar className="h-8 w-8 text-muted-foreground mb-3 opacity-50" />
-                  <h3 className="font-semibold text-sm">Schedule clear</h3>
-                  <p className="text-xs text-muted-foreground max-w-[200px] mt-1">
-                    Once bookings are confirmed, they will appear here.
-                  </p>
-                </div>
-              </CardContent>
-            </Card>
-          )}
-
-          <Card className="shadow-sm border-border/40 h-full">
+      {/* Revenue summary — Super Admin / Finance only */}
+      {canSeeRevenue && revenue && (
+        <div className="mt-6">
+          <Card className="shadow-sm border-border/40">
             <CardHeader className="pb-2">
-              <CardTitle className="text-base">Recent Activity</CardTitle>
+              <CardTitle className="text-base flex items-center gap-2">
+                <TrendingUp className="h-4 w-4 text-emerald-600" /> Revenue (Month to Date)
+              </CardTitle>
             </CardHeader>
-            <CardContent>
-              <div className="space-y-5">
-                {[
-                  { time: '10m ago', text: 'Sarah marked Lead #482 as Booked', icon: Activity, color: 'text-emerald-600 bg-emerald-500/10 border-emerald-200' },
-                  { time: '1h ago', text: 'New Customer profile auto-generated', icon: Users, color: 'text-blue-600 bg-blue-500/10 border-blue-200' },
-                  { time: '2h ago', text: 'City Manager assigned 5 leads', icon: ChevronRight, color: 'text-orange-600 bg-orange-500/10 border-orange-200' },
-                ].map((activity, i) => (
-                  <div key={i} className="flex items-start gap-3">
-                    <div className={`p-1.5 rounded-md border ${activity.color}`}>
-                      <activity.icon className="h-3.5 w-3.5" />
-                    </div>
-                    <div className="flex-1 space-y-0.5">
-                      <p className="text-xs font-medium leading-tight">{activity.text}</p>
-                      <p className="text-[10px] text-muted-foreground">{activity.time}</p>
-                    </div>
-                  </div>
-                ))}
+            <CardContent className="flex items-center gap-8">
+              <div>
+                <p className="text-3xl font-bold text-emerald-600">
+                  ₹{Number(revenue.mtd_revenue).toLocaleString('en-IN')}
+                </p>
+                <p className="text-sm text-muted-foreground mt-1">
+                  From {revenue.completed_bookings_count} completed booking{revenue.completed_bookings_count !== 1 ? 's' : ''}
+                </p>
               </div>
             </CardContent>
           </Card>
         </div>
-      </div>
+      )}
     </PageContainer>
   );
 };

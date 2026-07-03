@@ -5,59 +5,79 @@ import { DataTable } from '@/components/ui-custom/DataTable';
 import { Badge } from '@/components/ui/badge';
 import { format } from 'date-fns';
 import { useNavigate } from 'react-router-dom';
+import { JOB_STATUS_COLORS } from '../constants/job-colors';
 
 export const DispatchDashboard = () => {
-  const [filters] = useState({ status: ['Pending', 'Assigned', 'Accepted'] });
+  const [filters] = useState({
+    // BUG-D FIX: Pass as separate params — axios serializes arrays as status[]=...
+    // The backend getJobs service now handles arrays via Prisma `in`
+    status: ['Pending', 'Assigned', 'Accepted'],
+  });
   const { data: jobs, isLoading } = useJobs(filters);
   const navigate = useNavigate();
 
   const columns = [
-    { key: 'job_id', header: 'Job ID', cell: (row: any) => row.job_id },
-    { 
+    { key: 'job_id', header: 'Job ID', cell: (row: any) => (
+      <span className="font-mono text-sm font-medium">{row.job_id}</span>
+    )},
+    { key: 'customer', header: 'Customer', cell: (row: any) => row.booking?.customer_name || '—' },
+    { key: 'service', header: 'Service', cell: (row: any) => row.booking?.service?.name || '—' },
+    {
       key: 'datetime',
-      header: 'Date & Time', 
-      cell: (row: any) => format(new Date(row.scheduled_start), 'MMM dd, yyyy HH:mm') 
+      header: 'Scheduled',
+      cell: (row: any) => format(new Date(row.scheduled_start), 'dd MMM, HH:mm')
     },
-    { 
+    {
       key: 'technician',
-      header: 'Technician', 
-      cell: (row: any) => row.assignedUser ? row.assignedUser.name : <span className="text-muted-foreground italic">Unassigned</span>
+      header: 'Technician',
+      cell: (row: any) => row.assignedUser
+        ? row.assignedUser.name
+        : <span className="text-muted-foreground italic text-xs">Unassigned</span>
     },
-    { key: 'priority', header: 'Priority', cell: (row: any) => <Badge variant="outline">{row.priority}</Badge> },
-    { 
+    {
+      key: 'priority',
+      header: 'Priority',
+      cell: (row: any) => <Badge variant="outline">{row.priority}</Badge>
+    },
+    {
       key: 'status',
-      header: 'Status', 
-      cell: (row: any) => <Badge>{row.status}</Badge> 
+      header: 'Status',
+      cell: (row: any) => {
+        const colors = JOB_STATUS_COLORS[row.status] || {};
+        return (
+          <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${colors.bg} ${colors.text} border ${colors.border}`}>
+            {row.status}
+          </span>
+        );
+      }
     },
     {
       key: 'actions',
-      header: 'Actions',
+      header: '',
       cell: (row: any) => (
-        <div className="flex gap-2">
-          <button 
-            className="text-primary hover:underline text-sm font-medium"
-            onClick={() => navigate(`/jobs/${row.id}`)}
-          >
-            View
-          </button>
-        </div>
+        <button
+          className="text-primary hover:underline text-sm font-medium"
+          onClick={() => navigate(`/jobs/${row.id}`)}
+        >
+          View
+        </button>
       )
     }
   ];
 
   return (
     <div className="p-6 space-y-6">
-      <PageHeader 
-        title="Dispatch Dashboard" 
-        description="Manage job assignments and field operations."
+      <PageHeader
+        title="Dispatch Dashboard"
+        description="Active jobs requiring attention."
       />
       <div className="bg-card rounded-lg border shadow-sm">
-        <DataTable 
-          data={jobs || []} 
+        <DataTable
+          data={jobs || []}
           columns={columns}
           keyExtractor={(row: any) => row.id}
-          isLoading={isLoading} 
-          searchPlaceholder="Search jobs..."
+          isLoading={isLoading}
+          searchPlaceholder="Search by Job ID, customer..."
         />
       </div>
     </div>

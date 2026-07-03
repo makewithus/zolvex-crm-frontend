@@ -6,7 +6,9 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useConvertLeadToBooking } from '../hooks/useBookings';
 import { convertLeadToBookingSchema, ConvertLeadToBookingFormData } from '../schemas/booking.schema';
 import { Lead } from '@/features/leads/types/lead.types';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
+import { BUSINESS_HOURS } from '@/config/business-hours';
+import { AlertCircle } from 'lucide-react';
 
 interface Props {
   lead: Lead | null;
@@ -16,6 +18,7 @@ interface Props {
 
 export const ConvertLeadDialog = ({ lead, isOpen, onClose }: Props) => {
   const convertMutation = useConvertLeadToBooking();
+  const [apiError, setApiError] = useState<string>('');
 
   const form = useForm<any>({
     resolver: zodResolver(convertLeadToBookingSchema),
@@ -25,6 +28,7 @@ export const ConvertLeadDialog = ({ lead, isOpen, onClose }: Props) => {
 
   useEffect(() => {
     if (isOpen) {
+      setApiError('');
       reset({
         scheduled_date: new Date().toISOString().split('T')[0],
         slot: '10:00',
@@ -44,9 +48,10 @@ export const ConvertLeadDialog = ({ lead, isOpen, onClose }: Props) => {
 
   const onSubmit = (data: ConvertLeadToBookingFormData) => {
     if (!lead) return;
+    setApiError('');
 
     // Combine date and time slot into a single valid ISO datetime
-    const dateStr = data.scheduled_date.split('T')[0]; // Ensure it's just YYYY-MM-DD
+    const dateStr = data.scheduled_date.split('T')[0];
     const timeStr = data.slot || '00:00';
     const combinedDateTime = new Date(`${dateStr}T${timeStr}:00`);
 
@@ -62,6 +67,10 @@ export const ConvertLeadDialog = ({ lead, isOpen, onClose }: Props) => {
           reset();
           onClose();
         },
+        onError: (error: any) => {
+          // Show error inline inside the dialog so it's unmissable
+          setApiError(error.response?.data?.message || 'Failed to convert lead. Please try again.');
+        },
       }
     );
   };
@@ -76,7 +85,15 @@ export const ConvertLeadDialog = ({ lead, isOpen, onClose }: Props) => {
           </DialogDescription>
         </DialogHeader>
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-          
+
+          {/* Inline API error — shown inside dialog, not just as toast */}
+          {apiError && (
+            <div className="flex items-start gap-2 rounded-md border border-destructive/40 bg-destructive/10 px-3 py-2 text-sm text-destructive">
+              <AlertCircle className="h-4 w-4 mt-0.5 shrink-0" />
+              <span>{apiError}</span>
+            </div>
+          )}
+
           <div className="space-y-4 rounded-md border p-4 bg-muted/20">
             <h3 className="font-medium text-sm">Schedule</h3>
             <div className="grid grid-cols-2 gap-4">
@@ -86,8 +103,16 @@ export const ConvertLeadDialog = ({ lead, isOpen, onClose }: Props) => {
                 {errors.scheduled_date && <p className="text-xs text-destructive">{errors.scheduled_date.message as string}</p>}
               </div>
               <div className="space-y-2">
-                <label className="text-sm font-medium">Time Slot</label>
-                <Input type="time" {...register('slot')} />
+                <label className="text-sm font-medium">
+                  Time Slot
+                  <span className="text-xs text-muted-foreground ml-1">({BUSINESS_HOURS.START_HOUR}:00 – {BUSINESS_HOURS.END_HOUR}:00)</span>
+                </label>
+                <Input
+                  type="time"
+                  min={`${String(BUSINESS_HOURS.START_HOUR).padStart(2,'0')}:00`}
+                  max={`${String(BUSINESS_HOURS.END_HOUR).padStart(2,'0')}:00`}
+                  {...register('slot')}
+                />
                 {errors.slot && <p className="text-xs text-destructive">{errors.slot.message as string}</p>}
               </div>
             </div>

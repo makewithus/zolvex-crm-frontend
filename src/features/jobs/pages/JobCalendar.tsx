@@ -118,22 +118,34 @@ export const JobCalendar = () => {
         role={isCancelled ? undefined : 'button'}
         aria-label={isCancelled ? `Cancelled: ${job.job_id}` : `Open ${job.job_id}`}
         className={[
-          'absolute left-1 right-1 rounded-md border p-1.5 overflow-hidden shadow-sm transition-all',
-          colors.bg, colors.border,
-          // Cancelled: faded, no pointer, line-through, no hover
-          isCancelled ? 'opacity-40 cursor-not-allowed' : 'cursor-pointer hover:ring-2 ring-primary/50',
+          'absolute left-1 right-1 rounded-md p-1.5 overflow-hidden shadow-sm transition-all',
+          // Premium Cancelled: striped background via inline style, subtle border
+          isCancelled 
+            ? `border border-slate-300 cursor-not-allowed` 
+            : `border ${colors.border} ${colors.bg} cursor-pointer hover:ring-2 ring-primary/50`,
         ].join(' ')}
-        style={{ top: `${top}px`, height: `${height}px` }}
+        style={{ 
+          top: `${top}px`, 
+          height: `${height}px`,
+          ...(isCancelled ? {
+            backgroundImage: 'repeating-linear-gradient(45deg, #f8fafc, #f8fafc 8px, #f1f5f9 8px, #f1f5f9 16px)'
+          } : {})
+        }}
         title={isCancelled ? `CANCELLED: ${job.job_id}` : `${job.job_id} — ${job.booking?.customer_name}`}
       >
-        <div className={`text-xs font-semibold truncate ${colors.text} ${isCancelled ? 'line-through' : ''}`}>
+        {isCancelled && (
+          <div className="absolute top-1.5 right-1.5 bg-red-50 text-red-600 border border-red-100 text-[9px] font-bold px-1.5 py-0.5 rounded uppercase tracking-wider shadow-sm z-10">
+            CANCELLED
+          </div>
+        )}
+        <div className={`text-xs font-semibold truncate ${isCancelled ? 'text-slate-500 pr-10 relative z-10' : colors.text}`}>
           {job.job_id}
         </div>
-        <div className={`text-xs font-medium truncate ${isCancelled ? 'line-through text-slate-400' : ''}`}>
+        <div className={`text-xs font-medium truncate ${isCancelled ? 'text-slate-500 relative z-10' : ''}`}>
           {job.booking?.customer_name}
         </div>
         {height >= 50 && (
-          <div className="text-xs text-slate-400 truncate">
+          <div className={`text-xs truncate ${isCancelled ? 'text-slate-400 relative z-10 mt-0.5' : 'text-slate-400 mt-0.5'}`}>
             {job.booking?.service_name} · {format(start, 'HH:mm')} ({job.estimated_duration_minutes}m)
           </div>
         )}
