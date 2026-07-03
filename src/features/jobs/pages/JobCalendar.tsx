@@ -7,40 +7,40 @@ import { JOB_STATUS_COLORS } from '../constants/job-colors';
 import { format, parseISO, startOfDay, endOfDay } from 'date-fns';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { ChevronLeft, ChevronRight, Search, Globe } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Search, Globe, EyeOff, Eye } from 'lucide-react';
 import { Job } from '../types/job.types';
+import { BUSINESS_HOURS } from '@/config/business-hours';
 
-// Calendar Config
-const START_HOUR = 8;
-const END_HOUR = 20;
-const PIXELS_PER_MINUTE = 2; // e.g., 60 mins = 120px
+// Calendar config derives from the single shared Business Hours config
+const START_HOUR = BUSINESS_HOURS.START_HOUR;
+const END_HOUR = BUSINESS_HOURS.END_HOUR;
+const PIXELS_PER_MINUTE = 2;
 
 export const JobCalendar = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
-  
-  // Timezone Info
+
+  // Timezone indicator
   const userTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
   const isDev = import.meta.env.DEV;
 
-  // URL state
+  // URL-synced state
   const currentDateParam = searchParams.get('date') || format(new Date(), 'yyyy-MM-dd');
   const cityId = searchParams.get('city') || '';
-  const status = searchParams.get('status') || '';
   const searchQuery = searchParams.get('search') || '';
+  // Priority 3: Show Cancelled toggle — hidden by default, persists in URL
+  const showCancelled = searchParams.get('show_cancelled') === 'true';
 
   const filters = {
     start_date: startOfDay(parseISO(currentDateParam)).toISOString(),
     end_date: endOfDay(parseISO(currentDateParam)).toISOString(),
     ...(cityId ? { city_id: cityId } : {}),
-    ...(status ? { status } : {}),
   };
 
   const { data: calendarData, isLoading, error } = useCalendarJobs(filters);
-  const jobs = calendarData?.jobs || [];
+  const allJobs = calendarData?.jobs || [];
   const kpis = calendarData?.kpis;
 
-  // Change Date
   const handleDateChange = (days: number) => {
     const d = parseISO(currentDateParam);
     d.setDate(d.getDate() + days);
@@ -49,21 +49,37 @@ export const JobCalendar = () => {
     setSearchParams(newParams);
   };
 
-  // Group Jobs by Technician
-  const { lanes, unassignedJobs } = useMemo(() => {
-    let filteredJobs = jobs;
+  const toggleShowCancelled = () => {
+    const p = new URLSearchParams(searchParams);
+    if (showCancelled) p.delete('show_cancelled');
+    else p.set('show_cancelled', 'true');
+    setSearchParams(p);
+  };
+
+  // Group Jobs by Technician, applying search and cancelled filter
+  const { lanes, unassignedJobs, activeJobCount } = useMemo(() => {
+    let filteredJobs = allJobs;
+
+    // Priority 3: Filter out cancelled jobs unless show_cancelled is active
+    if (!showCancelled) {
+      filteredJobs = filteredJobs.filter(j => j.status !== 'Cancelled');
+    }
+
+    // Search filter
     if (searchQuery) {
       const q = searchQuery.toLowerCase();
-      filteredJobs = jobs.filter(j => 
-        j.job_id.toLowerCase().includes(q) || 
+      filteredJobs = filteredJobs.filter(j =>
+        j.job_id.toLowerCase().includes(q) ||
         j.booking?.customer_name?.toLowerCase().includes(q)
       );
     }
 
     const techMap = new Map<string, { id: string, name: string, jobs: Job[] }>();
     const unassigned: Job[] = [];
+    let activeCount = 0;
 
     filteredJobs.forEach(job => {
+      if (job.status !== 'Cancelled') activeCount++;
       if (!job.assigned_user_id) {
         unassigned.push(job);
       } else {
@@ -78,72 +94,105 @@ export const JobCalendar = () => {
       }
     });
 
-    return { lanes: Array.from(techMap.values()), unassignedJobs: unassigned };
-  }, [jobs, searchQuery]);
+    return { lanes: Array.from(techMap.values()), unassignedJobs: unassigned, activeJobCount: activeCount };
+  }, [allJobs, searchQuery, showCancelled]);
 
-  // Generate Hours
   const hours: number[] = [];
   for (let i = START_HOUR; i <= END_HOUR; i++) {
     hours.push(i);
   }
 
   const renderJobCard = (job: Job) => {
+    const isCancelled = job.status === 'Cancelled';
     const start = new Date(job.scheduled_start);
     const minutesFromStart = (start.getHours() - START_HOUR) * 60 + start.getMinutes();
     const top = minutesFromStart * PIXELS_PER_MINUTE;
-    const height = (job.estimated_duration_minutes || 60) * PIXELS_PER_MINUTE;
-
+    const height = Math.max((job.estimated_duration_minutes || 60) * PIXELS_PER_MINUTE, 24);
     const colors = JOB_STATUS_COLORS[job.status] || JOB_STATUS_COLORS.Pending;
 
     return (
-      <div 
+      <div
         key={job.id}
-        onClick={() => navigate(`/jobs/${job.id}`)}
-        className={`absolute left-1 right-1 rounded-md border p-2 overflow-hidden shadow-sm cursor-pointer hover:ring-2 ring-primary/50 transition-all ${colors.bg} ${colors.border}`}
+        // Priority 3: Cancelled cards are non-interactive (no onClick, no hover ring)
+        onClick={isCancelled ? undefined : () => navigate(`/jobs/${job.id}`)}
+        role={isCancelled ? undefined : 'button'}
+        aria-label={isCancelled ? `Cancelled: ${job.job_id}` : `Open ${job.job_id}`}
+        className={[
+          'absolute left-1 right-1 rounded-md border p-1.5 overflow-hidden shadow-sm transition-all',
+          colors.bg, colors.border,
+          // Cancelled: faded, no pointer, line-through, no hover
+          isCancelled ? 'opacity-40 cursor-not-allowed' : 'cursor-pointer hover:ring-2 ring-primary/50',
+        ].join(' ')}
         style={{ top: `${top}px`, height: `${height}px` }}
-        title={`${job.job_id} - ${job.booking?.customer_name}`}
+        title={isCancelled ? `CANCELLED: ${job.job_id}` : `${job.job_id} — ${job.booking?.customer_name}`}
       >
-        <div className={`text-xs font-semibold ${colors.text} truncate`}>{job.job_id}</div>
-        <div className="text-sm font-medium truncate">{job.booking?.customer_name}</div>
-        <div className="text-xs text-slate-500 truncate">{job.booking?.service_name} • {job.booking?.city_name}</div>
-        <div className="text-xs font-medium mt-1 truncate">{format(start, 'HH:mm')} ({job.estimated_duration_minutes}m)</div>
+        <div className={`text-xs font-semibold truncate ${colors.text} ${isCancelled ? 'line-through' : ''}`}>
+          {job.job_id}
+        </div>
+        <div className={`text-xs font-medium truncate ${isCancelled ? 'line-through text-slate-400' : ''}`}>
+          {job.booking?.customer_name}
+        </div>
+        {height >= 50 && (
+          <div className="text-xs text-slate-400 truncate">
+            {job.booking?.service_name} · {format(start, 'HH:mm')} ({job.estimated_duration_minutes}m)
+          </div>
+        )}
       </div>
     );
   };
+
+  const gridHeight = (END_HOUR - START_HOUR + 1) * 60 * PIXELS_PER_MINUTE;
 
   return (
     <div className="p-6 h-[calc(100vh-64px)] flex flex-col">
       <PageHeader title="Dispatch Calendar" />
 
       {/* Toolbar */}
-      <div className="flex flex-col md:flex-row gap-4 mb-6 justify-between items-start md:items-center">
+      <div className="flex flex-col md:flex-row gap-4 mb-6 justify-between items-start md:items-center flex-shrink-0">
+        {/* Date Navigation */}
         <div className="flex items-center gap-2">
-          <Button variant="outline" size="icon" onClick={() => handleDateChange(-1)}>
+          <Button variant="outline" size="icon" onClick={() => handleDateChange(-1)} aria-label="Previous day">
             <ChevronLeft className="h-4 w-4" />
           </Button>
-          <div className="font-semibold w-40 text-center">
+          <div className="font-semibold w-44 text-center text-slate-800">
             {format(parseISO(currentDateParam), 'EEEE, MMM d')}
           </div>
-          <Button variant="outline" size="icon" onClick={() => handleDateChange(1)}>
+          <Button variant="outline" size="icon" onClick={() => handleDateChange(1)} aria-label="Next day">
             <ChevronRight className="h-4 w-4" />
           </Button>
-          <Button variant="outline" onClick={() => {
+          <Button variant="outline" size="sm" onClick={() => {
             const p = new URLSearchParams(searchParams);
             p.set('date', format(new Date(), 'yyyy-MM-dd'));
             setSearchParams(p);
           }}>Today</Button>
         </div>
 
-        <div className="flex items-center gap-4">
-          <div className="flex items-center gap-2 text-sm text-slate-500 bg-slate-50 px-3 py-1.5 rounded-full border border-slate-200">
-            <Globe className="h-4 w-4 text-slate-400" />
-            <span>Schedule shown in <strong>{userTimezone}</strong> local time</span>
+        {/* Right Controls */}
+        <div className="flex items-center gap-3 flex-wrap">
+          {/* Timezone indicator */}
+          <div className="flex items-center gap-1.5 text-xs text-slate-500 bg-slate-50 px-2.5 py-1.5 rounded-full border border-slate-200">
+            <Globe className="h-3.5 w-3.5 text-slate-400" />
+            <span><strong>{userTimezone}</strong></span>
           </div>
+
+          {/* Show Cancelled Toggle — Priority 3 */}
+          <Button
+            variant={showCancelled ? 'default' : 'outline'}
+            size="sm"
+            onClick={toggleShowCancelled}
+            aria-pressed={showCancelled}
+            className="gap-1.5"
+          >
+            {showCancelled ? <Eye className="h-3.5 w-3.5" /> : <EyeOff className="h-3.5 w-3.5" />}
+            {showCancelled ? 'Hide Cancelled' : 'Show Cancelled'}
+          </Button>
+
+          {/* Search */}
           <div className="relative">
             <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-slate-400" />
-            <Input 
-              placeholder="Search ID or Customer..." 
-              className="pl-9 w-[250px]"
+            <Input
+              placeholder="Search ID or Customer..."
+              className="pl-9 w-[240px]"
               value={searchQuery}
               onChange={(e) => {
                 const p = new URLSearchParams(searchParams);
@@ -153,26 +202,30 @@ export const JobCalendar = () => {
               }}
             />
           </div>
-          {/* Add City/Status filters here later */}
         </div>
       </div>
 
+      {/* KPI Cards */}
       <CalendarKPIs kpis={kpis} />
 
-      {/* Main Calendar Grid */}
+      {/* Calendar Grid */}
       <div className="flex-1 overflow-auto bg-white border border-slate-200 rounded-lg shadow-sm">
         {isLoading ? (
-          <div className="p-10 flex justify-center text-slate-500">Loading calendar data...</div>
+          <div className="p-10 flex justify-center text-slate-500 text-sm">Loading calendar data…</div>
         ) : error ? (
-          <div className="p-10 text-center text-red-500">Failed to load calendar. Please try again.</div>
+          <div className="p-10 text-center text-red-500 text-sm">Failed to load calendar. Please try again.</div>
         ) : (
-          <div className="min-w-[1000px] flex border-b border-slate-200">
-            {/* Timeline Axis */}
-            <div className="w-20 flex-shrink-0 border-r border-slate-200 bg-slate-50 relative z-10 sticky left-0">
-              <div className="h-12 border-b border-slate-200" /> {/* Header spacer */}
-              <div className="relative" style={{ height: `${(END_HOUR - START_HOUR + 1) * 60 * PIXELS_PER_MINUTE}px` }}>
+          <div className="flex" style={{ minWidth: `${80 + (1 + lanes.length) * 250}px` }}>
+            {/* Time Axis — sticky left */}
+            <div className="w-20 flex-shrink-0 border-r border-slate-200 bg-slate-50 sticky left-0 z-20">
+              <div className="h-12 border-b border-slate-200" />
+              <div className="relative" style={{ height: `${gridHeight}px` }}>
                 {hours.map(h => (
-                  <div key={h} className="absolute w-full text-right pr-2 text-xs text-slate-500 -mt-2" style={{ top: `${(h - START_HOUR) * 60 * PIXELS_PER_MINUTE}px` }}>
+                  <div
+                    key={h}
+                    className="absolute w-full text-right pr-2 text-xs text-slate-400 -mt-2"
+                    style={{ top: `${(h - START_HOUR) * 60 * PIXELS_PER_MINUTE}px` }}
+                  >
                     {h.toString().padStart(2, '0')}:00
                   </div>
                 ))}
@@ -181,22 +234,21 @@ export const JobCalendar = () => {
 
             {/* Unassigned Lane */}
             <div className="flex-1 min-w-[250px] border-r border-slate-200 relative">
-              <div className="h-12 border-b border-slate-200 bg-slate-50 flex items-center justify-center font-semibold text-slate-700 sticky top-0 z-10 shadow-sm">
+              <div className="h-12 border-b border-slate-200 bg-slate-50 flex items-center justify-center font-semibold text-sm text-slate-700 sticky top-0 z-10 shadow-sm">
                 Unassigned ({unassignedJobs.length})
               </div>
-              
-              {/* Empty State Debug Banner */}
-              {jobs.length === 0 && (
-                <div className="absolute top-8 left-1/2 -translate-x-1/2 whitespace-nowrap z-20 pointer-events-none">
+
+              {/* Empty state banner */}
+              {activeJobCount === 0 && !isLoading && (
+                <div className="absolute top-16 left-1/2 -translate-x-1/2 whitespace-nowrap z-20 pointer-events-none">
                   <div className="bg-slate-800 text-slate-100 text-sm px-4 py-2 rounded-full shadow-lg text-center">
-                    <p>No jobs scheduled for {format(parseISO(currentDateParam), 'EEEE, MMM d')}.</p>
-                    {isDev && <p className="text-xs text-slate-400 mt-1">Dev Info: Jobs may exist outside this local date boundary due to timezone conversion.</p>}
+                    <p>No active jobs for {format(parseISO(currentDateParam), 'EEEE, MMM d')}.</p>
+                    {isDev && <p className="text-xs text-slate-400 mt-0.5">Dev: Check timezone boundary if jobs exist.</p>}
                   </div>
                 </div>
               )}
-              
-              <div className="relative" style={{ height: `${(END_HOUR - START_HOUR + 1) * 60 * PIXELS_PER_MINUTE}px` }}>
-                {/* Grid Lines */}
+
+              <div className="relative" style={{ height: `${gridHeight}px` }}>
                 {hours.map(h => (
                   <div key={h} className="absolute w-full border-t border-slate-100" style={{ top: `${(h - START_HOUR) * 60 * PIXELS_PER_MINUTE}px` }} />
                 ))}
@@ -207,10 +259,10 @@ export const JobCalendar = () => {
             {/* Technician Lanes */}
             {lanes.map(lane => (
               <div key={lane.id} className="flex-1 min-w-[250px] border-r border-slate-200 relative">
-                <div className="h-12 border-b border-slate-200 bg-slate-50 flex items-center justify-center font-semibold text-slate-700 sticky top-0 z-10 shadow-sm">
-                  {lane.name} ({lane.jobs.length})
+                <div className="h-12 border-b border-slate-200 bg-slate-50 flex items-center justify-center font-semibold text-sm text-slate-700 sticky top-0 z-10 shadow-sm">
+                  {lane.name} ({lane.jobs.filter(j => j.status !== 'Cancelled').length})
                 </div>
-                <div className="relative" style={{ height: `${(END_HOUR - START_HOUR + 1) * 60 * PIXELS_PER_MINUTE}px` }}>
+                <div className="relative" style={{ height: `${gridHeight}px` }}>
                   {hours.map(h => (
                     <div key={h} className="absolute w-full border-t border-slate-100" style={{ top: `${(h - START_HOUR) * 60 * PIXELS_PER_MINUTE}px` }} />
                   ))}
