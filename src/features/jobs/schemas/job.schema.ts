@@ -18,14 +18,18 @@ export const updateJobStatusSchema = z.object({
   failureReason: jobFailureReasonEnum.optional(),
   cancellationReason: z.string().optional(),
   completionNotes: z.string().optional(),
+  version_token: z.string().optional(),
 });
 
 export const assignJobSchema = z.object({
   assigned_user_id: z.string().uuid("Please select a technician"),
+  version_token: z.string().optional(),
+  override_conflict: z.boolean().optional(),
 });
 
 export const rescheduleJobSchema = z.object({
   new_scheduled_start: z.string().datetime(),
+  version_token: z.string().optional(),
 });
 
 export type UpdateJobStatusInput = z.infer<typeof updateJobStatusSchema>;

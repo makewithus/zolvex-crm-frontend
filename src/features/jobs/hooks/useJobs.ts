@@ -10,6 +10,15 @@ export const useJobs = (filters?: Record<string, any>) => {
   });
 };
 
+export const useCalendarJobs = (filters: { start_date: string, end_date: string, [key: string]: any }) => {
+  return useQuery({
+    queryKey: ['jobs', 'calendar', filters],
+    queryFn: () => jobsApi.getCalendarJobs(filters),
+    enabled: !!filters.start_date && !!filters.end_date,
+    refetchInterval: 30000, // 30s auto-refresh for dispatch board
+  });
+};
+
 export const useJob = (id: string) => {
   return useQuery({
     queryKey: ['jobs', id],

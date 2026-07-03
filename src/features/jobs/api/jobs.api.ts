@@ -7,6 +7,11 @@ export const getJobs = async (filters?: Record<string, any>): Promise<Job[]> => 
   return data.data;
 };
 
+export const getCalendarJobs = async (filters: { start_date: string, end_date: string, [key: string]: any }): Promise<{ jobs: Job[], kpis: any }> => {
+  const { data } = await apiClient.get('/jobs/calendar', { params: filters });
+  return data.data;
+};
+
 export const getJobById = async (id: string): Promise<Job> => {
   const { data } = await apiClient.get(`/jobs/${id}`);
   return data.data;
