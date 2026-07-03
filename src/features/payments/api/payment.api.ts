@@ -1,4 +1,4 @@
-import api from '@/lib/axios';
+import { apiClient as api } from '@/lib/axios';
 import { Payment, RecordPaymentPayload } from '../types/payment.types';
 
 export const recordPayment = async (data: RecordPaymentPayload): Promise<Payment> => {

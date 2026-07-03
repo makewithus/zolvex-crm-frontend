@@ -10,7 +10,7 @@ import { Button } from '@/components/ui/button';
 export const PaymentsList: React.FC = () => {
   const [searchTerm, setSearchTerm] = React.useState('');
   const { data: payments, isLoading } = usePayments();
-  const { mutate: downloadReceipt, isPending: isDownloading } = useDownloadReceipt();
+  const { mutate: downloadReceipt } = useDownloadReceipt();
   const [downloadingId, setDownloadingId] = React.useState<string | null>(null);
 
   const handleDownload = (id: string, paymentNumber: string) => {

@@ -2,12 +2,11 @@ import React from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { toast } from 'react-hot-toast';
+import { toast } from 'sonner';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
-import { FormGroup } from '@/components/ui/form-group';
+import { FormGroup } from '@/components/ui-custom/FormGroup';
 import { Input } from '@/components/ui/input';
-import { Select } from '@/components/ui/select';
 import { recordPaymentSchema } from '../schemas/payment.schema';
 import { recordPayment } from '../api/payment.api';
 
@@ -112,13 +111,16 @@ export const RecordPaymentDialog: React.FC<RecordPaymentDialogProps> = ({
           </FormGroup>
 
           <FormGroup label="Payment Method" error={errors.payment_method?.message as string}>
-            <Select {...register('payment_method')}>
+            <select 
+              className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+              {...register('payment_method')}
+            >
               <option value="UPI">UPI</option>
               <option value="Cash">Cash</option>
               <option value="BankTransfer">Bank Transfer</option>
               <option value="Card">Card</option>
               <option value="Cheque">Cheque</option>
-            </Select>
+            </select>
           </FormGroup>
 
           <FormGroup label="Notes / Reference (Optional)" error={errors.notes?.message as string}>
@@ -127,7 +129,9 @@ export const RecordPaymentDialog: React.FC<RecordPaymentDialogProps> = ({
 
           <div className="flex justify-end gap-2 pt-4">
             <Button type="button" variant="outline" onClick={onClose}>Cancel</Button>
-            <Button type="submit" isLoading={isSubmitting}>Confirm Payment</Button>
+            <Button type="submit" disabled={isSubmitting}>
+              {isSubmitting ? 'Processing...' : 'Confirm Payment'}
+            </Button>
           </div>
         </form>
       </DialogContent>
