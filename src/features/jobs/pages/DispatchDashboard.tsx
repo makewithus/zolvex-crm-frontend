@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useJobs } from '../hooks/useJobs';
 import { PageHeader } from '@/components/ui-custom/PageHeader';
 import { DataTable } from '@/components/ui-custom/DataTable';
@@ -7,7 +7,7 @@ import { format } from 'date-fns';
 import { useNavigate } from 'react-router-dom';
 
 export const DispatchDashboard = () => {
-  const [filters, setFilters] = useState({});
+  const [filters] = useState({ status: ['Pending', 'Assigned', 'Accepted'] });
   const { data: jobs, isLoading } = useJobs(filters);
   const navigate = useNavigate();
 

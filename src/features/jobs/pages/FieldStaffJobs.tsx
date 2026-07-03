@@ -1,4 +1,3 @@
-import React from 'react';
 import { useJobs } from '../hooks/useJobs';
 import { format } from 'date-fns';
 import { useNavigate } from 'react-router-dom';

@@ -1,12 +1,11 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useJob, useUpdateJobStatus } from '../hooks/useJobs';
-import { PageHeader } from '@/components/ui-custom/PageHeader';
 import { Button } from '@/components/ui/button';
 import { format } from 'date-fns';
 import { ArrowLeft, Clock, MapPin, User, FileText, Camera } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { useUsers } from '@/features/users/hooks/useUsers';
 import { useAssignJob } from '../hooks/useJobs';
 

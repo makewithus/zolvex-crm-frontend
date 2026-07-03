@@ -1,4 +1,3 @@
-import React from 'react';
 import { DispatchDashboard } from './DispatchDashboard';
 import { FieldStaffJobs } from './FieldStaffJobs';
 
