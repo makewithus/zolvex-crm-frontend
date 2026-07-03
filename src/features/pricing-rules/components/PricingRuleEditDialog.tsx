@@ -38,6 +38,9 @@ export const PricingRuleEditDialog = ({ rule, open, onOpenChange }: PricingRuleE
       bhk_type: rule?.bhk_type || '',
       tank_size: rule?.tank_size || '',
       base_price: rule?.base_price || 0,
+      cgst_percent: rule?.cgst_percent ?? 9,
+      sgst_percent: rule?.sgst_percent ?? 9,
+      igst_percent: rule?.igst_percent ?? 0,
     }
   });
 
@@ -49,6 +52,9 @@ export const PricingRuleEditDialog = ({ rule, open, onOpenChange }: PricingRuleE
         bhk_type: rule.bhk_type || '',
         tank_size: rule.tank_size || '',
         base_price: rule.base_price || 0,
+        cgst_percent: rule.cgst_percent ?? 9,
+        sgst_percent: rule.sgst_percent ?? 9,
+        igst_percent: rule.igst_percent ?? 0,
       });
     }
   }, [rule, open, reset]);
@@ -128,6 +134,18 @@ export const PricingRuleEditDialog = ({ rule, open, onOpenChange }: PricingRuleE
           <FormGroup label="Base Price" error={errors.base_price?.message}>
             <Input type="number" step="0.01" min="0" placeholder="0.00" {...register('base_price', { valueAsNumber: true })} />
           </FormGroup>
+
+          <FormGrid className="grid-cols-3">
+            <FormGroup label="CGST (%)" error={errors.cgst_percent?.message}>
+              <Input type="number" step="0.01" min="0" {...register('cgst_percent', { valueAsNumber: true })} />
+            </FormGroup>
+            <FormGroup label="SGST (%)" error={errors.sgst_percent?.message}>
+              <Input type="number" step="0.01" min="0" {...register('sgst_percent', { valueAsNumber: true })} />
+            </FormGroup>
+            <FormGroup label="IGST (%)" error={errors.igst_percent?.message}>
+              <Input type="number" step="0.01" min="0" {...register('igst_percent', { valueAsNumber: true })} />
+            </FormGroup>
+          </FormGrid>
 
           <div className="flex justify-end gap-2 pt-4 border-t">
             <Button type="button" variant="outline" onClick={() => handleOpenChange(false)}>Cancel</Button>

@@ -5,6 +5,9 @@ export interface PricingRule {
   bhk_type?: string | null;
   tank_size?: string | null;
   base_price: number;
+  cgst_percent?: number;
+  sgst_percent?: number;
+  igst_percent?: number;
   service?: {
     id: string;
     name: string;

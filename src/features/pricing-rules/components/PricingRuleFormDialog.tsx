@@ -91,6 +91,18 @@ export const PricingRuleFormDialog = () => {
             <Input type="number" step="0.01" min="0" placeholder="0.00" {...register('base_price', { valueAsNumber: true })} />
           </FormGroup>
 
+          <FormGrid className="grid-cols-3">
+            <FormGroup label="CGST (%)" error={errors.cgst_percent?.message}>
+              <Input type="number" step="0.01" min="0" defaultValue={9} {...register('cgst_percent', { valueAsNumber: true })} />
+            </FormGroup>
+            <FormGroup label="SGST (%)" error={errors.sgst_percent?.message}>
+              <Input type="number" step="0.01" min="0" defaultValue={9} {...register('sgst_percent', { valueAsNumber: true })} />
+            </FormGroup>
+            <FormGroup label="IGST (%)" error={errors.igst_percent?.message}>
+              <Input type="number" step="0.01" min="0" defaultValue={0} {...register('igst_percent', { valueAsNumber: true })} />
+            </FormGroup>
+          </FormGrid>
+
           <div className="flex justify-end gap-2 pt-4 border-t">
             <Button type="button" variant="outline" onClick={() => setOpen(false)}>Cancel</Button>
             <Button type="submit" disabled={createPricingRule.isPending}>
