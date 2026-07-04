@@ -18,6 +18,7 @@ export interface Payment {
   
   user?: { name: string };
   customer?: { name: string; phone: string };
+  invoice?: { invoice_number: string }; // included in list endpoint now
   history?: PaymentHistory[];
 }
 
@@ -36,6 +37,7 @@ export interface RecordPaymentPayload {
   invoice_id: string;
   amount: number;
   payment_method: PaymentMethod;
+  payment_date?: string; // ISO date string
   notes?: string;
   reason?: string;
 }

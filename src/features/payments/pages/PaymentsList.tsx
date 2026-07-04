@@ -25,7 +25,7 @@ export const PaymentsList: React.FC = () => {
     return payments.filter(p => 
       p.payment_number.toLowerCase().includes(searchTerm.toLowerCase()) ||
       p.customer?.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      p.invoice_id.toLowerCase().includes(searchTerm.toLowerCase())
+      (p.invoice?.invoice_number || '').toLowerCase().includes(searchTerm.toLowerCase())
     );
   }, [payments, searchTerm]);
 
@@ -57,6 +57,7 @@ export const PaymentsList: React.FC = () => {
               <TableHeader>
                 <TableRow>
                   <TableHead>Receipt No</TableHead>
+                  <TableHead>Invoice No</TableHead>
                   <TableHead>Date</TableHead>
                   <TableHead>Customer</TableHead>
                   <TableHead>Method</TableHead>
@@ -68,13 +69,13 @@ export const PaymentsList: React.FC = () => {
               <TableBody>
                 {isLoading ? (
                   <TableRow>
-                    <TableCell colSpan={7} className="text-center py-8 text-gray-500">
+                    <TableCell colSpan={8} className="text-center py-8 text-gray-500">
                       Loading payments...
                     </TableCell>
                   </TableRow>
                 ) : filteredPayments.length === 0 ? (
                   <TableRow>
-                    <TableCell colSpan={7} className="text-center py-8 text-gray-500">
+                    <TableCell colSpan={8} className="text-center py-8 text-gray-500">
                       No payments found.
                     </TableCell>
                   </TableRow>
@@ -82,6 +83,7 @@ export const PaymentsList: React.FC = () => {
                   filteredPayments.map(payment => (
                     <TableRow key={payment.id}>
                       <TableCell className="font-medium text-blue-600">{payment.payment_number}</TableCell>
+                      <TableCell className="text-xs text-gray-500">{payment.invoice?.invoice_number ?? '—'}</TableCell>
                       <TableCell>{format(new Date(payment.payment_date), 'dd MMM yyyy')}</TableCell>
                       <TableCell>
                         <div className="font-medium text-gray-900">{payment.customer?.name}</div>

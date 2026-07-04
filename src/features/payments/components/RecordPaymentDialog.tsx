@@ -3,6 +3,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
+import { format } from 'date-fns';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { FormGroup } from '@/components/ui-custom/FormGroup';
@@ -35,6 +36,7 @@ export const RecordPaymentDialog: React.FC<RecordPaymentDialogProps> = ({
       invoice_id: invoice?.id || '',
       amount: invoice?.balance_due || 0,
       payment_method: 'UPI',
+      payment_date: format(new Date(), 'yyyy-MM-dd'), // Default to today
       notes: '',
       reason: ''
     }
@@ -125,6 +127,10 @@ export const RecordPaymentDialog: React.FC<RecordPaymentDialogProps> = ({
 
           <FormGroup label="Notes / Reference (Optional)" error={errors.notes?.message as string}>
             <Input placeholder="e.g. UTR Number, Cheque No." {...register('notes')} />
+          </FormGroup>
+
+          <FormGroup label="Payment Date" error={(errors as any).payment_date?.message as string}>
+            <Input type="date" {...register('payment_date')} />
           </FormGroup>
 
           <div className="flex justify-end gap-2 pt-4">
