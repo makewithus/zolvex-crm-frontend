@@ -14,10 +14,12 @@ import {
 } from '@/features/auth/api/dashboard.api';
 import { FEATURE_REGISTRY } from '@/config/features';
 import { format } from 'date-fns';
+import { useCurrentUser } from '@/features/auth/hooks/useAuth';
 
 export const Dashboard = () => {
   const navigate = useNavigate();
-  const userRole = localStorage.getItem('userRole') || 'Super Admin';
+  const { data: currentUser } = useCurrentUser();
+  const userRole = currentUser?.role?.name || 'Super Admin';
 
   const hasAccess = (route: string) => {
     const feat = FEATURE_REGISTRY.find(f => f.route === route);
@@ -85,7 +87,7 @@ export const Dashboard = () => {
       show: hasAccess('/jobs'),
     },
     {
-      label: 'Revenue (MTD)',
+      label: 'Booked Value (MTD)',
       value: canSeeRevenue
         ? (revenue ? `₹${Number(revenue.mtd_revenue).toLocaleString('en-IN')}` : '—')
         : null,
