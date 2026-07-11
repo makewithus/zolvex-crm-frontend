@@ -186,7 +186,36 @@ export const LeadDetail = () => {
             <SectionHeader title="Stage History" />
             <Card>
               <CardContent className="p-4">
-                <p className="text-sm text-muted-foreground text-center py-4">History component placeholder.</p>
+                <div className="space-y-4">
+                  {(!lead.history || lead.history.length === 0) ? (
+                    <p className="text-sm text-muted-foreground text-center py-4">No history available.</p>
+                  ) : (
+                    lead.history.map((event: any, index: number) => (
+                      <div key={event.id} className="relative pl-4 pb-4 last:pb-0">
+                        {/* Vertical line connector */}
+                        {index !== lead.history.length - 1 && (
+                          <div className="absolute left-[7px] top-4 bottom-0 w-[2px] bg-muted" />
+                        )}
+                        {/* Dot */}
+                        <div className="absolute left-0 top-1.5 h-4 w-4 rounded-full border-2 border-primary bg-background" />
+                        
+                        <div className="ml-4">
+                          <p className="text-sm font-medium text-foreground">
+                            {event.from_stage ? `${event.from_stage} → ${event.to_stage}` : `Created as ${event.to_stage}`}
+                          </p>
+                          <div className="flex flex-col mt-1">
+                            <p className="text-xs text-muted-foreground">
+                              by {event.changedBy?.name || 'System'}
+                            </p>
+                            <p className="text-xs text-muted-foreground mt-0.5">
+                              {new Date(event.changed_at).toLocaleString()}
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    ))
+                  )}
+                </div>
               </CardContent>
             </Card>
           </Section>
