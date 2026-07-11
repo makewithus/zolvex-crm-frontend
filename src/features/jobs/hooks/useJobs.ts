@@ -92,3 +92,18 @@ export const useRescheduleJob = () => {
     },
   });
 };
+
+export const useUploadJobPhotos = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ id, formData }: { id: string; formData: FormData }) => 
+      jobsApi.uploadJobPhotos(id, formData),
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({ queryKey: ['jobs', variables.id] });
+      toast.success('Photos uploaded successfully');
+    },
+    onError: (error: any) => {
+      toast.error(error.response?.data?.message || 'Failed to upload photos');
+    },
+  });
+};
