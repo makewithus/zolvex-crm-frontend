@@ -6,9 +6,11 @@ import {
 } from 'lucide-react';
 import { FEATURE_REGISTRY } from '@/config/features';
 import { useSidebar } from './MainLayout';
+import { useCurrentUser } from '@/features/auth/hooks/useAuth';
 
 export const Sidebar = () => {
-  const userRole = localStorage.getItem('userRole') || 'Super Admin';
+  const { data: currentUser } = useCurrentUser();
+  const userRole = currentUser?.role?.name || 'Super Admin';
   const location = useLocation();
   const { isCollapsed } = useSidebar();
 
