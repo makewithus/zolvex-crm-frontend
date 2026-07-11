@@ -34,3 +34,12 @@ export const assignJob = async (id: string, payload: AssignJobInput): Promise<vo
 export const rescheduleJob = async (id: string, payload: RescheduleJobInput): Promise<void> => {
   await apiClient.patch(`/jobs/${id}/reschedule`, payload);
 };
+
+export const uploadJobPhotos = async (id: string, formData: FormData): Promise<any> => {
+  const { data } = await apiClient.post(`/jobs/${id}/photos`, formData, {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+  });
+  return data.data;
+};
