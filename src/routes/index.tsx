@@ -20,6 +20,11 @@ import { JobCalendar } from '@/features/jobs/pages/JobCalendar';
 import { InvoiceList } from '@/features/invoices/pages/InvoiceList';
 import { InvoiceDetail } from '@/features/invoices/pages/InvoiceDetail';
 import { PaymentsList } from '@/features/payments/pages/PaymentsList';
+import { ReportsDashboard } from '@/features/reports/pages/ReportsDashboard';
+import { FinancialReport } from '@/features/reports/pages/FinancialReport';
+import { OperationalReport } from '@/features/reports/pages/OperationalReport';
+import { TechnicianReport } from '@/features/reports/pages/TechnicianReport';
+import { GSTReport } from '@/features/reports/pages/GSTReport';
 
 const PrivateRoute = ({ children }: { children: React.ReactNode }) => {
   const token = localStorage.getItem('token');
@@ -62,7 +67,11 @@ export const AppRoutes = () => {
         <Route path="invoices" element={<InvoiceList />} />
         <Route path="invoices/:id" element={<InvoiceDetail />} />
         <Route path="payments" element={<PaymentsList />} />
-        <Route path="reports" element={<ComingSoon title="Reports" />} />
+        <Route path="reports" element={<ReportsDashboard />} />
+        <Route path="reports/financial" element={<FinancialReport />} />
+        <Route path="reports/operational" element={<OperationalReport />} />
+        <Route path="reports/technician" element={<TechnicianReport />} />
+        <Route path="reports/gst" element={<GSTReport />} />
         <Route path="settings" element={<ComingSoon title="System Settings" />} />
       </Route>
       <Route path="*" element={<Navigate to="/" replace />} />
