@@ -1,13 +1,14 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { useJob, useUpdateJobStatus } from '../hooks/useJobs';
+import { useJob, useUpdateJobStatus, useUploadJobPhotos } from '../hooks/useJobs';
 import { Button } from '@/components/ui/button';
 import { format } from 'date-fns';
-import { ArrowLeft, Clock, MapPin, User, FileText, Camera } from 'lucide-react';
+import { ArrowLeft, Clock, MapPin, User, FileText, Camera, ImageIcon } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { useUsers } from '@/features/users/hooks/useUsers';
 import { useAssignJob } from '../hooks/useJobs';
+import { useCurrentUser } from '@/features/auth/hooks/useAuth';
 
 export const JobDetail = () => {
   const { id } = useParams<{ id: string }>();
@@ -15,14 +16,29 @@ export const JobDetail = () => {
   const { data: job, isLoading } = useJob(id!);
   const updateStatus = useUpdateJobStatus();
   const assignJob = useAssignJob();
+  const uploadPhotos = useUploadJobPhotos();
   const { data: usersResponse } = useUsers();
+  const fileInputRef = useRef<HTMLInputElement>(null);
   
   const [isAssignOpen, setIsAssignOpen] = useState(false);
   const [assignedTo, setAssignedTo] = useState('');
 
-  const userRole = localStorage.getItem('userRole') || 'Super Admin';
+  const { data: currentUser } = useCurrentUser();
+  const userRole = currentUser?.role?.name || 'Super Admin';
   const isFieldStaff = userRole === 'Field Staff';
   const canAssign = userRole === 'Super Admin' || userRole === 'City Manager';
+
+  const handlePhotoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files.length > 0) {
+      const formData = new FormData();
+      Array.from(e.target.files).forEach((file) => {
+        formData.append('photos', file);
+      });
+      uploadPhotos.mutate({ id: job!.id, formData });
+      // Reset input
+      if (fileInputRef.current) fileInputRef.current.value = '';
+    }
+  };
 
   if (isLoading) return <div className="p-6">Loading...</div>;
   if (!job) return <div className="p-6">Job not found</div>;
@@ -48,7 +64,10 @@ export const JobDetail = () => {
     if (job.status === 'Started') {
       return (
         <div className="space-y-3">
-          <Button variant="outline" className="w-full py-6 border-2 font-bold"><Camera className="mr-2 h-5 w-5"/> Upload Final Photos</Button>
+          <input type="file" multiple accept="image/*" className="hidden" ref={fileInputRef} onChange={handlePhotoUpload} />
+          <Button variant="outline" className="w-full py-6 border-2 font-bold" onClick={() => fileInputRef.current?.click()} disabled={uploadPhotos.isPending}>
+            <Camera className="mr-2 h-5 w-5"/> {uploadPhotos.isPending ? 'Uploading...' : 'Upload Final Photos'}
+          </Button>
           <Button className={btnClass} onClick={() => updateStatus.mutate({ id: job.id, data: { status: 'Completed', completionNotes: 'Work finished' } })}>Complete Job</Button>
         </div>
       );
@@ -150,6 +169,21 @@ export const JobDetail = () => {
               </Dialog>
             </div>
           )}
+
+          <div className="bg-white rounded-xl p-5 shadow-sm border mb-6">
+             <h3 className="font-semibold mb-3 flex items-center gap-2"><ImageIcon className="text-primary h-5 w-5"/> Photos</h3>
+             {job.media && job.media.length > 0 ? (
+               <div className="grid grid-cols-2 gap-2 mt-2">
+                 {job.media.map((m: any) => (
+                   <a key={m.id} href={m.url} target="_blank" rel="noreferrer">
+                     <img src={m.url} alt="Job media" className="rounded-md w-full h-24 object-cover border" />
+                   </a>
+                 ))}
+               </div>
+             ) : (
+               <p className="text-sm text-slate-500 italic">No photos uploaded</p>
+             )}
+          </div>
 
           <div className="bg-white rounded-xl p-5 shadow-sm border">
              <h3 className="font-semibold mb-3 flex items-center gap-2"><FileText className="text-primary h-5 w-5"/> Notes</h3>
