@@ -5,6 +5,7 @@ import { DollarSign, TrendingUp, AlertCircle,
   Briefcase, Calendar, ChevronRight,
   BarChart3 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { useCurrentUser } from '@/features/auth/hooks/useAuth';
 
 const formatCurrency = (val: number) =>
   `₹${val.toLocaleString('en-IN', { maximumFractionDigits: 2 })}`;
@@ -63,7 +64,8 @@ const StatusBar = ({
 };
 
 export const ReportsDashboard: React.FC = () => {
-  const userRole = localStorage.getItem('userRole') || '';
+  const { data: currentUser } = useCurrentUser();
+  const userRole = currentUser?.role?.name || '';
   const canSeeFinancial = ['Super Admin', 'Finance', 'City Manager'].includes(userRole);
 
   const { data, isLoading } = useReportDashboard();
