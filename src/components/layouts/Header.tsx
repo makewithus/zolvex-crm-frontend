@@ -6,7 +6,13 @@ import { logout } from '@/features/auth';
 import { FEATURE_REGISTRY } from '@/config/features';
 import { useSidebar } from './MainLayout';
 
+import { useCurrentUser } from '@/features/auth/hooks/useAuth';
+
 export const Header = () => {
+  const { data: currentUser } = useCurrentUser();
+  const userName = currentUser?.name || localStorage.getItem('userName') || 'User';
+  const userRole = currentUser?.role?.name || localStorage.getItem('userRole') || 'Staff';
+  
   const location = useLocation();
   const pathnames = location.pathname.split('/').filter(x => x);
   const { toggleSidebar } = useSidebar();
@@ -79,8 +85,8 @@ export const Header = () => {
           {/* User Profile */}
           <div className="flex items-center gap-3 pl-1">
             <div className="hidden text-right md:block">
-              <p className="text-sm font-medium leading-none">{localStorage.getItem('userName') || 'User'}</p>
-              <p className="text-xs text-muted-foreground mt-1">{localStorage.getItem('userRole') || 'Staff'}</p>
+              <p className="text-sm font-medium leading-none">{userName}</p>
+              <p className="text-xs text-muted-foreground mt-1">{userRole}</p>
             </div>
             <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center text-primary">
               <UserIcon className="h-4 w-4" />
