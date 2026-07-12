@@ -33,6 +33,7 @@ export interface Lead {
     name: string;
   } | null;
   notes?: LeadNote[];
+  history?: any[];
 }
 
 export interface LeadsResponse {
