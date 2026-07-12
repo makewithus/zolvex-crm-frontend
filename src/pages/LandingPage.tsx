@@ -46,7 +46,7 @@ export const LandingPage = () => {
         <div className="absolute inset-0 bg-[linear-gradient(to_right,#e2e8f020_1px,transparent_1px),linear-gradient(to_bottom,#e2e8f020_1px,transparent_1px)] bg-[size:40px_40px] pointer-events-none" />
 
         <div className="max-w-[1400px] mx-auto relative z-10">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-8 items-center">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 xl:gap-24 items-center">
             
             {/* Hero Left */}
             <div className="w-full lg:max-w-[650px] lg:pr-4">
