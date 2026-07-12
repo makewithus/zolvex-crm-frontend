@@ -19,6 +19,21 @@ import { FEATURE_REGISTRY } from '@/config/features';
 import { format } from 'date-fns';
 import { useCurrentUser } from '@/features/auth/hooks/useAuth';
 
+const EmptyWidget = ({ icon: Icon, title, description, action, onClick }: any) => (
+  <div className="flex flex-col items-center justify-center p-8 text-center h-full min-h-[220px]">
+    <div className="h-12 w-12 rounded-full bg-slate-50 flex items-center justify-center mb-4">
+      <Icon className="h-6 w-6 text-slate-400" />
+    </div>
+    <h3 className="text-[16px] font-semibold text-slate-900 mb-1">{title}</h3>
+    <p className="text-[14px] text-slate-500 max-w-[280px] mb-6">{description}</p>
+    {action && (
+      <Button variant="outline" className="h-9 px-4 text-[13px] font-semibold bg-white border-slate-300 shadow-sm" onClick={onClick}>
+        {action}
+      </Button>
+    )}
+  </div>
+);
+
 export const Dashboard = () => {
   const navigate = useNavigate();
   const { data: currentUser } = useCurrentUser();
@@ -113,21 +128,6 @@ export const Dashboard = () => {
       wrapperClass: 'bg-purple-50 text-purple-600',
     },
   ].filter(c => c.value !== null);
-
-  const EmptyWidget = ({ icon: Icon, title, description, action, onClick }: any) => (
-    <div className="flex flex-col items-center justify-center p-8 text-center h-full min-h-[220px]">
-      <div className="h-12 w-12 rounded-full bg-slate-50 flex items-center justify-center mb-4">
-        <Icon className="h-6 w-6 text-slate-400" />
-      </div>
-      <h3 className="text-[16px] font-semibold text-slate-900 mb-1">{title}</h3>
-      <p className="text-[14px] text-slate-500 max-w-[280px] mb-6">{description}</p>
-      {action && (
-        <Button variant="outline" className="h-9 px-4 text-[13px] font-semibold bg-white border-slate-300 shadow-sm" onClick={onClick}>
-          {action}
-        </Button>
-      )}
-    </div>
-  );
 
   return (
     <PageContainer>
