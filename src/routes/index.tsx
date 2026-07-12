@@ -12,7 +12,7 @@ import { PricingRulesList } from '@/features/pricing-rules';
 import { LeadList, LeadDetail, LeadForm } from '@/features/leads';
 import CustomerList from '@/features/customers/pages/CustomerList';
 import CustomerDetail from '@/features/customers/pages/CustomerDetail';
-import { ComingSoon } from '@/components/ui-custom/ComingSoon';
+
 import { BookingsList } from '@/features/bookings/pages/BookingsList';
 import { BookingDetail } from '@/features/bookings/pages/BookingDetail';
 import { JobsList } from '@/features/jobs/pages/JobsList';
@@ -26,6 +26,7 @@ import { FinancialReport } from '@/features/reports/pages/FinancialReport';
 import { OperationalReport } from '@/features/reports/pages/OperationalReport';
 import { TechnicianReport } from '@/features/reports/pages/TechnicianReport';
 import { GSTReport } from '@/features/reports/pages/GSTReport';
+import { Settings } from '@/features/settings/pages/Settings';
 
 const PrivateRoute = ({ children }: { children: React.ReactNode }) => {
   const token = localStorage.getItem('token');
@@ -74,7 +75,7 @@ export const AppRoutes = () => {
         <Route path="reports/operational" element={<OperationalReport />} />
         <Route path="reports/technician" element={<TechnicianReport />} />
         <Route path="reports/gst" element={<GSTReport />} />
-        <Route path="settings" element={<ComingSoon title="System Settings" />} />
+        <Route path="settings" element={<Settings />} />
       </Route>
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
