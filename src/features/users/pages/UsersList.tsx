@@ -8,12 +8,29 @@ import { UserFormDialog } from '../components/UserFormDialog';
 import { Button } from '@/components/ui/button';
 import { MapPin, Shield, MoreHorizontal, Edit, Lock } from 'lucide-react';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { UserEditDialog } from '../components/UserEditDialog';
 import { ResetPasswordDialog } from '../components/ResetPasswordDialog';
 export const UsersList = () => {
   const { data: usersResponse, isLoading, isError, error } = useUsers();
-  const users = usersResponse?.data || [];
+  const [page, setPage] = useState(1);
+  const [searchQuery, setSearchQuery] = useState('');
+  const limit = 10;
+
+  const users = useMemo(() => {
+    const all = usersResponse?.data || [];
+    const sorted = [...all].sort((a: any, b: any) => new Date(b.created_at || 0).getTime() - new Date(a.created_at || 0).getTime());
+    if (!searchQuery.trim()) return sorted;
+    const q = searchQuery.toLowerCase();
+    return sorted.filter((u: any) =>
+      u.name?.toLowerCase().includes(q) ||
+      u.phone?.toLowerCase().includes(q) ||
+      u.role?.name?.toLowerCase().includes(q)
+    );
+  }, [usersResponse, searchQuery]);
+
+  const totalPages = Math.max(1, Math.ceil(users.length / limit));
+  const paginatedUsers = users.slice((page - 1) * limit, page * limit);
   
   const [editingUser, setEditingUser] = useState<User | null>(null);
   const [resetPasswordUser, setResetPasswordUser] = useState<User | null>(null);
@@ -109,12 +126,14 @@ export const UsersList = () => {
       </PageHeader>
       <DataTable
         columns={columns}
-        data={users}
+        data={paginatedUsers}
         keyExtractor={(user) => user.id}
         isLoading={isLoading}
-        searchPlaceholder="Search staff by name or phone..."
+        onSearch={(q) => { setSearchQuery(q); setPage(1); }}
+        searchPlaceholder="Search by name, phone or role..."
         emptyStateTitle="No staff found"
-        emptyStateDescription="Get started by adding a new user to the system."
+        emptyStateDescription="Try a different search term or add a new user."
+        pagination={{ page, totalPages, onPageChange: setPage }}
       />
       <UserEditDialog 
         user={editingUser} 
