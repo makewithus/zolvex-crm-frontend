@@ -17,12 +17,17 @@ export default function CustomerList() {
   const [page, setPage] = useState(1);
 
   const filteredCustomers = useMemo(() => {
-    const custs = customers || [];
+    let custs = customers || [];
+    custs = [...custs].sort((a: any, b: any) => new Date(b.created_at || 0).getTime() - new Date(a.created_at || 0).getTime());
     return custs.filter((customer: Customer) =>
       (customer.name && customer.name.toLowerCase().includes(searchQuery.toLowerCase())) ||
       customer.phone.includes(searchQuery)
     );
   }, [customers, searchQuery]);
+
+  const limit = 10;
+  const totalPages = Math.max(1, Math.ceil(filteredCustomers.length / limit));
+  const paginatedCustomers = filteredCustomers.slice((page - 1) * limit, page * limit);
 
   const columns: Column<Customer>[] = [
     {
@@ -109,12 +114,12 @@ export default function CustomerList() {
       
       <DataTable
         columns={columns}
-        data={filteredCustomers}
+        data={paginatedCustomers}
         keyExtractor={(r) => r.id}
         isLoading={isLoading}
-        onSearch={setSearchQuery}
+        onSearch={(query) => { setSearchQuery(query); setPage(1); }}
         searchPlaceholder="Search customers by name or phone..."
-        pagination={{ page, totalPages: 1, onPageChange: setPage }}
+        pagination={{ page, totalPages, onPageChange: setPage }}
         emptyStateTitle="No clientele found"
         emptyStateDescription="Successfully converted leads will appear here."
       />
