@@ -173,19 +173,19 @@ export const BookingsList = () => {
           </table>
         </div>
         {/* Pagination Controls */}
-        {data?.total > 0 && (
+        {(data?.total || 0) > 0 && (
           <div className="flex items-center justify-between px-6 py-4 border-t">
             <p className="text-sm text-muted-foreground">
               Showing <span className="font-medium">{(page - 1) * limit + 1}</span> to{' '}
-              <span className="font-medium">{Math.min(page * limit, data.total)}</span> of{' '}
-              <span className="font-medium">{data.total}</span> bookings
+              <span className="font-medium">{Math.min(page * limit, data?.total || 0)}</span> of{' '}
+              <span className="font-medium">{data?.total || 0}</span> bookings
             </p>
             <div className="flex items-center gap-2">
               <Button
                 variant="outline"
                 size="sm"
                 onClick={() => setPage(p => Math.max(1, p - 1))}
-                disabled={page === 1}
+                disabled={page <= 1}
               >
                 Previous
               </Button>
@@ -193,7 +193,7 @@ export const BookingsList = () => {
                 variant="outline"
                 size="sm"
                 onClick={() => setPage(p => p + 1)}
-                disabled={page * limit >= data.total}
+                disabled={page * limit >= (data?.total || 0)}
               >
                 Next
               </Button>
