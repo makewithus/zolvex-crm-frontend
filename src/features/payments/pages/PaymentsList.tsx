@@ -9,6 +9,9 @@ import { Button } from '@/components/ui/button';
 
 export const PaymentsList: React.FC = () => {
   const [searchTerm, setSearchTerm] = React.useState('');
+  const [page, setPage] = React.useState(1);
+  const limit = 10;
+  
   const { data: payments, isLoading } = usePayments();
   const { mutate: downloadReceipt } = useDownloadReceipt();
   const [downloadingId, setDownloadingId] = React.useState<string | null>(null);
@@ -21,13 +24,17 @@ export const PaymentsList: React.FC = () => {
   };
 
   const filteredPayments = React.useMemo(() => {
-    if (!payments) return [];
-    return payments.filter(p => 
+    let pays = payments || [];
+    pays = [...pays].sort((a: any, b: any) => new Date(b.payment_date || b.created_at || 0).getTime() - new Date(a.payment_date || a.created_at || 0).getTime());
+    return pays.filter(p => 
       p.payment_number.toLowerCase().includes(searchTerm.toLowerCase()) ||
       p.customer?.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       (p.invoice?.invoice_number || '').toLowerCase().includes(searchTerm.toLowerCase())
     );
   }, [payments, searchTerm]);
+
+  const totalPages = Math.max(1, Math.ceil(filteredPayments.length / limit));
+  const paginatedPayments = filteredPayments.slice((page - 1) * limit, page * limit);
 
   return (
     <div className="p-6 max-w-7xl mx-auto space-y-6">
@@ -45,7 +52,7 @@ export const PaymentsList: React.FC = () => {
             <Input 
               placeholder="Search by Receipt No, Customer Name..." 
               value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
+              onChange={(e) => { setSearchTerm(e.target.value); setPage(1); }}
               className="pl-9"
             />
           </div>
@@ -80,7 +87,7 @@ export const PaymentsList: React.FC = () => {
                     </TableCell>
                   </TableRow>
                 ) : (
-                  filteredPayments.map(payment => (
+                  paginatedPayments.map(payment => (
                     <TableRow key={payment.id}>
                       <TableCell className="font-medium text-blue-600">{payment.payment_number}</TableCell>
                       <TableCell className="text-xs text-gray-500">{payment.invoice?.invoice_number ?? '—'}</TableCell>
@@ -123,6 +130,33 @@ export const PaymentsList: React.FC = () => {
               </TableBody>
             </Table>
           </div>
+          {filteredPayments && filteredPayments.length > 0 && (
+            <div className="flex items-center justify-between px-6 py-4 border-t">
+              <p className="text-sm text-gray-500">
+                Showing <span className="font-medium">{(page - 1) * limit + 1}</span> to{' '}
+                <span className="font-medium">{Math.min(page * limit, filteredPayments.length)}</span> of{' '}
+                <span className="font-medium">{filteredPayments.length}</span> payments
+              </p>
+              <div className="flex items-center gap-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setPage(p => Math.max(1, p - 1))}
+                  disabled={page <= 1}
+                >
+                  Previous
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setPage(p => p + 1)}
+                  disabled={page >= totalPages}
+                >
+                  Next
+                </Button>
+              </div>
+            </div>
+          )}
         </CardContent>
       </Card>
     </div>
