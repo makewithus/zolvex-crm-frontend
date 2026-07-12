@@ -3,6 +3,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { ChevronLeft, ChevronRight, Search, SlidersHorizontal } from 'lucide-react';
+import { EmptyState } from '@/components/ui-custom/EmptyState';
 
 export interface Column<T> {
   key: string;
@@ -82,24 +83,19 @@ export function DataTable<T>({
           </TableHeader>
           <TableBody>
             {isLoading ? (
-              <TableRow>
-                <TableCell colSpan={columns.length} className="h-64 text-center">
-                  <div className="flex flex-col items-center justify-center text-muted-foreground">
-                    <div className="h-6 w-6 border-2 border-primary border-t-transparent rounded-full animate-spin mb-3"></div>
-                    Loading data...
-                  </div>
-                </TableCell>
-              </TableRow>
+              Array.from({ length: 5 }).map((_, rowIndex) => (
+                <TableRow key={`skeleton-${rowIndex}`}>
+                  {columns.map((_, colIndex) => (
+                    <TableCell key={`skeleton-${rowIndex}-${colIndex}`} className="py-4">
+                      <div className={`h-4 bg-muted/60 rounded animate-pulse ${colIndex === 0 ? 'w-3/4' : 'w-1/2'}`}></div>
+                    </TableCell>
+                  ))}
+                </TableRow>
+              ))
             ) : data.length === 0 ? (
               <TableRow>
                 <TableCell colSpan={columns.length} className="h-64 text-center">
-                  <div className="flex flex-col items-center justify-center max-w-sm mx-auto text-center space-y-2">
-                    <div className="h-12 w-12 rounded-full bg-muted flex items-center justify-center mb-2">
-                      <Search className="h-6 w-6 text-muted-foreground opacity-50" />
-                    </div>
-                    <h3 className="font-semibold text-foreground">{emptyStateTitle}</h3>
-                    <p className="text-sm text-muted-foreground">{emptyStateDescription}</p>
-                  </div>
+                  <EmptyState title={emptyStateTitle} description={emptyStateDescription} />
                 </TableCell>
               </TableRow>
             ) : (
