@@ -17,12 +17,17 @@ export const LeadList = () => {
   const [page, setPage] = useState(1);
 
   const filteredLeads = useMemo(() => {
-    const leads = leadsResponse?.data || [];
+    let leads = leadsResponse?.data || [];
+    leads = [...leads].sort((a: any, b: any) => new Date(b.created_at || 0).getTime() - new Date(a.created_at || 0).getTime());
     return leads.filter((lead: Lead) =>
       (lead.name && lead.name.toLowerCase().includes(searchQuery.toLowerCase())) ||
       lead.phone.includes(searchQuery)
     );
   }, [leadsResponse, searchQuery]);
+
+  const limit = 10;
+  const totalPages = Math.max(1, Math.ceil(filteredLeads.length / limit));
+  const paginatedLeads = filteredLeads.slice((page - 1) * limit, page * limit);
 
   const columns: Column<Lead>[] = [
     {
@@ -118,12 +123,12 @@ export const LeadList = () => {
       
       <DataTable
         columns={columns}
-        data={filteredLeads}
+        data={paginatedLeads}
         keyExtractor={(r) => r.id}
         isLoading={isLoading}
-        onSearch={setSearchQuery}
+        onSearch={(query) => { setSearchQuery(query); setPage(1); }}
         searchPlaceholder="Search leads by name or phone..."
-        pagination={{ page, totalPages: 1, onPageChange: setPage }}
+        pagination={{ page, totalPages, onPageChange: setPage }}
         emptyStateTitle="No leads in pipeline"
         emptyStateDescription="Add a prospect to begin the conversion process."
       />
