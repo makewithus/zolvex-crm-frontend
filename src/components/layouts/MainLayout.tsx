@@ -29,8 +29,8 @@ export const MainLayout = () => {
         <Header />
         <div className="flex flex-1 overflow-hidden min-h-0">
           <Sidebar />
-          <main className="flex-1 overflow-y-auto relative" id="main-content">
-            <div className="p-4 md:p-6 lg:p-8">
+          <main className="flex-1 overflow-y-auto relative bg-[#F8FAFC]" id="main-content">
+            <div className="max-w-[1400px] mx-auto p-4 md:p-6 lg:p-8">
               <Outlet />
             </div>
           </main>
