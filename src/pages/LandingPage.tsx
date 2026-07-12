@@ -18,12 +18,12 @@ export const LandingPage = () => {
           </div>
           
           <div className="hidden lg:flex items-center gap-8 text-[14px] font-medium text-slate-600">
-            <a href="#features" className="hover:text-slate-900 transition-colors">Features</a>
-            <a href="#modules" className="hover:text-slate-900 transition-colors">Modules</a>
-            <a href="#solutions" className="hover:text-slate-900 transition-colors">Solutions</a>
-            <a href="#pricing" className="hover:text-slate-900 transition-colors">Pricing</a>
-            <a href="#resources" className="hover:text-slate-900 transition-colors">Resources</a>
-            <a href="#about" className="hover:text-slate-900 transition-colors">About</a>
+            <Link to="/login" className="hover:text-slate-900 transition-colors">Features</Link>
+            <Link to="/login" className="hover:text-slate-900 transition-colors">Modules</Link>
+            <Link to="/login" className="hover:text-slate-900 transition-colors">Solutions</Link>
+            <Link to="/login" className="hover:text-slate-900 transition-colors">Pricing</Link>
+            <Link to="/login" className="hover:text-slate-900 transition-colors">Resources</Link>
+            <Link to="/login" className="hover:text-slate-900 transition-colors">About</Link>
           </div>
 
           <div className="flex items-center gap-5">
@@ -32,7 +32,7 @@ export const LandingPage = () => {
             </Link>
             <Link
               to="/login"
-              className="hidden sm:inline-flex items-center justify-center text-[14px] font-semibold text-white px-5 py-2.5 rounded-xl bg-[#2563EB] hover:bg-[#1D4ED8] transition-all shadow-sm"
+              className="hidden sm:inline-flex items-center justify-center text-[14px] font-semibold text-white px-5 py-2.5 rounded-none bg-[#2563EB] hover:bg-[#1D4ED8]"
             >
               Request Demo
             </Link>
@@ -41,45 +41,44 @@ export const LandingPage = () => {
       </header>
 
       {/* 2. HERO SECTION */}
-      <section className="pt-24 pb-20 px-6 overflow-hidden bg-white relative">
-        {/* Subtle background glow */}
-        <div className="absolute top-[20%] left-[10%] w-[600px] h-[600px] bg-[#DBEAFE] rounded-full blur-[120px] opacity-[0.03] pointer-events-none" />
-        <div className="absolute top-1/2 right-[5%] -translate-y-1/2 w-[800px] h-[800px] bg-[#DBEAFE] rounded-full blur-[120px] opacity-[0.04] pointer-events-none" />
-        
+      <section className="pt-32 pb-32 lg:min-h-[85vh] flex items-center px-6 overflow-hidden bg-gradient-to-br from-slate-50 via-blue-50/30 to-slate-50 relative">
+        {/* Very subtle grid pattern */}
+        <div className="absolute inset-0 bg-[linear-gradient(to_right,#e2e8f020_1px,transparent_1px),linear-gradient(to_bottom,#e2e8f020_1px,transparent_1px)] bg-[size:40px_40px] pointer-events-none" />
+
         <div className="max-w-[1400px] mx-auto relative z-10">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-8 items-center">
             
             {/* Hero Left */}
-            <div className="max-w-xl">
-              <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-slate-50 border border-slate-200 text-slate-700 text-xs font-semibold mb-8 shadow-sm">
+            <div className="w-full lg:max-w-[650px] lg:pr-4">
+              <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white border border-slate-200 text-slate-700 text-xs font-semibold mb-8 shadow-sm">
                 <Star className="h-3.5 w-3.5 text-yellow-500" /> All-In-One CRM for Service Businesses
               </div>
               
-              <h1 className="text-[48px] lg:text-[64px] font-black text-slate-900 tracking-tight leading-tight mb-6">
+              <h1 className="text-[48px] lg:text-[56px] xl:text-[60px] font-black text-slate-900 tracking-tight leading-[1.15] mb-6">
                 Run Your Business. <br/>
                 <span className="text-[#2563EB]">Delight Your Customers.</span>
               </h1>
               
-              <p className="text-[18px] text-slate-600 mb-10 leading-relaxed pr-8">
+              <p className="text-[18px] text-slate-600 mb-10 leading-relaxed max-w-[540px]">
                 Zolvex CRM helps service businesses manage leads, bookings, jobs, customers, payments, and team operations — all in one powerful platform.
               </p>
               
-              <div className="flex flex-col sm:flex-row items-center gap-4 mb-12">
+              <div className="flex flex-col sm:flex-row items-start gap-4 mb-12">
                 <Link
                   to="/login"
-                  className="w-full sm:w-auto inline-flex justify-center items-center gap-2 text-[16px] font-semibold text-white px-8 py-3.5 rounded-xl shadow-sm transition-colors bg-[#2563EB] hover:bg-[#1D4ED8]"
+                  className="inline-flex justify-center items-center gap-2 text-[16px] font-semibold text-white px-8 py-3.5 rounded-none bg-[#2563EB] hover:bg-[#1D4ED8]"
                 >
                   Request Demo &rarr;
                 </Link>
                 <Link
                   to="/login"
-                  className="w-full sm:w-auto inline-flex justify-center items-center gap-2 text-[16px] font-semibold text-slate-700 bg-white hover:bg-slate-50 px-8 py-3.5 rounded-xl border border-slate-200 transition-colors shadow-sm"
+                  className="inline-flex justify-center items-center gap-2 text-[16px] font-semibold text-slate-700 bg-white hover:bg-slate-50 px-8 py-3.5 rounded-none border border-slate-200"
                 >
                   Contact Sales
                 </Link>
               </div>
 
-              <div className="flex flex-wrap md:flex-nowrap items-start gap-8">
+              <div className="flex flex-wrap items-start gap-8">
                 <div className="flex gap-3">
                   <div className="h-10 w-10 shrink-0 rounded-full bg-blue-50 flex items-center justify-center text-blue-600">
                      <Shield className="h-5 w-5" />
@@ -112,18 +111,14 @@ export const LandingPage = () => {
               </div>
             </div>
 
-            {/* Hero Right: UI Mockup inside Browser Frame */}
-            <div className="relative w-full max-w-2xl mx-auto lg:ml-auto lg:mr-[-100px] z-10 mt-12 lg:mt-0">
-               <div className="relative rounded-[24px] shadow-[0_20px_50px_-12px_rgba(0,0,0,0.1)] border border-[#E2E8F0] bg-white overflow-hidden transition-transform">
-                  <div className="h-12 border-b border-[#E2E8F0] bg-[#F8FAFC] flex items-center px-5 gap-2">
-                     <div className="h-3 w-3 rounded-full bg-[#FF5F56]"></div>
-                     <div className="h-3 w-3 rounded-full bg-[#FFBD2E]"></div>
-                     <div className="h-3 w-3 rounded-full bg-[#27C93F]"></div>
-                  </div>
+            {/* Hero Right: Large Dashboard Image - overflows right like the reference */}
+            <div className="relative w-full mt-12 lg:mt-0">
+               {/* Container naturally scales up and overflows to the right */}
+               <div className="relative w-full sm:scale-105 lg:w-[120%] lg:-mr-[20%]">
                  <img 
-                   src="/crm_hero_dashboard.png" 
-                   alt="Zolvex CRM Dashboard Mockup" 
-                   className="w-full h-auto block"
+                   src="/image-das.jpeg" 
+                   alt="Zolvex CRM Dashboard" 
+                   className="w-full h-auto block mix-blend-multiply object-contain"
                  />
                </div>
             </div>
@@ -136,24 +131,24 @@ export const LandingPage = () => {
         <div className="max-w-[1400px] mx-auto px-6 text-center">
           <p className="text-[13px] font-medium text-[#64748B] mb-8">Trusted by service businesses across India</p>
           <div className="flex flex-wrap justify-center items-center gap-10 md:gap-16">
-             <div className="flex items-center gap-2.5 text-[22px] font-bold text-[#64748B] hover:text-[#0F172A] transition-colors cursor-default tracking-tight"><Home className="h-5 w-5" /> HomeCare</div>
-             <div className="flex items-center gap-2.5 text-[22px] font-bold text-[#64748B] hover:text-[#0F172A] transition-colors cursor-default tracking-tight"><PenTool className="h-5 w-5" /> QuickFix</div>
-             <div className="flex items-center gap-2.5 text-[22px] font-bold text-[#64748B] hover:text-[#0F172A] transition-colors cursor-default tracking-tight"><Shield className="h-5 w-5" /> CleanPro</div>
-             <div className="flex items-center gap-2.5 text-[22px] font-bold text-[#64748B] hover:text-[#0F172A] transition-colors cursor-default tracking-tight"><Zap className="h-5 w-5" /> TechServe</div>
-             <div className="flex items-center gap-2.5 text-[22px] font-bold text-[#64748B] hover:text-[#0F172A] transition-colors cursor-default tracking-tight"><Building2 className="h-5 w-5" /> BrightHome</div>
-             <div className="flex items-center gap-2.5 text-[22px] font-bold text-[#64748B] hover:text-[#0F172A] transition-colors cursor-default tracking-tight"><Settings className="h-5 w-5" /> FixItFast</div>
+             <div className="flex items-center gap-2.5 text-[22px] font-bold text-slate-400 opacity-60 hover:opacity-100 transition-all duration-300 cursor-default tracking-tight"><Home className="h-5 w-5" /> HomeCare</div>
+             <div className="flex items-center gap-2.5 text-[22px] font-bold text-slate-400 opacity-60 hover:opacity-100 transition-all duration-300 cursor-default tracking-tight"><PenTool className="h-5 w-5" /> QuickFix</div>
+             <div className="flex items-center gap-2.5 text-[22px] font-bold text-slate-400 opacity-60 hover:opacity-100 transition-all duration-300 cursor-default tracking-tight"><Shield className="h-5 w-5" /> CleanPro</div>
+             <div className="flex items-center gap-2.5 text-[22px] font-bold text-slate-400 opacity-60 hover:opacity-100 transition-all duration-300 cursor-default tracking-tight"><Zap className="h-5 w-5" /> TechServe</div>
+             <div className="flex items-center gap-2.5 text-[22px] font-bold text-slate-400 opacity-60 hover:opacity-100 transition-all duration-300 cursor-default tracking-tight"><Building2 className="h-5 w-5" /> BrightHome</div>
+             <div className="flex items-center gap-2.5 text-[22px] font-bold text-slate-400 opacity-60 hover:opacity-100 transition-all duration-300 cursor-default tracking-tight"><Settings className="h-5 w-5" /> FixItFast</div>
           </div>
         </div>
       </section>
 
       {/* 4. FEATURES GRID */}
-      <section id="features" className="py-20 bg-white">
+      <section id="features" className="py-16 bg-white">
          <div className="max-w-[1200px] mx-auto px-6">
-            <div className="text-center mb-14">
+            <div className="text-center mb-10">
                <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-white border border-[#E2E8F0] text-[#475569] text-[13px] font-semibold mb-6 shadow-sm">
                   <Star className="h-3 w-3 text-slate-400" /> Core Features
                </div>
-               <h2 className="text-[36px] font-bold text-[#0F172A] tracking-tight leading-tight">
+               <h2 className="text-[42px] font-bold text-[#0F172A] tracking-tight leading-tight">
                  Everything You Need to Grow <br/> Your Service Business
                </h2>
             </div>
@@ -167,11 +162,11 @@ export const LandingPage = () => {
                  { icon: BarChart3, title: 'Reports & Analytics', desc: 'Make data-driven decisions with powerful insights.' },
                  { icon: Zap, title: 'Automations', desc: 'Automate reminders, follow-ups & business workflows.' }
                ].map((item, i) => (
-                 <div key={i} className="bg-white p-6 rounded-lg border border-[#E2E8F0] shadow-sm transition-shadow">
-                    <div className="h-10 w-10 rounded-full bg-blue-50 flex items-center justify-center mb-5">
-                       <item.icon className="h-4 w-4 text-[#2563EB]" />
+                 <div key={i} className="group bg-white p-6 rounded-lg border border-[#E2E8F0] shadow-sm transition-all duration-200 hover:scale-[1.01] hover:shadow-md hover:border-blue-200 cursor-default">
+                    <div className="h-10 w-10 rounded-full bg-blue-50 flex items-center justify-center mb-5 group-hover:bg-blue-100 transition-colors">
+                       <item.icon className="h-5 w-5 text-[#2563EB]" strokeWidth={1.75} />
                     </div>
-                    <h4 className="text-[18px] font-bold text-[#0F172A] mb-2">{item.title}</h4>
+                    <h4 className="text-[20px] font-semibold text-[#0F172A] mb-2">{item.title}</h4>
                     <p className="text-[#64748B] text-[16px] leading-relaxed">{item.desc}</p>
                  </div>
                ))}
@@ -180,7 +175,7 @@ export const LandingPage = () => {
       </section>
 
       {/* 5. STATS GRID */}
-      <section className="px-6 py-12 bg-[#F8FAFC]">
+      <section className="px-6 py-10 bg-[#F8FAFC]">
          <div className="max-w-[1200px] mx-auto grid grid-cols-2 md:grid-cols-5 gap-4">
             {[
               { icon: Building2, stat: '500+', label: 'Businesses' },
@@ -199,12 +194,12 @@ export const LandingPage = () => {
       </section>
 
       {/* 6. CRM MODULES GRID (ICON ROW) */}
-      <section className="py-20 bg-white border-y border-[#E2E8F0]">
+      <section className="py-16 bg-white border-y border-[#E2E8F0]">
          <div className="max-w-[1200px] mx-auto px-6 text-center">
             <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-white border border-[#E2E8F0] text-[#475569] text-[13px] font-semibold mb-6 shadow-sm">
                <Star className="h-3 w-3 text-slate-400" /> CRM Modules
             </div>
-            <h2 className="text-[36px] font-bold text-[#0F172A] tracking-tight mb-14">All Your Operations, One Platform</h2>
+            <h2 className="text-[42px] font-bold text-[#0F172A] tracking-tight mb-10">All Your Operations, One Platform</h2>
             
             <div className="flex flex-wrap justify-center gap-4 md:gap-6">
                {[
@@ -212,9 +207,9 @@ export const LandingPage = () => {
                  { i: Briefcase, l: 'Jobs' }, { i: Calendar, l: 'Calendar' }, { i: FileText, l: 'Invoices' },
                  { i: CreditCard, l: 'Payments' }, { i: BarChart3, l: 'Reports' }, { i: Users, l: 'Team' }, { i: Settings, l: 'Settings' }
                ].map((x, i) => (
-                 <div key={i} className="flex flex-col items-center gap-2.5 min-w-[90px]">
-                    <div className="h-14 w-14 bg-[#F8FAFC] border border-[#E2E8F0] shadow-sm rounded-lg flex items-center justify-center hover:border-slate-300 transition-colors cursor-pointer">
-                       <x.i className="h-5 w-5 text-[#0F172A]" />
+                 <div key={i} className="group flex flex-col items-center gap-2.5 min-w-[90px]">
+                    <div className="h-14 w-14 bg-[#F8FAFC] border border-[#E2E8F0] shadow-sm rounded-lg flex items-center justify-center transition-all duration-200 group-hover:border-blue-200 group-hover:-translate-y-0.5 cursor-pointer">
+                       <x.i className="h-5 w-5 text-[#0F172A]" strokeWidth={1.75} />
                     </div>
                     <span className="text-[13px] font-medium text-[#475569]">{x.l}</span>
                  </div>
@@ -224,27 +219,27 @@ export const LandingPage = () => {
       </section>
 
       {/* 7. SPLIT FEATURE & WORKER IMAGE */}
-      <section className="py-20 bg-[#F8FAFC]">
+      <section className="py-16 bg-[#F8FAFC]">
          <div className="max-w-[1200px] mx-auto px-6 flex flex-col lg:flex-row items-center gap-16">
-            <div className="flex-1">
+            <div className="w-full lg:w-[45%]">
                <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-white border border-[#E2E8F0] text-[#475569] text-[13px] font-semibold mb-6 shadow-sm">
                   <Star className="h-3 w-3 text-slate-400" /> Why Choose Zolvex
                </div>
-               <h3 className="text-[36px] font-bold text-[#0F172A] tracking-tight leading-[1.15] mb-10">
+               <h3 className="text-[42px] font-bold text-[#0F172A] tracking-tight leading-[1.15] mb-10">
                   Built for Service Businesses. <br/> Designed for Growth.
                </h3>
-               <div className="space-y-4 text-[16px] text-[#475569]">
-                  <div className="flex items-center gap-3"><CheckCircle2 className="h-5 w-5 text-[#2563EB]" /> Easy to use and quick to implement</div>
-                  <div className="flex items-center gap-3"><CheckCircle2 className="h-5 w-5 text-[#2563EB]" /> Access your business from anywhere</div>
-                  <div className="flex items-center gap-3"><CheckCircle2 className="h-5 w-5 text-[#2563EB]" /> Secure data with role-based access</div>
-                  <div className="flex items-center gap-3"><CheckCircle2 className="h-5 w-5 text-[#2563EB]" /> Scalable as your business grows</div>
-                  <div className="flex items-center gap-3"><CheckCircle2 className="h-5 w-5 text-[#2563EB]" /> Dedicated support whenever you need</div>
+               <div className="space-y-5 text-[16px] text-[#475569]">
+                  <div className="flex items-center gap-3"><CheckCircle2 className="h-5 w-5 text-[#2563EB]" strokeWidth={2} /> Easy to use and quick to implement</div>
+                  <div className="flex items-center gap-3"><CheckCircle2 className="h-5 w-5 text-[#2563EB]" strokeWidth={2} /> Access your business from anywhere</div>
+                  <div className="flex items-center gap-3"><CheckCircle2 className="h-5 w-5 text-[#2563EB]" strokeWidth={2} /> Secure data with role-based access</div>
+                  <div className="flex items-center gap-3"><CheckCircle2 className="h-5 w-5 text-[#2563EB]" strokeWidth={2} /> Scalable as your business grows</div>
+                  <div className="flex items-center gap-3"><CheckCircle2 className="h-5 w-5 text-[#2563EB]" strokeWidth={2} /> Dedicated support whenever you need</div>
                </div>
             </div>
             
-            <div className="flex-1 w-full relative pl-0 lg:pl-10">
+            <div className="w-full lg:w-[55%] relative pl-0 lg:pl-10 mt-12 lg:mt-0">
                {/* Worker Image with floating UI elements */}
-               <div className="relative rounded-xl overflow-visible aspect-[4/3] lg:aspect-[5/4] shadow-none">
+               <div className="relative rounded-xl overflow-visible aspect-[4/3] lg:aspect-[5/4] shadow-none animate-float">
                   <div className="absolute inset-0 rounded-xl overflow-hidden border border-[#E2E8F0] shadow-sm bg-white">
                      <img src="/service_worker_tablet.png" alt="Service worker using tablet" className="w-full h-full object-cover" />
                   </div>
@@ -284,12 +279,12 @@ export const LandingPage = () => {
       </section>
 
       {/* 8. TESTIMONIALS */}
-      <section className="py-20 bg-white border-y border-[#E2E8F0]">
+      <section className="py-16 bg-white border-y border-[#E2E8F0]">
          <div className="max-w-[1200px] mx-auto px-6 text-center">
             <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-white border border-[#E2E8F0] text-[#475569] text-[13px] font-semibold mb-6 shadow-sm">
                <Star className="h-3 w-3 text-slate-400" /> Testimonials
             </div>
-            <h2 className="text-[36px] font-bold text-[#0F172A] tracking-tight mb-14">Loved by Businesses Like Yours</h2>
+            <h2 className="text-[42px] font-bold text-[#0F172A] tracking-tight mb-10">Loved by Businesses Like Yours</h2>
             
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-left">
                {[
@@ -297,7 +292,7 @@ export const LandingPage = () => {
                  { q: "The automation and reports save us hours every day. Our team and customers are happier than ever.", name: "Priya Mehta", role: "Operations Head, CleanPro", letter: "P" },
                  { q: "Best CRM for service companies. Simple, powerful and affordable.", name: "Amit Verma", role: "Founder, QuickFix Solutions", letter: "A" }
                ].map((t, i) => (
-                 <div key={i} className="bg-white p-6 rounded-lg border border-[#E2E8F0] shadow-sm relative flex flex-col h-full">
+                 <div key={i} className="bg-white p-6 rounded-lg border border-[#E2E8F0] shadow-sm relative flex flex-col h-full transition-all duration-200 hover:scale-[1.01] hover:shadow-md cursor-default">
                     <Quote className="absolute top-6 right-6 h-6 w-6 text-slate-100 fill-slate-50" />
                     <div className="flex gap-1 text-[#2563EB] mb-4">
                        <Star className="h-4 w-4 fill-current" /><Star className="h-4 w-4 fill-current" /><Star className="h-4 w-4 fill-current" /><Star className="h-4 w-4 fill-current" /><Star className="h-4 w-4 fill-current" />
@@ -318,16 +313,16 @@ export const LandingPage = () => {
 
       {/* 9. BOTTOM CTA */}
       <section className="py-16 bg-[#F8FAFC] px-6">
-         <div className="max-w-[1200px] mx-auto bg-[#1E293B] rounded-[24px] p-12 lg:p-16 flex flex-col lg:flex-row items-center justify-between gap-8 text-white shadow-sm">
+         <div className="max-w-[1200px] mx-auto bg-[#1E293B] rounded-[24px] p-16 ring-1 ring-white/10 flex flex-col lg:flex-row items-center justify-between gap-8 text-white shadow-xl">
             <div>
-               <h2 className="text-[30px] font-bold tracking-tight mb-2">Ready to Grow Your Business?</h2>
-               <p className="text-[15px] text-slate-400">Join hundreds of service businesses already using Zolvex CRM.</p>
+               <h2 className="text-[36px] font-bold tracking-tight mb-2">Ready to Grow Your Business?</h2>
+               <p className="text-[16px] text-slate-400">Join hundreds of service businesses already using Zolvex CRM.</p>
             </div>
             <div className="flex flex-col sm:flex-row gap-4 w-full lg:w-auto">
-               <Link to="/login" className="inline-flex justify-center items-center text-[15px] font-semibold text-white bg-[#2563EB] hover:bg-[#1D4ED8] px-8 py-3.5 rounded-xl shadow-sm transition-colors">
+               <Link to="/login" className="inline-flex justify-center items-center text-[16px] font-semibold text-white bg-[#2563EB] hover:bg-[#1D4ED8] px-8 py-3.5 rounded-none">
                   Get Started Free
                </Link>
-               <Link to="/login" className="inline-flex justify-center items-center text-[15px] font-semibold text-white border border-slate-600 bg-transparent px-8 py-3.5 rounded-xl hover:bg-slate-800 transition-colors">
+               <Link to="/login" className="inline-flex justify-center items-center text-[16px] font-semibold text-white border border-slate-600 bg-transparent px-8 py-3.5 rounded-none hover:bg-slate-800">
                   Request Demo
                </Link>
             </div>
@@ -338,38 +333,38 @@ export const LandingPage = () => {
       <footer className="bg-[#F8FAFC] py-16 border-t border-[#E2E8F0]">
          <div className="max-w-[1200px] mx-auto px-6 grid grid-cols-1 md:grid-cols-5 gap-10">
             <div className="md:col-span-2">
-               <div className="flex items-center gap-2.5 mb-6">
-                 <div className="h-8 w-8 bg-[#0F172A] rounded-lg flex items-center justify-center font-bold text-white text-sm">Z</div>
-                 <span className="font-extrabold text-[#0F172A] tracking-tight text-xl">ZOLVEX</span>
+               <div className="flex items-center gap-2.5 mb-5">
+                 <div className="h-6 w-6 bg-[#0F172A] rounded-md flex items-center justify-center font-bold text-white text-xs">Z</div>
+                 <span className="font-extrabold text-[#0F172A] tracking-tight text-lg">ZOLVEX</span>
                </div>
-               <p className="text-[13px] text-[#64748B] font-medium mb-12">All-In-One CRM for Service Businesses</p>
-               <p className="text-[12px] text-slate-400">&copy; {new Date().getFullYear()} Zolvex CRM. All rights reserved.</p>
+               <p className="text-[14px] text-[#64748B] font-medium mb-10 max-w-[200px]">All-In-One CRM for Service Businesses.</p>
+               <p className="text-[13px] text-slate-400">&copy; {new Date().getFullYear()} Zolvex CRM. All rights reserved.</p>
             </div>
             <div>
-               <h5 className="font-bold text-[#0F172A] text-[14px] mb-6">Product</h5>
-               <ul className="space-y-4 text-[13px] text-[#64748B] font-medium">
-                  <li><Link to="/login" className="hover:text-[#2563EB] transition-colors">Features</Link></li>
-                  <li><Link to="/login" className="hover:text-[#2563EB] transition-colors">Modules</Link></li>
-                  <li><Link to="/login" className="hover:text-[#2563EB] transition-colors">Pricing</Link></li>
-                  <li><Link to="/login" className="hover:text-[#2563EB] transition-colors">Updates</Link></li>
+               <h5 className="font-semibold text-[#0F172A] text-[15px] mb-5">Product</h5>
+               <ul className="space-y-3 text-[14px] text-[#64748B] font-medium">
+                  <li><Link to="/login" className="hover:text-slate-900 transition-colors">Features</Link></li>
+                  <li><Link to="/login" className="hover:text-slate-900 transition-colors">Modules</Link></li>
+                  <li><Link to="/login" className="hover:text-slate-900 transition-colors">Pricing</Link></li>
+                  <li><Link to="/login" className="hover:text-slate-900 transition-colors">Updates</Link></li>
                </ul>
             </div>
             <div>
-               <h5 className="font-bold text-[#0F172A] text-[14px] mb-6">Resources</h5>
-               <ul className="space-y-4 text-[13px] text-[#64748B] font-medium">
-                  <li><Link to="/login" className="hover:text-[#2563EB] transition-colors">Blog</Link></li>
-                  <li><Link to="/login" className="hover:text-[#2563EB] transition-colors">Guides</Link></li>
-                  <li><Link to="/login" className="hover:text-[#2563EB] transition-colors">Help Center</Link></li>
-                  <li><Link to="/login" className="hover:text-[#2563EB] transition-colors">API Docs</Link></li>
+               <h5 className="font-semibold text-[#0F172A] text-[15px] mb-5">Resources</h5>
+               <ul className="space-y-3 text-[14px] text-[#64748B] font-medium">
+                  <li><Link to="/login" className="hover:text-slate-900 transition-colors">Blog</Link></li>
+                  <li><Link to="/login" className="hover:text-slate-900 transition-colors">Guides</Link></li>
+                  <li><Link to="/login" className="hover:text-slate-900 transition-colors">Help Center</Link></li>
+                  <li><Link to="/login" className="hover:text-slate-900 transition-colors">API Docs</Link></li>
                </ul>
             </div>
             <div>
-               <h5 className="font-bold text-[#0F172A] text-[14px] mb-6">Company</h5>
-               <ul className="space-y-4 text-[13px] text-[#64748B] font-medium">
-                  <li><Link to="/login" className="hover:text-[#2563EB] transition-colors">About Us</Link></li>
-                  <li><Link to="/login" className="hover:text-[#2563EB] transition-colors">Contact Us</Link></li>
-                  <li><Link to="/login" className="hover:text-[#2563EB] transition-colors">Careers</Link></li>
-                  <li><Link to="/login" className="hover:text-[#2563EB] transition-colors">Privacy Policy</Link></li>
+               <h5 className="font-semibold text-[#0F172A] text-[15px] mb-5">Company</h5>
+               <ul className="space-y-3 text-[14px] text-[#64748B] font-medium">
+                  <li><Link to="/login" className="hover:text-slate-900 transition-colors">About Us</Link></li>
+                  <li><Link to="/login" className="hover:text-slate-900 transition-colors">Contact Us</Link></li>
+                  <li><Link to="/login" className="hover:text-slate-900 transition-colors">Careers</Link></li>
+                  <li><Link to="/login" className="hover:text-slate-900 transition-colors">Privacy Policy</Link></li>
                </ul>
             </div>
          </div>
