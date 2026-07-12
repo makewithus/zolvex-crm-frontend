@@ -7,10 +7,20 @@ import { Role } from '../types/role.types';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Shield, Users } from 'lucide-react';
+import { useState, useMemo } from 'react';
 
 export const RolesList = () => {
   const { data: rolesResponse, isLoading, isError, error } = useRoles();
-  const roles = rolesResponse?.data || [];
+  const [page, setPage] = useState(1);
+  const limit = 10;
+
+  const roles = useMemo(() => {
+    const all = rolesResponse?.data || [];
+    return [...all].sort((a: any, b: any) => new Date(b.created_at || 0).getTime() - new Date(a.created_at || 0).getTime());
+  }, [rolesResponse]);
+
+  const totalPages = Math.max(1, Math.ceil(roles.length / limit));
+  const paginatedRoles = roles.slice((page - 1) * limit, page * limit);
 
   const columns: Column<Role>[] = [
     { 
@@ -106,12 +116,13 @@ export const RolesList = () => {
       <PageHeader title="Roles & Permissions" description="Manage security roles and access matrices." />
       <DataTable
         columns={columns}
-        data={roles}
+        data={paginatedRoles}
         keyExtractor={(role) => role.id}
         isLoading={isLoading}
         searchPlaceholder="Search roles..."
         emptyStateTitle="No roles found"
         emptyStateDescription="The system requires at least one default role."
+        pagination={{ page, totalPages, onPageChange: setPage }}
       />
     </PageContainer>
   );
