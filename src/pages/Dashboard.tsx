@@ -1,9 +1,10 @@
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Users, TrendingUp, DollarSign, Calendar, Plus, Activity, ChevronRight, Briefcase } from 'lucide-react';
+import { Users, DollarSign, Calendar, Plus, Activity, ChevronRight, Briefcase } from 'lucide-react';
 import { PageHeader } from '@/components/ui-custom/PageHeader';
 import { PageContainer } from '@/components/ui-custom/PageContainer';
 import { StatusBadge } from '@/components/ui-custom/StatusBadge';
+import { EmptyState } from '@/components/ui-custom/EmptyState';
 import { useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import {
@@ -58,45 +59,30 @@ export const Dashboard = () => {
       label: 'Total Leads',
       value: kpis?.total_leads ?? '—',
       icon: Users,
-      color: 'text-blue-600',
-      bg: 'bg-blue-500/10',
-      show: hasAccess('/leads'),
     },
     {
       label: 'Customers',
       value: kpis?.total_customers ?? '—',
       icon: Users,
-      color: 'text-purple-600',
-      bg: 'bg-purple-500/10',
-      show: hasAccess('/customers'),
     },
     {
       label: 'Active Bookings',
       value: kpis?.active_bookings ?? '—',
       icon: Calendar,
-      color: 'text-orange-600',
-      bg: 'bg-orange-500/10',
-      show: hasAccess('/bookings'),
     },
     {
       label: 'Jobs Today',
       value: kpis?.jobs_today ?? '—',
       icon: Briefcase,
-      color: 'text-indigo-600',
-      bg: 'bg-indigo-500/10',
-      show: hasAccess('/jobs'),
     },
     {
-      label: 'Booked Value (MTD)',
+      label: 'Booked Value',
       value: canSeeRevenue
         ? (revenue ? `₹${Number(revenue.mtd_revenue).toLocaleString('en-IN')}` : '—')
         : null,
       icon: DollarSign,
-      color: 'text-emerald-600',
-      bg: 'bg-emerald-500/10',
-      show: canSeeRevenue,
     },
-  ].filter(c => c.show && c.value !== null);
+  ].filter(c => c.value !== null);
 
   return (
     <PageContainer>
@@ -130,16 +116,14 @@ export const Dashboard = () => {
                 </CardContent>
               </Card>
             ))
-          : kpiCards.map(({ label, value, icon: Icon, color, bg }) => (
-              <Card key={label} className="shadow-sm border-border/40 hover:shadow-md transition-all">
+          : kpiCards.map(({ label, value, icon: Icon }) => (
+              <Card key={label}>
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                   <CardTitle className="text-sm font-medium text-muted-foreground">{label}</CardTitle>
-                  <div className={`p-2 ${bg} rounded-full`}>
-                    <Icon className={`h-4 w-4 ${color}`} />
-                  </div>
+                  <Icon className="h-4 w-4 text-muted-foreground/70" />
                 </CardHeader>
                 <CardContent>
-                  <div className="text-2xl font-bold tracking-tight">{value}</div>
+                  <div className="text-3xl font-bold tracking-tight">{value}</div>
                 </CardContent>
               </Card>
             ))}
@@ -162,20 +146,17 @@ export const Dashboard = () => {
                 ))}
               </div>
             ) : activity.length === 0 ? (
-              <div className="flex flex-col items-center justify-center py-10 text-center bg-secondary/20 rounded-lg border border-dashed">
-                <Activity className="h-8 w-8 text-muted-foreground mb-3 opacity-50" />
-                <p className="text-sm text-muted-foreground">No recent activity</p>
-              </div>
+              <EmptyState title="No recent activity" description="Audit trail events will appear here once bookings or jobs are created." />
             ) : (
-              <div className="space-y-3">
+              <div className="space-y-1">
                 {activity.map((item: any, i: number) => (
-                  <div key={i} className="flex items-start gap-3 py-2 border-b last:border-0">
-                    <div className={`p-1.5 rounded-md border ${item.type === 'booking' ? 'text-blue-600 bg-blue-500/10 border-blue-200' : 'text-indigo-600 bg-indigo-500/10 border-indigo-200'}`}>
-                      {item.type === 'booking' ? <Calendar className="h-3.5 w-3.5" /> : <Briefcase className="h-3.5 w-3.5" />}
+                  <div key={i} className="flex items-start gap-4 py-3 border-b last:border-0 hover:bg-muted/30 transition-colors px-2 -mx-2 rounded-md">
+                    <div className="mt-0.5 text-muted-foreground/70">
+                      {item.type === 'booking' ? <Calendar className="h-4 w-4" /> : <Briefcase className="h-4 w-4" />}
                     </div>
                     <div className="flex-1 min-w-0">
-                      <p className="text-xs font-medium leading-tight truncate">{item.label}</p>
-                      <p className="text-[10px] text-muted-foreground">
+                      <p className="text-sm font-medium leading-tight truncate">{item.label}</p>
+                      <p className="text-[11px] text-muted-foreground mt-1 tracking-wider uppercase">
                         {format(new Date(item.at), 'dd MMM, h:mm a')}
                       </p>
                     </div>
@@ -207,25 +188,22 @@ export const Dashboard = () => {
                   ))}
                 </div>
               ) : upcomingBookings.length === 0 ? (
-                <div className="flex flex-col items-center justify-center py-8 text-center bg-secondary/20 rounded-lg border border-dashed">
-                  <Calendar className="h-7 w-7 text-muted-foreground mb-2 opacity-50" />
-                  <p className="text-xs text-muted-foreground">No upcoming bookings in the next 48 hours</p>
-                </div>
+                <EmptyState title="No upcoming bookings" description="No scheduled bookings for the next 48 hours." />
               ) : (
                 <div className="space-y-2">
                   {upcomingBookings.map((b: any) => (
                     <div
                       key={b.id}
-                      className="flex items-center justify-between p-2 rounded-lg border bg-secondary/20 hover:bg-secondary/40 cursor-pointer transition-colors"
+                      className="flex items-center justify-between p-3 rounded-md border bg-card hover:bg-muted/50 cursor-pointer transition-colors shadow-sm"
                       onClick={() => navigate(`/bookings/${b.id}`)}
                     >
                       <div className="min-w-0">
-                        <p className="text-xs font-medium truncate">{b.customer_name || 'Customer'}</p>
-                        <p className="text-[10px] text-muted-foreground truncate">{b.service_name}</p>
+                        <p className="text-sm font-medium truncate">{b.customer_name || 'Customer'}</p>
+                        <p className="text-xs text-muted-foreground truncate mt-0.5">{b.service_name}</p>
                       </div>
-                      <div className="text-right shrink-0 ml-2">
-                        <p className="text-[10px] font-medium">{format(new Date(b.scheduled_date), 'dd MMM')}</p>
-                        <p className="text-[10px] text-muted-foreground">{format(new Date(b.scheduled_date), 'h:mm a')}</p>
+                      <div className="text-right shrink-0 ml-3">
+                        <p className="text-xs font-medium">{format(new Date(b.scheduled_date), 'dd MMM')}</p>
+                        <p className="text-[11px] text-muted-foreground mt-0.5">{format(new Date(b.scheduled_date), 'h:mm a')}</p>
                       </div>
                     </div>
                   ))}
@@ -239,19 +217,18 @@ export const Dashboard = () => {
       {/* Revenue summary — Super Admin / Finance only */}
       {canSeeRevenue && revenue && (
         <div className="mt-6">
-          <Card className="shadow-sm border-border/40">
-            <CardHeader className="pb-2">
-              <CardTitle className="text-base flex items-center gap-2">
-                <TrendingUp className="h-4 w-4 text-emerald-600" /> Revenue (Month to Date)
-              </CardTitle>
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between pb-2">
+              <CardTitle className="text-base font-semibold">Revenue Overview</CardTitle>
+              <span className="text-xs font-medium bg-muted px-2 py-1 rounded-md text-muted-foreground">Month to Date</span>
             </CardHeader>
-            <CardContent className="flex items-center gap-8">
+            <CardContent className="flex items-center gap-8 pt-4">
               <div>
-                <p className="text-3xl font-bold text-emerald-600">
+                <p className="text-4xl font-bold tracking-tight">
                   ₹{Number(revenue.mtd_revenue).toLocaleString('en-IN')}
                 </p>
-                <p className="text-sm text-muted-foreground mt-1">
-                  From {revenue.completed_bookings_count} completed booking{revenue.completed_bookings_count !== 1 ? 's' : ''}
+                <p className="text-sm text-muted-foreground mt-2">
+                  Generated from <span className="font-medium text-foreground">{revenue.completed_bookings_count}</span> completed booking{revenue.completed_bookings_count !== 1 ? 's' : ''}
                 </p>
               </div>
             </CardContent>
