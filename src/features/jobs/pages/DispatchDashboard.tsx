@@ -16,6 +16,13 @@ export const DispatchDashboard = () => {
   const { data: jobs, isLoading } = useJobs(filters);
   const navigate = useNavigate();
 
+  const [page, setPage] = useState(1);
+  const limit = 10;
+  
+  const totalPages = Math.max(1, Math.ceil((jobs?.length || 0) / limit));
+  const sortedJobs = [...(jobs || [])].sort((a: any, b: any) => new Date(b.created_at || 0).getTime() - new Date(a.created_at || 0).getTime());
+  const paginatedJobs = sortedJobs.slice((page - 1) * limit, page * limit);
+
   const columns = [
     { key: 'job_id', header: 'Job ID', cell: (row: any) => (
       <span className="font-mono text-sm font-medium">{row.job_id}</span>
@@ -73,11 +80,12 @@ export const DispatchDashboard = () => {
       />
       <div className="bg-card rounded-lg border shadow-sm">
         <DataTable
-          data={jobs || []}
+          data={paginatedJobs}
           columns={columns}
           keyExtractor={(row: any) => row.id}
           isLoading={isLoading}
           searchPlaceholder="Search by Job ID, customer..."
+          pagination={{ page, totalPages, onPageChange: setPage }}
         />
       </div>
     </div>
