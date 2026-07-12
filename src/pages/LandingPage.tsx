@@ -71,12 +71,12 @@ export const LandingPage = () => {
                 >
                   Request Demo &rarr;
                 </Link>
-                <a
-                  href="#demo"
+                <Link
+                  to="/login"
                   className="w-full sm:w-auto inline-flex justify-center items-center gap-2 text-[16px] font-semibold text-slate-700 bg-white hover:bg-slate-50 px-8 py-3.5 rounded-xl border border-slate-200 transition-colors shadow-sm"
                 >
                   Contact Sales
-                </a>
+                </Link>
               </div>
 
               <div className="flex flex-wrap md:flex-nowrap items-start gap-8">
@@ -116,9 +116,9 @@ export const LandingPage = () => {
             <div className="relative w-full max-w-2xl mx-auto lg:ml-auto lg:mr-[-100px] z-10 mt-12 lg:mt-0">
                <div className="relative rounded-[24px] shadow-[0_20px_50px_-12px_rgba(0,0,0,0.1)] border border-[#E2E8F0] bg-white overflow-hidden transition-transform">
                   <div className="h-12 border-b border-[#E2E8F0] bg-[#F8FAFC] flex items-center px-5 gap-2">
-                     <div className="h-3.5 w-3.5 rounded-full bg-slate-200"></div>
-                     <div className="h-3.5 w-3.5 rounded-full bg-slate-200"></div>
-                     <div className="h-3.5 w-3.5 rounded-full bg-slate-200"></div>
+                     <div className="h-3 w-3 rounded-full bg-[#FF5F56]"></div>
+                     <div className="h-3 w-3 rounded-full bg-[#FFBD2E]"></div>
+                     <div className="h-3 w-3 rounded-full bg-[#27C93F]"></div>
                   </div>
                  <img 
                    src="/crm_hero_dashboard.png" 
@@ -348,28 +348,28 @@ export const LandingPage = () => {
             <div>
                <h5 className="font-bold text-[#0F172A] text-[14px] mb-6">Product</h5>
                <ul className="space-y-4 text-[13px] text-[#64748B] font-medium">
-                  <li><a href="#" className="hover:text-[#2563EB] transition-colors">Features</a></li>
-                  <li><a href="#" className="hover:text-[#2563EB] transition-colors">Modules</a></li>
-                  <li><a href="#" className="hover:text-[#2563EB] transition-colors">Pricing</a></li>
-                  <li><a href="#" className="hover:text-[#2563EB] transition-colors">Updates</a></li>
+                  <li><Link to="/login" className="hover:text-[#2563EB] transition-colors">Features</Link></li>
+                  <li><Link to="/login" className="hover:text-[#2563EB] transition-colors">Modules</Link></li>
+                  <li><Link to="/login" className="hover:text-[#2563EB] transition-colors">Pricing</Link></li>
+                  <li><Link to="/login" className="hover:text-[#2563EB] transition-colors">Updates</Link></li>
                </ul>
             </div>
             <div>
                <h5 className="font-bold text-[#0F172A] text-[14px] mb-6">Resources</h5>
                <ul className="space-y-4 text-[13px] text-[#64748B] font-medium">
-                  <li><a href="#" className="hover:text-[#2563EB] transition-colors">Blog</a></li>
-                  <li><a href="#" className="hover:text-[#2563EB] transition-colors">Guides</a></li>
-                  <li><a href="#" className="hover:text-[#2563EB] transition-colors">Help Center</a></li>
-                  <li><a href="#" className="hover:text-[#2563EB] transition-colors">API Docs</a></li>
+                  <li><Link to="/login" className="hover:text-[#2563EB] transition-colors">Blog</Link></li>
+                  <li><Link to="/login" className="hover:text-[#2563EB] transition-colors">Guides</Link></li>
+                  <li><Link to="/login" className="hover:text-[#2563EB] transition-colors">Help Center</Link></li>
+                  <li><Link to="/login" className="hover:text-[#2563EB] transition-colors">API Docs</Link></li>
                </ul>
             </div>
             <div>
                <h5 className="font-bold text-[#0F172A] text-[14px] mb-6">Company</h5>
                <ul className="space-y-4 text-[13px] text-[#64748B] font-medium">
-                  <li><a href="#" className="hover:text-[#2563EB] transition-colors">About Us</a></li>
-                  <li><a href="#" className="hover:text-[#2563EB] transition-colors">Contact Us</a></li>
-                  <li><a href="#" className="hover:text-[#2563EB] transition-colors">Careers</a></li>
-                  <li><a href="#" className="hover:text-[#2563EB] transition-colors">Privacy Policy</a></li>
+                  <li><Link to="/login" className="hover:text-[#2563EB] transition-colors">About Us</Link></li>
+                  <li><Link to="/login" className="hover:text-[#2563EB] transition-colors">Contact Us</Link></li>
+                  <li><Link to="/login" className="hover:text-[#2563EB] transition-colors">Careers</Link></li>
+                  <li><Link to="/login" className="hover:text-[#2563EB] transition-colors">Privacy Policy</Link></li>
                </ul>
             </div>
          </div>
