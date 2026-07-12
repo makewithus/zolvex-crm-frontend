@@ -8,12 +8,21 @@ import { CityFormDialog } from '../components/CityFormDialog';
 import { Building2, Map, Users, MoreHorizontal, Edit, Settings } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { CityEditDialog } from '../components/CityEditDialog';
 
 export const CitiesList = () => {
   const { data: citiesResponse, isLoading, isError, error } = useCities();
-  const cities = citiesResponse?.data || [];
+  const [page, setPage] = useState(1);
+  const limit = 10;
+
+  const cities = useMemo(() => {
+    const all = citiesResponse?.data || [];
+    return [...all].sort((a: any, b: any) => new Date(b.created_at || 0).getTime() - new Date(a.created_at || 0).getTime());
+  }, [citiesResponse]);
+
+  const totalPages = Math.max(1, Math.ceil(cities.length / limit));
+  const paginatedCities = cities.slice((page - 1) * limit, page * limit);
   
   const [editingCity, setEditingCity] = useState<City | null>(null);
 
@@ -105,12 +114,13 @@ export const CitiesList = () => {
       </PageHeader>
       <DataTable
         columns={columns}
-        data={cities}
+        data={paginatedCities}
         keyExtractor={(city) => city.id}
         isLoading={isLoading}
         searchPlaceholder="Search regions..."
         emptyStateTitle="No regions found"
         emptyStateDescription="Get started by defining your first operational city."
+        pagination={{ page, totalPages, onPageChange: setPage }}
       />
       <CityEditDialog 
         city={editingCity} 
