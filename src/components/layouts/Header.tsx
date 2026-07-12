@@ -1,5 +1,5 @@
 import { useLocation } from 'react-router-dom';
-import { Button } from '../ui/button';
+
 import { Input } from '../ui/input';
 import { Search, Bell, ChevronRight, User as UserIcon, LogOut, Menu } from 'lucide-react';
 import { logout } from '@/features/auth';
@@ -41,60 +41,62 @@ export const Header = () => {
   });
 
   return (
-    <header className="sticky top-0 z-40 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80 shadow-sm">
-      <div className="px-6 flex h-[var(--header-height)] items-center justify-between">
+    <header className="sticky top-0 z-40 w-full border-b border-slate-200 bg-white">
+      <div className="px-6 lg:px-8 flex h-[72px] items-center justify-between">
         
         {/* Hamburger and Breadcrumbs */}
-        <div className="flex items-center gap-3">
-          <Button aria-label="Toggle Sidebar" variant="ghost" size="icon" onClick={toggleSidebar} className="flex text-muted-foreground hover:text-foreground mr-1 lg:mr-3">
+        <div className="flex items-center gap-4">
+          <button aria-label="Toggle Sidebar" onClick={toggleSidebar} className="text-slate-500 hover:text-slate-900 transition-colors">
             <Menu className="h-5 w-5" />
-          </Button>
+          </button>
 
-          <div className="flex items-center gap-1.5 text-sm text-muted-foreground hidden md:flex font-medium">
-            <span className="hover:text-foreground cursor-pointer transition-colors px-1 rounded-sm hover:bg-muted/50">Home</span>
-          {breadcrumbs.length > 0 && <ChevronRight className="h-3.5 w-3.5 opacity-50" />}
+          <div className="flex items-center gap-2 text-[14px] text-slate-500 hidden md:flex font-medium">
+            <span className="hover:text-slate-900 cursor-pointer transition-colors">Home</span>
+          {breadcrumbs.length > 0 && <ChevronRight className="h-4 w-4 text-slate-400" />}
           {breadcrumbs.map((crumb, idx) => (
-            <div key={crumb} className="flex items-center gap-1.5">
-              <span className={`px-1 rounded-sm ${idx === breadcrumbs.length - 1 ? 'text-foreground' : 'hover:text-foreground cursor-pointer transition-colors hover:bg-muted/50'}`}>
+            <div key={crumb} className="flex items-center gap-2">
+              <span className={idx === breadcrumbs.length - 1 ? 'text-slate-900 font-semibold' : 'hover:text-slate-900 cursor-pointer transition-colors'}>
                 {crumb}
               </span>
-              {idx < breadcrumbs.length - 1 && <ChevronRight className="h-3.5 w-3.5 opacity-50" />}
+              {idx < breadcrumbs.length - 1 && <ChevronRight className="h-4 w-4 text-slate-400" />}
             </div>
           ))}
           </div>
         </div>
 
-        <div className="flex items-center gap-4 flex-1 justify-end">
+        <div className="flex items-center gap-6 flex-1 justify-end">
           {/* Global Search */}
-          <div className="relative w-full max-w-[300px] hidden md:block">
-            <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+          <div className="relative w-full max-w-[320px] hidden md:block">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
             <Input
               type="search"
               aria-label="Global Search"
               placeholder="Search leads, customers, jobs..."
-              className="w-full bg-muted/30 border shadow-sm pl-9 hover:bg-muted/50 transition-colors focus-visible:ring-1"
+              className="w-full bg-slate-50 border-slate-200 pl-10 h-10 rounded-md text-[14px] focus-visible:ring-1 focus-visible:ring-blue-600 focus-visible:border-blue-600 transition-colors shadow-sm"
             />
           </div>
 
-          <Button aria-label="Notifications" variant="ghost" size="icon" className="relative text-muted-foreground hover:text-foreground">
-            <Bell className="h-5 w-5" />
-            <span className="absolute top-1.5 right-1.5 h-2 w-2 rounded-full bg-destructive border-2 border-background"></span>
-          </Button>
+          <div className="flex items-center gap-4">
+            <button aria-label="Notifications" className="relative text-slate-500 hover:text-slate-900 transition-colors">
+              <Bell className="h-5 w-5" />
+              <span className="absolute -top-1 -right-1 h-2 w-2 rounded-full bg-red-600 border-[1.5px] border-white"></span>
+            </button>
+            
+            <div className="h-5 w-px bg-slate-200 mx-2"></div>
 
-          <div className="h-6 w-px bg-border mx-1"></div>
-
-          {/* User Profile */}
-          <div className="flex items-center gap-3 pl-1">
-            <div className="hidden text-right md:block">
-              <p className="text-sm font-medium leading-none">{userName}</p>
-              <p className="text-xs text-muted-foreground mt-1">{userRole}</p>
+            {/* User Profile */}
+            <div className="flex items-center gap-3">
+              <div className="hidden md:block text-right">
+                <p className="text-[14px] font-semibold text-slate-900 leading-none">{userName}</p>
+                <p className="text-[12px] text-slate-500 mt-1">{userRole}</p>
+              </div>
+              <div className="h-9 w-9 rounded-full bg-slate-100 border border-slate-200 flex items-center justify-center text-slate-500 font-medium">
+                <UserIcon className="h-4 w-4" />
+              </div>
+              <button aria-label="Log out" onClick={logout} className="text-slate-400 hover:text-red-600 transition-colors ml-1" title="Log out">
+                <LogOut className="h-4 w-4" />
+              </button>
             </div>
-            <div className="h-8 w-8 rounded-full bg-muted flex items-center justify-center text-muted-foreground border shadow-sm">
-              <UserIcon className="h-4 w-4" />
-            </div>
-            <Button aria-label="Log out" variant="ghost" size="icon" onClick={logout} className="text-muted-foreground hover:bg-destructive/10 hover:text-destructive transition-colors ml-1" title="Log out">
-              <LogOut className="h-4 w-4" />
-            </Button>
           </div>
         </div>
       </div>
