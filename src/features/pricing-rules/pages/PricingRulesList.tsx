@@ -6,15 +6,24 @@ import { usePricingRules } from '../hooks/usePricingRules';
 import { PricingRule } from '../types/pricingRule.types';
 import { PricingRuleFormDialog } from '../components/PricingRuleFormDialog';
 import { Button } from '@/components/ui/button';
-import { MapPin, Briefcase, ListTree, DollarSign, MoreHorizontal, Edit, Trash2 } from 'lucide-react';
+import { MapPin, Briefcase, ListTree, MoreHorizontal, Edit, Trash2 } from 'lucide-react';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { PricingRuleEditDialog } from '../components/PricingRuleEditDialog';
 import { PricingRuleDeleteDialog } from '../components/PricingRuleDeleteDialog';
 
 export const PricingRulesList = () => {
   const { data: pricingRulesResponse, isLoading, isError, error } = usePricingRules();
-  const pricingRules = pricingRulesResponse?.data || [];
+  const [page, setPage] = useState(1);
+  const limit = 10;
+
+  const pricingRules = useMemo(() => {
+    const all = pricingRulesResponse?.data || [];
+    return [...all].sort((a: any, b: any) => new Date(b.created_at || 0).getTime() - new Date(a.created_at || 0).getTime());
+  }, [pricingRulesResponse]);
+
+  const totalPages = Math.max(1, Math.ceil(pricingRules.length / limit));
+  const paginatedRules = pricingRules.slice((page - 1) * limit, page * limit);
   
   const [editingRule, setEditingRule] = useState<PricingRule | null>(null);
   const [deletingRule, setDeletingRule] = useState<PricingRule | null>(null);
@@ -60,8 +69,8 @@ export const PricingRulesList = () => {
       header: 'Override Price', 
       cell: (row) => (
         <div className="flex items-center font-bold text-foreground">
-          <DollarSign className="h-3.5 w-3.5 text-muted-foreground mr-0.5" />
-          {row.base_price.toLocaleString(undefined, { minimumFractionDigits: 2 })}
+          <span className="text-muted-foreground mr-0.5 text-sm">₹</span>
+          {row.base_price.toLocaleString('en-IN', { minimumFractionDigits: 2 })}
         </div>
       ) 
     },
@@ -115,12 +124,13 @@ export const PricingRulesList = () => {
       </PageHeader>
       <DataTable
         columns={columns}
-        data={pricingRules}
+        data={paginatedRules}
         keyExtractor={(rule) => rule.id}
         isLoading={isLoading}
         searchPlaceholder="Search pricing configurations..."
         emptyStateTitle="No pricing rules configured"
         emptyStateDescription="Set up rules to override base pricing for specific regions or variants."
+        pagination={{ page, totalPages, onPageChange: setPage }}
       />
       <PricingRuleEditDialog 
         rule={editingRule} 
