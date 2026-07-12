@@ -46,6 +46,7 @@ export interface DashboardKPIsReport {
 
 export interface TechnicianProductivity {
   [techId: string]: {
+    name: string;
     jobs_completed: number;
     total_scheduled_mins: number;
     total_actual_mins: number;
