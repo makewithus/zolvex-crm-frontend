@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useTechnicianReport } from '../hooks/useReports';
-import { useUsers } from '@/features/users/hooks/useUsers';
+
 import { ReportFilters } from '../api/reports.api';
 import { Clock, CheckCircle, ChevronRight, TrendingUp } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -48,11 +48,7 @@ export const TechnicianReport: React.FC = () => {
   };
 
   const { data, isLoading } = useTechnicianReport(filters);
-  const { data: usersRes } = useUsers();
-
   const productivity = data?.productivity || {};
-  const usersMap: Record<string, string> = {};
-  usersRes?.data?.forEach((u: any) => { usersMap[u.id] = u.name; });
 
   const entries = Object.entries(productivity);
 
@@ -111,8 +107,7 @@ export const TechnicianReport: React.FC = () => {
                   {entries.sort(([, a], [, b]) => b.jobs_completed - a.jobs_completed).map(([id, stats]) => (
                     <tr key={id} className="hover:bg-gray-50">
                       <td className="py-3">
-                        <div className="font-medium text-gray-900">{usersMap[id] || 'Unknown'}</div>
-                        <div className="text-xs text-gray-400 font-mono">{id.slice(0, 8)}…</div>
+                        <div className="font-medium text-gray-900">{stats.name || 'Unknown'}</div>
                       </td>
                       <td className="text-center py-3">
                         <span className="inline-flex items-center gap-1 font-semibold text-gray-900">
