@@ -1,6 +1,7 @@
 import { Routes, Route } from 'react-router-dom';
 import { MainLayout } from '@/components/layouts/MainLayout';
 import { Dashboard } from '@/pages/Dashboard';
+import { LandingPage } from '@/pages/LandingPage';
 import { Login } from '@/features/auth';
 import { Navigate } from 'react-router-dom';
 import { CitiesList } from '@/features/cities';
@@ -37,6 +38,7 @@ const PrivateRoute = ({ children }: { children: React.ReactNode }) => {
 export const AppRoutes = () => {
   return (
     <Routes>
+      <Route path="/home" element={<LandingPage />} />
       <Route path="/login" element={<Login />} />
       <Route path="/" element={
         <PrivateRoute>
