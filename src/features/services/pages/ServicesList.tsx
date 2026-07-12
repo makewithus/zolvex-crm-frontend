@@ -6,14 +6,23 @@ import { useServices } from '../hooks/useServices';
 import { Service } from '../types/service.types';
 import { ServiceFormDialog } from '../components/ServiceFormDialog';
 import { Button } from '@/components/ui/button';
-import { Briefcase, Layers, MoreHorizontal, Edit, DollarSign } from 'lucide-react';
+import { Briefcase, Layers, MoreHorizontal, Edit } from 'lucide-react';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { ServiceEditDialog } from '../components/ServiceEditDialog';
 
 export const ServicesList = () => {
   const { data: servicesResponse, isLoading, isError, error } = useServices();
-  const services = servicesResponse?.data || [];
+  const [page, setPage] = useState(1);
+  const limit = 10;
+
+  const services = useMemo(() => {
+    const all = servicesResponse?.data || [];
+    return [...all].sort((a: any, b: any) => new Date(b.created_at || 0).getTime() - new Date(a.created_at || 0).getTime());
+  }, [servicesResponse]);
+
+  const totalPages = Math.max(1, Math.ceil(services.length / limit));
+  const paginatedServices = services.slice((page - 1) * limit, page * limit);
   
   const [editingService, setEditingService] = useState<Service | null>(null);
 
@@ -48,8 +57,8 @@ export const ServicesList = () => {
       header: 'Base Price', 
       cell: (row) => (
         <div className="flex items-center font-medium text-foreground">
-          <DollarSign className="h-3.5 w-3.5 text-muted-foreground mr-0.5" />
-          {row.base_price.toLocaleString(undefined, { minimumFractionDigits: 2 })}
+          <span className="text-muted-foreground mr-0.5 text-sm">₹</span>
+          {row.base_price.toLocaleString('en-IN', { minimumFractionDigits: 2 })}
         </div>
       ) 
     },
@@ -105,12 +114,13 @@ export const ServicesList = () => {
       </PageHeader>
       <DataTable
         columns={columns}
-        data={services}
+        data={paginatedServices}
         keyExtractor={(service) => service.id}
         isLoading={isLoading}
         searchPlaceholder="Search services..."
         emptyStateTitle="No services defined"
         emptyStateDescription="Create a base service to start configuring pricing."
+        pagination={{ page, totalPages, onPageChange: setPage }}
       />
       <ServiceEditDialog 
         service={editingService} 
