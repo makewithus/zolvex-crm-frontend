@@ -6,8 +6,65 @@ import { useRoles } from '../hooks/useRoles';
 import { Role } from '../types/role.types';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { Shield, Users } from 'lucide-react';
+import { Shield, Users, CheckCircle, XCircle } from 'lucide-react';
 import { useState, useMemo } from 'react';
+import { FEATURE_REGISTRY } from '@/config/features';
+
+// Permission matrix: role → which modules it can access (maps to backend authorize() lists)
+const ROLE_PERMISSIONS: Record<string, string[]> = {
+  'Super Admin': FEATURE_REGISTRY.map(f => f.id),
+  'City Manager': ['dashboard','leads','customers','bookings','jobs','calendar','invoices','payments','reports','users'],
+  'Support Agent': ['dashboard','leads','customers','bookings','jobs'],
+  'Field Staff': ['dashboard','customers','bookings','jobs'],
+  'Finance': ['dashboard','invoices','payments','reports'],
+};
+
+const PermissionMatrix = ({ roleName }: { roleName: string }) => {
+  const permissions = ROLE_PERMISSIONS[roleName] || [];
+  const modules = FEATURE_REGISTRY.filter(f => f.sidebarVisibility);
+
+  return (
+    <div className="mt-4 max-h-[60vh] overflow-y-auto">
+      <p className="text-xs text-muted-foreground mb-4 bg-amber-50 border border-amber-200 rounded-md px-3 py-2">
+        ⚠️ Permissions are enforced at the backend route level. This matrix reflects the current access policy.
+      </p>
+      <div className="border rounded-lg overflow-hidden">
+        <table className="w-full text-sm">
+          <thead>
+            <tr className="bg-muted/50 border-b">
+              <th className="text-left font-semibold px-4 py-2.5 text-foreground">Module</th>
+              <th className="text-center font-semibold px-4 py-2.5 text-foreground">View</th>
+              <th className="text-center font-semibold px-4 py-2.5 text-foreground w-32 text-xs text-muted-foreground" colSpan={3}>
+                Create / Edit / Delete — Super Admin only
+              </th>
+            </tr>
+          </thead>
+          <tbody className="divide-y divide-border">
+            {modules.map(mod => {
+              const canAccess = permissions.includes(mod.id);
+              const isSuperAdmin = roleName === 'Super Admin';
+              return (
+                <tr key={mod.id} className={canAccess ? '' : 'opacity-40'}>
+                  <td className="px-4 py-2.5 font-medium text-foreground">{mod.name}</td>
+                  <td className="px-4 py-2.5 text-center">
+                    {canAccess
+                      ? <CheckCircle className="h-4 w-4 text-emerald-500 mx-auto" />
+                      : <XCircle className="h-4 w-4 text-slate-300 mx-auto" />}
+                  </td>
+                  <td className="px-2 py-2.5 text-center" colSpan={3}>
+                    {isSuperAdmin
+                      ? <span className="inline-flex items-center gap-1 text-xs text-emerald-600 font-medium"><CheckCircle className="h-3 w-3" />Full</span>
+                      : <span className="text-xs text-muted-foreground">—</span>}
+                  </td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
+};
 
 export const RolesList = () => {
   const { data: rolesResponse, isLoading, isError, error } = useRoles();
@@ -84,15 +141,9 @@ export const RolesList = () => {
             </DialogTrigger>
             <DialogContent className="max-w-2xl">
               <DialogHeader>
-                <DialogTitle>{row.name} - Permissions</DialogTitle>
+                <DialogTitle>{row.name} — Permission Matrix</DialogTitle>
               </DialogHeader>
-              <div className="py-6 flex flex-col items-center justify-center border-2 border-dashed rounded-lg bg-secondary/30 mt-4">
-                <Shield className="h-10 w-10 text-muted-foreground/50 mb-3" />
-                <h3 className="font-semibold text-lg">Matrix Configuration</h3>
-                <p className="text-sm text-muted-foreground text-center mt-1 max-w-sm">
-                  Detailed permission checkboxes for individual modules will be enabled in Phase 4.
-                </p>
-              </div>
+              <PermissionMatrix roleName={row.name} />
             </DialogContent>
           </Dialog>
         </div>
