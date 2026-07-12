@@ -46,19 +46,19 @@ export const Header = () => {
         
         {/* Hamburger and Breadcrumbs */}
         <div className="flex items-center gap-3">
-          <Button variant="ghost" size="icon" onClick={toggleSidebar} className="hidden lg:flex text-muted-foreground hover:text-foreground mr-1">
+          <Button aria-label="Toggle Sidebar" variant="ghost" size="icon" onClick={toggleSidebar} className="flex text-muted-foreground hover:text-foreground mr-1 lg:mr-3">
             <Menu className="h-5 w-5" />
           </Button>
 
-          <div className="flex items-center gap-2 text-sm text-muted-foreground hidden md:flex">
-            <span className="hover:text-foreground cursor-pointer transition-colors">Home</span>
-          {breadcrumbs.length > 0 && <ChevronRight className="h-4 w-4" />}
+          <div className="flex items-center gap-1.5 text-sm text-muted-foreground hidden md:flex font-medium">
+            <span className="hover:text-foreground cursor-pointer transition-colors px-1 rounded-sm hover:bg-muted/50">Home</span>
+          {breadcrumbs.length > 0 && <ChevronRight className="h-3.5 w-3.5 opacity-50" />}
           {breadcrumbs.map((crumb, idx) => (
-            <div key={crumb} className="flex items-center gap-2">
-              <span className={idx === breadcrumbs.length - 1 ? 'font-medium text-foreground' : 'hover:text-foreground cursor-pointer transition-colors'}>
+            <div key={crumb} className="flex items-center gap-1.5">
+              <span className={`px-1 rounded-sm ${idx === breadcrumbs.length - 1 ? 'text-foreground' : 'hover:text-foreground cursor-pointer transition-colors hover:bg-muted/50'}`}>
                 {crumb}
               </span>
-              {idx < breadcrumbs.length - 1 && <ChevronRight className="h-4 w-4" />}
+              {idx < breadcrumbs.length - 1 && <ChevronRight className="h-3.5 w-3.5 opacity-50" />}
             </div>
           ))}
           </div>
@@ -70,12 +70,13 @@ export const Header = () => {
             <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
             <Input
               type="search"
+              aria-label="Global Search"
               placeholder="Search leads, customers, jobs..."
-              className="w-full bg-muted/50 border-none pl-9 focus-visible:ring-1"
+              className="w-full bg-muted/30 border shadow-sm pl-9 hover:bg-muted/50 transition-colors focus-visible:ring-1"
             />
           </div>
 
-          <Button variant="ghost" size="icon" className="relative text-muted-foreground hover:text-foreground">
+          <Button aria-label="Notifications" variant="ghost" size="icon" className="relative text-muted-foreground hover:text-foreground">
             <Bell className="h-5 w-5" />
             <span className="absolute top-1.5 right-1.5 h-2 w-2 rounded-full bg-destructive border-2 border-background"></span>
           </Button>
@@ -88,10 +89,10 @@ export const Header = () => {
               <p className="text-sm font-medium leading-none">{userName}</p>
               <p className="text-xs text-muted-foreground mt-1">{userRole}</p>
             </div>
-            <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center text-primary">
+            <div className="h-8 w-8 rounded-full bg-muted flex items-center justify-center text-muted-foreground border shadow-sm">
               <UserIcon className="h-4 w-4" />
             </div>
-            <Button variant="ghost" size="icon" onClick={logout} className="text-muted-foreground hover:text-destructive transition-colors ml-2" title="Log out">
+            <Button aria-label="Log out" variant="ghost" size="icon" onClick={logout} className="text-muted-foreground hover:bg-destructive/10 hover:text-destructive transition-colors ml-1" title="Log out">
               <LogOut className="h-4 w-4" />
             </Button>
           </div>
