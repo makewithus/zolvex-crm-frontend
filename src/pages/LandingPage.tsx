@@ -13,7 +13,7 @@ export const LandingPage = () => {
       <header className="sticky top-0 z-50 bg-white border-b border-slate-200">
         <div className="max-w-[1400px] mx-auto px-6 h-[72px] flex items-center justify-between">
           <div className="flex items-center gap-2.5">
-            <div className="h-8 w-8 bg-[#1E293B] rounded-lg flex items-center justify-center font-bold text-white text-sm">Z</div>
+            <div className="h-8 w-8 bg-blue-600 rounded-lg flex items-center justify-center font-bold text-white text-sm">Z</div>
             <span className="font-extrabold text-slate-900 tracking-tight text-xl">ZOLVEX</span>
           </div>
           
@@ -334,7 +334,7 @@ export const LandingPage = () => {
          <div className="max-w-[1200px] mx-auto px-6 grid grid-cols-1 md:grid-cols-5 gap-10">
             <div className="md:col-span-2">
                <div className="flex items-center gap-2.5 mb-5">
-                 <div className="h-6 w-6 bg-[#0F172A] rounded-md flex items-center justify-center font-bold text-white text-xs">Z</div>
+                 <div className="h-6 w-6 bg-blue-600 rounded-md flex items-center justify-center font-bold text-white text-xs">Z</div>
                  <span className="font-extrabold text-[#0F172A] tracking-tight text-lg">ZOLVEX</span>
                </div>
                <p className="text-[14px] text-[#64748B] font-medium mb-10 max-w-[200px]">All-In-One CRM for Service Businesses.</p>
