@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { useInvoices } from '../hooks/useInvoices';
 import { Link } from 'react-router-dom';
 import { format } from 'date-fns';
@@ -6,20 +6,30 @@ import { InvoiceStatusBadge } from '../components/InvoiceStatusBadge';
 import { PaymentStatusBadge } from '../components/PaymentStatusBadge';
 import { FileText, Search, Filter } from 'lucide-react';
 import { Card, CardHeader, CardContent } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
 
 export const InvoiceList: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('');
+  const [page, setPage] = useState(1);
+  const limit = 10;
 
   const { data: invoices, isLoading } = useInvoices(
     statusFilter ? { status: statusFilter } : undefined
   );
 
-  const filteredInvoices = invoices?.filter((inv: any) =>
-    inv.invoice_number.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    inv.customer_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    inv.customer_phone.includes(searchTerm)
-  );
+  const filteredInvoices = useMemo(() => {
+    let invs = invoices || [];
+    invs = [...invs].sort((a: any, b: any) => new Date(b.created_at || b.issue_date || 0).getTime() - new Date(a.created_at || a.issue_date || 0).getTime());
+    return invs.filter((inv: any) =>
+      inv.invoice_number.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      inv.customer_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      inv.customer_phone.includes(searchTerm)
+    );
+  }, [invoices, searchTerm]);
+
+  const totalPages = Math.max(1, Math.ceil((filteredInvoices?.length || 0) / limit));
+  const paginatedInvoices = filteredInvoices?.slice((page - 1) * limit, page * limit) || [];
 
   return (
     <div className="p-6 max-w-7xl mx-auto space-y-6">
@@ -39,7 +49,7 @@ export const InvoiceList: React.FC = () => {
                 type="text"
                 placeholder="Search by invoice number, customer or phone..."
                 value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
+                onChange={(e) => { setSearchTerm(e.target.value); setPage(1); }}
                 className="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
               />
             </div>
@@ -48,7 +58,7 @@ export const InvoiceList: React.FC = () => {
                 <Filter className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
                 <select
                   value={statusFilter}
-                  onChange={(e) => setStatusFilter(e.target.value)}
+                  onChange={(e) => { setStatusFilter(e.target.value); setPage(1); }}
                   className="pl-10 pr-8 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm appearance-none bg-white"
                 >
                   <option value="">All Statuses</option>
@@ -90,7 +100,7 @@ export const InvoiceList: React.FC = () => {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-100">
-                  {filteredInvoices?.map((invoice: any) => (
+                  {paginatedInvoices.map((invoice: any) => (
                     <tr key={invoice.id} className="hover:bg-gray-50 transition-colors group">
                       <td className="px-6 py-4">
                         <span className="font-medium text-gray-900">{invoice.invoice_number}</span>
@@ -116,7 +126,7 @@ export const InvoiceList: React.FC = () => {
                       <td className="px-6 py-4 text-right">
                         <Link
                           to={`/invoices/${invoice.id}`}
-                          className="text-blue-600 hover:text-blue-800 font-medium text-sm transition-colors opacity-0 group-hover:opacity-100"
+                          className="text-blue-600 hover:text-blue-800 font-medium text-sm transition-colors"
                         >
                           View Details &rarr;
                         </Link>
@@ -125,6 +135,33 @@ export const InvoiceList: React.FC = () => {
                   ))}
                 </tbody>
               </table>
+            </div>
+          )}
+          {filteredInvoices && filteredInvoices.length > 0 && (
+            <div className="flex items-center justify-between px-6 py-4 border-t">
+              <p className="text-sm text-gray-500">
+                Showing <span className="font-medium">{(page - 1) * limit + 1}</span> to{' '}
+                <span className="font-medium">{Math.min(page * limit, filteredInvoices.length)}</span> of{' '}
+                <span className="font-medium">{filteredInvoices.length}</span> invoices
+              </p>
+              <div className="flex items-center gap-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setPage(p => Math.max(1, p - 1))}
+                  disabled={page <= 1}
+                >
+                  Previous
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setPage(p => p + 1)}
+                  disabled={page >= totalPages}
+                >
+                  Next
+                </Button>
+              </div>
             </div>
           )}
         </CardContent>
