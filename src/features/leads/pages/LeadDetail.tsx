@@ -193,7 +193,7 @@ export const LeadDetail = () => {
                     lead.history.map((event: any, index: number) => (
                       <div key={event.id} className="relative pl-4 pb-4 last:pb-0">
                         {/* Vertical line connector */}
-                        {index !== lead.history.length - 1 && (
+                        {index !== lead.history!.length - 1 && (
                           <div className="absolute left-[7px] top-4 bottom-0 w-[2px] bg-muted" />
                         )}
                         {/* Dot */}
