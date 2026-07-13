@@ -38,7 +38,6 @@ export const ConvertLeadDialog = ({ lead, isOpen, onClose }: Props) => {
         landmark: '',
         city_name: lead?.city?.name || '',
         postal_code: '',
-        state: 'Kerala',
         country: 'India',
         notes: '',
         special_instructions: '',
@@ -141,10 +140,10 @@ export const ConvertLeadDialog = ({ lead, isOpen, onClose }: Props) => {
                 {errors.postal_code && <p className="text-xs text-destructive">{errors.postal_code.message as string}</p>}
               </div>
             </div>
-            <div className="space-y-2">
-              <label className="text-sm font-medium">State <span className="text-destructive">*</span></label>
-              <Input {...register('state')} />
-              {errors.state && <p className="text-xs text-destructive">{errors.state.message as string}</p>}
+            <div className="space-y-2 col-span-2">
+              <p className="text-xs text-muted-foreground mt-2">
+                Note: The GST State is derived automatically based on the Lead's selected City profile.
+              </p>
             </div>
           </div>
 
