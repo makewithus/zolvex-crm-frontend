@@ -21,7 +21,6 @@ export const createBookingSchema = z.object({
   landmark: z.string().optional(),
   city_name: z.string().min(1, 'City name is required'),
   postal_code: z.string().min(1, 'Postal code is required'),
-  state: z.string().min(1, 'State is required'),
   country: z.string().default('India'),
   
   notes: z.string().optional(),
@@ -40,7 +39,6 @@ export const convertLeadToBookingSchema = z.object({
   landmark: z.string().optional(),
   city_name: z.string().min(1, 'City name is required'),
   postal_code: z.string().min(1, 'Postal code is required'),
-  state: z.string().min(1, 'State is required'),
   country: z.string().default('India'),
   
   notes: z.string().optional(),
