@@ -60,7 +60,8 @@ export const UserEditDialog = ({ user, open, onOpenChange }: UserEditDialogProps
       return;
     }
 
-    updateUser.mutate({ id: user.id, data }, {
+    const payload = { ...data, city_id: data.city_id || undefined };
+    updateUser.mutate({ id: user.id, data: payload }, {
       onSuccess: () => {
         toast.success('User updated successfully');
         onOpenChange(false);

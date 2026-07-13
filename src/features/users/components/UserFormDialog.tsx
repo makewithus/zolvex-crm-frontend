@@ -26,7 +26,8 @@ export const UserFormDialog = () => {
 
   const onSubmit = (data: UserFormData) => {
     setErrorMsg('');
-    createUser.mutate(data, {
+    const payload = { ...data, city_id: data.city_id || undefined };
+    createUser.mutate(payload, {
       onSuccess: () => {
         reset();
         setOpen(false);
