@@ -44,14 +44,7 @@ export const Login = () => {
         className="hidden lg:flex lg:w-[45%] flex-col justify-between pt-16 pl-16 pr-12 pb-12 relative overflow-hidden"
         style={{ backgroundColor: '#0f172a' }}
       >
-        {/* Subtle blueprint grid */}
-        <div
-          className="absolute inset-0 opacity-[0.02]"
-          style={{
-            backgroundImage: 'linear-gradient(#fff 1px, transparent 1px), linear-gradient(90deg, #fff 1px, transparent 1px)',
-            backgroundSize: '32px 32px'
-          }}
-        />
+
         {/* Logo */}
         <div className="relative z-10 flex items-center gap-3">
           <div className="h-10 w-10 bg-blue-600 rounded-none flex items-center justify-center font-bold text-white text-lg">Z</div>
