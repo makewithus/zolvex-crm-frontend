@@ -41,7 +41,7 @@ export const LandingPage = () => {
       </header>
 
       {/* 2. HERO SECTION */}
-      <section className="pt-32 pb-32 lg:min-h-[85vh] flex items-center px-6 overflow-hidden bg-gradient-to-br from-slate-50 via-blue-50/30 to-slate-50 relative">
+      <section className="pt-20 pb-16 lg:pt-32 lg:pb-32 lg:min-h-[85vh] flex items-center px-4 sm:px-6 overflow-hidden bg-gradient-to-br from-slate-50 via-blue-50/30 to-slate-50 relative">
         {/* Very subtle grid pattern */}
         <div className="absolute inset-0 bg-[linear-gradient(to_right,#e2e8f020_1px,transparent_1px),linear-gradient(to_bottom,#e2e8f020_1px,transparent_1px)] bg-[size:40px_40px] pointer-events-none" />
 
@@ -54,12 +54,12 @@ export const LandingPage = () => {
                 <Star className="h-3.5 w-3.5 text-yellow-500" /> All-In-One CRM for Service Businesses
               </div>
               
-              <h1 className="text-[48px] lg:text-[56px] xl:text-[60px] font-black text-slate-900 tracking-tight leading-[1.15] mb-6">
+              <h1 className="text-4xl sm:text-[48px] lg:text-[56px] xl:text-[60px] font-black text-slate-900 tracking-tight leading-[1.15] mb-6">
                 Run Your Business. <br/>
                 <span className="text-[#2563EB]">Delight Your Customers.</span>
               </h1>
               
-              <p className="text-[18px] text-slate-600 mb-10 leading-relaxed max-w-[540px]">
+              <p className="text-base sm:text-[18px] text-slate-600 mb-10 leading-relaxed max-w-[540px]">
                 Zolvex CRM helps service businesses manage leads, bookings, jobs, customers, payments, and team operations — all in one powerful platform.
               </p>
               
@@ -112,9 +112,9 @@ export const LandingPage = () => {
             </div>
 
             {/* Hero Right: Large Dashboard Image - overflows right like the reference */}
-            <div className="relative w-full mt-12 lg:mt-0">
-               {/* Container naturally scales up and overflows to the right */}
-               <div className="relative w-full sm:scale-105 lg:w-[120%] lg:-mr-[20%]">
+            <div className="relative w-full mt-10 lg:mt-0 flex justify-center">
+               {/* Container naturally scales up and overflows to the right on desktop, stays contained on mobile */}
+               <div className="relative w-full sm:w-11/12 md:w-full lg:w-[120%] lg:-mr-[20%]">
                  <img 
                    src="/image-das.jpeg" 
                    alt="Zolvex CRM Dashboard" 

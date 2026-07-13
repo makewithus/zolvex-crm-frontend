@@ -3,7 +3,7 @@ import { MainLayout } from '@/components/layouts/MainLayout';
 import { Dashboard } from '@/pages/Dashboard';
 import { LandingPage } from '@/pages/LandingPage';
 import { Login } from '@/features/auth';
-import { Navigate } from 'react-router-dom';
+import { Navigate, useLocation } from 'react-router-dom';
 import { CitiesList } from '@/features/cities';
 import { UsersList } from '@/features/users';
 import { RolesList } from '@/features/roles';
@@ -30,7 +30,11 @@ import { Settings } from '@/features/settings/pages/Settings';
 
 const PrivateRoute = ({ children }: { children: React.ReactNode }) => {
   const token = localStorage.getItem('token');
+  const location = useLocation();
   if (!token) {
+    if (location.pathname === '/') {
+      return <LandingPage />;
+    }
     return <Navigate to="/login" replace />;
   }
   return <>{children}</>;
