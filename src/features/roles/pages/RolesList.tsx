@@ -6,7 +6,7 @@ import { useRoles } from '../hooks/useRoles';
 import { Role } from '../types/role.types';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { Shield, Users, CheckCircle, XCircle } from 'lucide-react';
+import { Shield, Users, CheckCircle, XCircle, Info } from 'lucide-react';
 import { useState, useMemo } from 'react';
 import { FEATURE_REGISTRY } from '@/config/features';
 
@@ -23,44 +23,80 @@ const PermissionMatrix = ({ roleName }: { roleName: string }) => {
   const permissions = ROLE_PERMISSIONS[roleName] || [];
   const modules = FEATURE_REGISTRY.filter(f => f.sidebarVisibility);
 
+  let summary = 'Standard functional access.';
+  if (roleName === 'Super Admin') summary = 'Full System Access';
+  else if (roleName === 'Finance') summary = 'Invoices, Payments, Financial Reports';
+  else if (roleName === 'Technician') summary = 'Assigned Jobs, Assigned Customers, Dashboard';
+  else if (roleName === 'Field Staff') summary = 'Assigned Operational Data, Customers, Dashboard';
+  else if (roleName === 'Support Agent') summary = 'Operational Modules';
+  else if (roleName === 'City Manager') summary = 'Regional branch and staff oversight';
+
   return (
-    <div className="mt-4 max-h-[60vh] overflow-y-auto">
-      <p className="text-xs text-muted-foreground mb-4 bg-amber-50 border border-amber-200 rounded-md px-3 py-2">
-        ⚠️ Permissions are enforced at the backend route level. This matrix reflects the current access policy.
-      </p>
-      <div className="border rounded-lg overflow-hidden">
-        <table className="w-full text-sm">
-          <thead>
-            <tr className="bg-muted/50 border-b">
-              <th className="text-left font-semibold px-4 py-2.5 text-foreground">Module</th>
-              <th className="text-center font-semibold px-4 py-2.5 text-foreground">View</th>
-              <th className="text-center font-semibold px-4 py-2.5 text-foreground w-32 text-xs text-muted-foreground" colSpan={3}>
-                Create / Edit / Delete — Super Admin only
-              </th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-border">
-            {modules.map(mod => {
-              const canAccess = permissions.includes(mod.id);
-              const isSuperAdmin = roleName === 'Super Admin';
-              return (
-                <tr key={mod.id} className={canAccess ? '' : 'opacity-40'}>
-                  <td className="px-4 py-2.5 font-medium text-foreground">{mod.name}</td>
-                  <td className="px-4 py-2.5 text-center">
-                    {canAccess
-                      ? <CheckCircle className="h-4 w-4 text-emerald-500 mx-auto" />
-                      : <XCircle className="h-4 w-4 text-slate-300 mx-auto" />}
-                  </td>
-                  <td className="px-2 py-2.5 text-center" colSpan={3}>
-                    {isSuperAdmin
-                      ? <span className="inline-flex items-center gap-1 text-xs text-emerald-600 font-medium"><CheckCircle className="h-3 w-3" />Full</span>
-                      : <span className="text-xs text-muted-foreground">—</span>}
-                  </td>
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
+    <div className="mt-2 max-h-[65vh] overflow-y-auto space-y-6 pr-2">
+      <div className="flex items-start gap-3 p-3.5 rounded-lg bg-blue-50 border border-blue-200 text-blue-800 text-sm">
+        <Info className="w-5 h-5 mt-0.5 shrink-0 text-blue-600" />
+        <div>
+          <p className="font-semibold text-blue-900 mb-1">Backend Enforced RBAC</p>
+          <p className="leading-relaxed">
+            Permissions shown below are enforced by backend middleware and database authorization. This matrix is informational only and cannot be modified through the UI in Phase 0–10.
+          </p>
+        </div>
+      </div>
+
+      <div className="space-y-1.5">
+        <h4 className="font-semibold text-sm text-foreground">Role Summary</h4>
+        <p className="text-sm text-muted-foreground">{summary}</p>
+      </div>
+
+      <div className="space-y-3">
+        <h4 className="font-semibold text-sm text-foreground">Current Access Policy</h4>
+        <div className="border rounded-lg overflow-hidden bg-card">
+          <table className="w-full text-sm">
+            <thead>
+              <tr className="bg-muted/50 border-b">
+                <th className="text-left font-semibold px-4 py-3 text-foreground">Module</th>
+                <th className="text-center font-semibold px-4 py-3 text-foreground">View</th>
+                <th className="text-center font-semibold px-4 py-3 text-foreground">Create</th>
+                <th className="text-center font-semibold px-4 py-3 text-foreground">Edit</th>
+                <th className="text-center font-semibold px-4 py-3 text-foreground">Delete</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-border">
+              {modules.map(mod => {
+                const canView = permissions.includes(mod.id);
+                const isSuperAdmin = roleName === 'Super Admin';
+                
+                // Simplified CRUD mapping for visual matrix
+                let canCreate = canView && roleName !== 'Technician';
+                let canEdit = canView;
+                let canDelete = isSuperAdmin;
+
+                if (mod.id === 'reports' || mod.id === 'dashboard') {
+                   canCreate = false;
+                   canEdit = false;
+                }
+
+                return (
+                  <tr key={mod.id} className="hover:bg-muted/30 transition-colors">
+                    <td className="px-4 py-3 font-medium text-foreground">{mod.name}</td>
+                    <td className="px-4 py-3 text-center">
+                      {canView ? <CheckCircle className="h-4 w-4 text-emerald-500 mx-auto" /> : <XCircle className="h-4 w-4 text-slate-300 mx-auto" />}
+                    </td>
+                    <td className="px-4 py-3 text-center">
+                      {canCreate ? <CheckCircle className="h-4 w-4 text-emerald-500 mx-auto" /> : <XCircle className="h-4 w-4 text-slate-300 mx-auto" />}
+                    </td>
+                    <td className="px-4 py-3 text-center">
+                      {canEdit ? <CheckCircle className="h-4 w-4 text-emerald-500 mx-auto" /> : <XCircle className="h-4 w-4 text-slate-300 mx-auto" />}
+                    </td>
+                    <td className="px-4 py-3 text-center">
+                      {canDelete ? <CheckCircle className="h-4 w-4 text-emerald-500 mx-auto" /> : <XCircle className="h-4 w-4 text-slate-300 mx-auto" />}
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   );
