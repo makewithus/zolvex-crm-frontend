@@ -118,7 +118,7 @@ export const LandingPage = () => {
                  <img 
                    src="/image-das.jpeg" 
                    alt="Zolvex CRM Dashboard" 
-                   className="w-full h-auto block mix-blend-multiply object-contain"
+                   className="w-full h-auto block mix-blend-multiply object-contain rounded-2xl"
                  />
                </div>
             </div>
