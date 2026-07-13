@@ -4,7 +4,7 @@ import { PageHeader } from '@/components/ui-custom/PageHeader';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Building2, ReceiptText, Globe, Landmark, Briefcase, CheckCircle2, Info } from 'lucide-react';
+import { Building2, Landmark, CheckCircle2, Info } from 'lucide-react';
 import { toast } from 'sonner';
 import { apiClient } from '@/lib/axios';
 
@@ -20,9 +20,6 @@ const INDIAN_STATES = [
 const TABS = [
   { id: 'company', label: 'Company Information', icon: Building2 },
   { id: 'gst',     label: 'GST Configuration',   icon: Landmark   },
-  { id: 'invoice', label: 'Invoice Settings',     icon: ReceiptText },
-  { id: 'booking', label: 'Booking Settings',     icon: Briefcase  },
-  { id: 'regional', label: 'Currency & Timezone', icon: Globe      },
 ];
 
 export const Settings = () => {
@@ -133,22 +130,6 @@ export const Settings = () => {
                         disabled={!isSuperAdmin}
                       />
                     </div>
-                    <div className="space-y-2">
-                      <label className="text-sm font-medium">Legal Name</label>
-                      <Input defaultValue="Zolvex Services Private Limited" disabled={!isSuperAdmin} />
-                    </div>
-                    <div className="space-y-2">
-                      <label className="text-sm font-medium">Support Email</label>
-                      <Input type="email" defaultValue="support@zolvex.com" disabled={!isSuperAdmin} />
-                    </div>
-                    <div className="space-y-2">
-                      <label className="text-sm font-medium">Phone Number</label>
-                      <Input defaultValue="+91 99999 99999" disabled={!isSuperAdmin} />
-                    </div>
-                    <div className="space-y-2 md:col-span-2">
-                      <label className="text-sm font-medium">Registered Address</label>
-                      <Input defaultValue="123 Tech Park, Cyber City, Mumbai, Maharashtra 400001" disabled={!isSuperAdmin} />
-                    </div>
                   </div>
                 </CardContent>
               </Card>
@@ -228,96 +209,7 @@ export const Settings = () => {
               </Card>
             )}
 
-            {activeTab === 'invoice' && (
-              <Card>
-                <CardHeader>
-                  <CardTitle>Invoice Settings</CardTitle>
-                  <CardDescription>Configure numbering sequences and payment terms.</CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="grid md:grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                      <label className="text-sm font-medium">Invoice Prefix</label>
-                      <Input defaultValue="INV-" disabled={!isSuperAdmin} />
-                    </div>
-                    <div className="space-y-2">
-                      <label className="text-sm font-medium">Default Payment Terms (Days)</label>
-                      <Input type="number" defaultValue="7" disabled={!isSuperAdmin} />
-                    </div>
-                    <div className="space-y-2 md:col-span-2">
-                      <label className="text-sm font-medium">Invoice Footer Notes</label>
-                      <textarea
-                        className="flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                        defaultValue={"1. Payment is due within the stated due date.\n2. Please include invoice number on your check."}
-                        disabled={!isSuperAdmin}
-                      />
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            )}
 
-            {activeTab === 'booking' && (
-              <Card>
-                <CardHeader>
-                  <CardTitle>Booking Settings</CardTitle>
-                  <CardDescription>Configure scheduling limits and default durations.</CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="grid md:grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                      <label className="text-sm font-medium">Default Job Duration (Mins)</label>
-                      <Input type="number" defaultValue="60" disabled={!isSuperAdmin} />
-                    </div>
-                    <div className="space-y-2">
-                      <label className="text-sm font-medium">Buffer Time Between Jobs (Mins)</label>
-                      <Input type="number" defaultValue="30" disabled={!isSuperAdmin} />
-                    </div>
-                    <div className="space-y-2">
-                      <label className="text-sm font-medium">Operating Hours Start</label>
-                      <Input type="time" defaultValue="09:00" disabled={!isSuperAdmin} />
-                    </div>
-                    <div className="space-y-2">
-                      <label className="text-sm font-medium">Operating Hours End</label>
-                      <Input type="time" defaultValue="18:00" disabled={!isSuperAdmin} />
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            )}
-
-            {activeTab === 'regional' && (
-              <Card>
-                <CardHeader>
-                  <CardTitle>Currency & Timezone</CardTitle>
-                  <CardDescription>Regional settings for formatting and time calculation.</CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="grid md:grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                      <label className="text-sm font-medium">Base Currency</label>
-                      <select
-                        className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
-                        disabled={!isSuperAdmin}
-                      >
-                        <option value="INR">Indian Rupee (₹)</option>
-                        <option value="USD">US Dollar ($)</option>
-                      </select>
-                    </div>
-                    <div className="space-y-2">
-                      <label className="text-sm font-medium">System Timezone</label>
-                      <select
-                        className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
-                        disabled={!isSuperAdmin}
-                      >
-                        <option value="Asia/Kolkata">Asia/Kolkata (IST)</option>
-                        <option value="UTC">UTC</option>
-                      </select>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            )}
 
             {isSuperAdmin && (
               <div className="mt-6 flex justify-end">
