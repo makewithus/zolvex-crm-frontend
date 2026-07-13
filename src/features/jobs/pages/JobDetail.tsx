@@ -31,6 +31,8 @@ export const JobDetail = () => {
   const handlePhotoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
       const formData = new FormData();
+      const category = job!.status === 'Arrived' ? 'Before' : 'After';
+      formData.append('category', category);
       Array.from(e.target.files).forEach((file) => {
         formData.append('photos', file);
       });
@@ -59,7 +61,15 @@ export const JobDetail = () => {
       return <Button className={btnClass} onClick={() => updateStatus.mutate({ id: job.id, data: { status: 'Arrived' } })}>I Have Arrived</Button>;
     }
     if (job.status === 'Arrived') {
-      return <Button className={btnClass} onClick={() => updateStatus.mutate({ id: job.id, data: { status: 'Started' } })}>Start Work</Button>;
+      return (
+        <div className="space-y-3">
+          <input type="file" multiple accept="image/*" className="hidden" ref={fileInputRef} onChange={handlePhotoUpload} />
+          <Button variant="outline" className="w-full py-6 border-2 font-bold" onClick={() => fileInputRef.current?.click()} disabled={uploadPhotos.isPending}>
+            <Camera className="mr-2 h-5 w-5"/> {uploadPhotos.isPending ? 'Uploading...' : 'Upload Before Photos'}
+          </Button>
+          <Button className={btnClass} onClick={() => updateStatus.mutate({ id: job.id, data: { status: 'Started' } })}>Start Work</Button>
+        </div>
+      );
     }
     if (job.status === 'Started') {
       return (
