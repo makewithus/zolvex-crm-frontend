@@ -177,14 +177,23 @@ export const InvoiceDetail: React.FC = () => {
               <CardTitle className="text-sm">GST Breakdown</CardTitle>
             </CardHeader>
             <CardContent className="p-4 space-y-3">
-              <div className="flex justify-between text-sm">
-                <span className="text-gray-500">CGST ({Number(invoice.cgst_percent)}%)</span>
-                <span className="font-medium text-gray-900">₹{Number(invoice.cgst_amount).toLocaleString('en-IN')}</span>
-              </div>
-              <div className="flex justify-between text-sm">
-                <span className="text-gray-500">SGST ({Number(invoice.sgst_percent)}%)</span>
-                <span className="font-medium text-gray-900">₹{Number(invoice.sgst_amount).toLocaleString('en-IN')}</span>
-              </div>
+              {Number(invoice.igst_amount) > 0 ? (
+                <div className="flex justify-between text-sm">
+                  <span className="text-gray-500">IGST ({Number(invoice.igst_percent)}%)</span>
+                  <span className="font-medium text-gray-900">₹{Number(invoice.igst_amount).toLocaleString('en-IN')}</span>
+                </div>
+              ) : (
+                <>
+                  <div className="flex justify-between text-sm">
+                    <span className="text-gray-500">CGST ({Number(invoice.cgst_percent)}%)</span>
+                    <span className="font-medium text-gray-900">₹{Number(invoice.cgst_amount).toLocaleString('en-IN')}</span>
+                  </div>
+                  <div className="flex justify-between text-sm">
+                    <span className="text-gray-500">SGST ({Number(invoice.sgst_percent)}%)</span>
+                    <span className="font-medium text-gray-900">₹{Number(invoice.sgst_amount).toLocaleString('en-IN')}</span>
+                  </div>
+                </>
+              )}
               <div className="flex justify-between text-sm pt-3 border-t border-gray-100">
                 <span className="font-medium text-gray-700">Total GST</span>
                 <span className="font-bold text-gray-900">₹{Number(invoice.total_tax_amount).toLocaleString('en-IN')}</span>
