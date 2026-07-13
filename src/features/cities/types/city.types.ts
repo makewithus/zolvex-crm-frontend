@@ -7,6 +7,7 @@ export interface ServiceArea {
 export interface City {
   id: string;
   name: string;
+  state?: string;
   is_active: boolean;
   serviceAreas?: ServiceArea[];
 }
