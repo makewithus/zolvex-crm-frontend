@@ -12,7 +12,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { LoadingState } from '@/components/ui-custom/LoadingState';
 import { EmptyState } from '@/components/ui-custom/EmptyState';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { useLead, useAddLeadNote, useUpdateLead } from '../hooks/useLeads';
+import { useLead, useAddLeadNote, useUpdateLead, useLostReasons, useCreateLostReason } from '../hooks/useLeads';
 import { LeadStatus } from '../types/lead.types';
 import { ConvertLeadDialog } from '@/features/bookings/components/ConvertLeadDialog';
 import { toast } from 'sonner';
@@ -26,8 +26,12 @@ export const LeadDetail = () => {
   const { data: usersResponse } = useUsers();
   const users = usersResponse?.data || [];
   
+  const { data: lostReasonsResponse } = useLostReasons();
+  const lostReasons = lostReasonsResponse?.data || [];
+  
   const addNoteMutation = useAddLeadNote();
   const updateMutation = useUpdateLead();
+  const createLostReasonMutation = useCreateLostReason();
   const [noteText, setNoteText] = useState('');
   
   const [isStageOpen, setIsStageOpen] = useState(false);
@@ -35,6 +39,7 @@ export const LeadDetail = () => {
   const [isNoteOpen, setIsNoteOpen] = useState(false);
   
   const [newStage, setNewStage] = useState<LeadStatus | ''>('');
+  const [lostReasonText, setLostReasonText] = useState('');
   const [assignedTo, setAssignedTo] = useState('');
   const [isConvertOpen, setIsConvertOpen] = useState(false);
 
@@ -55,13 +60,36 @@ export const LeadDetail = () => {
     });
   };
 
-  const handleUpdateStage = () => {
+  const handleUpdateStage = async () => {
     if (!newStage) return;
-    updateMutation.mutate({ id: lead.id, data: { status: newStage } }, {
+    const updateData: any = { status: newStage };
+    
+    if (newStage === 'Lost') {
+      if (!lostReasonText.trim()) {
+        toast.error('Please enter a reason for losing this lead');
+        return;
+      }
+      
+      let reasonId = lostReasons.find((r: any) => r.reason_text.toLowerCase() === lostReasonText.trim().toLowerCase())?.id;
+      
+      if (!reasonId) {
+        try {
+          const res = await createLostReasonMutation.mutateAsync(lostReasonText.trim());
+          reasonId = res.data.id;
+        } catch (err: any) {
+          toast.error(err.response?.data?.message || 'Failed to create new lost reason');
+          return;
+        }
+      }
+      updateData.lost_reason_id = reasonId;
+    }
+
+    updateMutation.mutate({ id: lead.id, data: updateData }, {
       onSuccess: () => {
         toast.success('Stage updated successfully');
         setIsStageOpen(false);
         setNewStage('');
+        setLostReasonText('');
       },
       onError: (error: any) => {
         toast.error(error.response?.data?.message || 'Failed to update stage');
@@ -107,7 +135,25 @@ export const LeadDetail = () => {
                   <option value="Booked">Booked</option>
                   <option value="Lost">Lost</option>
                 </select>
-                <Button onClick={handleUpdateStage} disabled={!newStage || updateMutation.isPending} className="w-full">Confirm Transition</Button>
+
+                {newStage === 'Lost' && (
+                  <div>
+                    <Input 
+                      list="lost-reasons" 
+                      placeholder="Type or select a reason..." 
+                      value={lostReasonText} 
+                      onChange={e => setLostReasonText(e.target.value)}
+                      className="bg-background"
+                    />
+                    <datalist id="lost-reasons">
+                      {lostReasons.map((r: any) => (
+                        <option key={r.id} value={r.reason_text} />
+                      ))}
+                    </datalist>
+                  </div>
+                )}
+
+                <Button onClick={handleUpdateStage} disabled={!newStage || (newStage === 'Lost' && !lostReasonText.trim()) || updateMutation.isPending || createLostReasonMutation.isPending} className="w-full">Confirm Transition</Button>
               </div>
             </DialogContent>
           </Dialog>

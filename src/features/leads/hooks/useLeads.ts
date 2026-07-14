@@ -46,3 +46,20 @@ export const useAddLeadNote = () => {
     }
   });
 };
+
+export const useLostReasons = () => {
+  return useQuery({
+    queryKey: ['lostReasons'],
+    queryFn: api.getLostReasons
+  });
+};
+
+export const useCreateLostReason = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: api.createLostReason,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['lostReasons'] });
+    }
+  });
+};

@@ -26,3 +26,13 @@ export const addLeadNote = async ({ id, note_text }: { id: string; note_text: st
   const res = await apiClient.post(`/leads/${id}/notes`, { note_text });
   return res.data;
 };
+
+export const getLostReasons = async () => {
+  const res = await apiClient.get('/lost-reasons');
+  return res.data;
+};
+
+export const createLostReason = async (reason_text: string) => {
+  const res = await apiClient.post('/lost-reasons', { reason_text });
+  return res.data;
+};
