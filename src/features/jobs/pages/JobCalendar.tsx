@@ -275,7 +275,7 @@ export const JobCalendar = () => {
               {/* Empty state banner */}
               {activeJobCount === 0 && !isLoading && (
                 <div className="absolute top-16 left-1/2 -translate-x-1/2 whitespace-nowrap z-20 pointer-events-none">
-                  <div className="bg-slate-800 text-slate-100 text-sm px-4 py-2 rounded-full shadow-lg text-center">
+                  <div className="bg-slate-900 border border-slate-800 text-slate-100 text-sm px-4 py-2 rounded shadow-none text-center">
                     <p>No active jobs for {format(parseISO(currentDateParam), 'EEEE, MMM d')}.</p>
                     {isDev && <p className="text-xs text-slate-400 mt-0.5">Dev: Check timezone boundary if jobs exist.</p>}
                   </div>

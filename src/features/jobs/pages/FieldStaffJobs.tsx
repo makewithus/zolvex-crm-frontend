@@ -15,14 +15,14 @@ export const FieldStaffJobs = () => {
 
   return (
     <div className="min-h-screen bg-slate-50 pb-20">
-      <div className="bg-primary text-primary-foreground px-4 py-6 shadow-md">
+      <div className="bg-primary text-primary-foreground px-4 py-6 border-b border-slate-200/20 shadow-none">
         <h1 className="text-2xl font-bold">My Jobs</h1>
         <p className="text-primary-foreground/80 text-sm mt-1">Today's Schedule</p>
       </div>
 
       <div className="p-4 space-y-4">
         {jobs?.length === 0 ? (
-          <div className="text-center py-10 bg-white rounded-xl border border-slate-100 shadow-sm">
+          <div className="text-center py-10 bg-white rounded border border-slate-200 shadow-none">
             <CalendarIcon className="mx-auto h-12 w-12 text-slate-300 mb-3" />
             <p className="text-slate-500 font-medium">No jobs assigned today.</p>
           </div>
@@ -31,14 +31,14 @@ export const FieldStaffJobs = () => {
             <div 
               key={job.id} 
               onClick={() => navigate(`/jobs/${job.id}`)}
-              className="bg-white rounded-xl p-4 shadow-sm border border-slate-100 active:scale-[0.98] transition-transform cursor-pointer relative overflow-hidden"
+              className="bg-white rounded p-4 shadow-none border border-slate-200 active:scale-[0.99] transition-all cursor-pointer relative overflow-hidden"
             >
               <div className="flex justify-between items-start mb-3">
                 <div>
-                  <Badge variant="outline" className="mb-2 bg-slate-50">{job.priority}</Badge>
+                  <Badge variant="outline" className="mb-2 bg-slate-50 rounded">{job.priority}</Badge>
                   <h3 className="font-bold text-lg text-slate-800">{job.booking?.service?.name || 'Service'}</h3>
                 </div>
-                <Badge className="capitalize text-xs">{job.status}</Badge>
+                <Badge className="capitalize text-xs rounded">{job.status}</Badge>
               </div>
 
               <div className="space-y-2 text-sm text-slate-600">

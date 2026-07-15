@@ -49,7 +49,7 @@ export const JobDetail = () => {
   const renderFieldStaffActions = () => {
     if (!isFieldStaff) return null;
 
-    const btnClass = "w-full py-6 text-lg font-bold rounded-xl shadow-lg";
+    const btnClass = "w-full py-4 text-sm font-semibold rounded shadow-none";
 
     if (job.status === 'Assigned') {
       return <Button className={btnClass} onClick={() => updateStatus.mutate({ id: job.id, data: { status: 'Accepted' } })}>Accept Job</Button>;
@@ -64,8 +64,8 @@ export const JobDetail = () => {
       return (
         <div className="space-y-3">
           <input type="file" multiple accept="image/*" className="hidden" ref={fileInputRef} onChange={handlePhotoUpload} />
-          <Button variant="outline" className="w-full py-6 border-2 font-bold" onClick={() => fileInputRef.current?.click()} disabled={uploadPhotos.isPending}>
-            <Camera className="mr-2 h-5 w-5"/> {uploadPhotos.isPending ? 'Uploading...' : 'Upload Before Photos'}
+          <Button variant="outline" className="w-full py-4 border font-semibold rounded shadow-none" onClick={() => fileInputRef.current?.click()} disabled={uploadPhotos.isPending}>
+            <Camera className="mr-2 h-4 w-4"/> {uploadPhotos.isPending ? 'Uploading...' : 'Upload Before Photos'}
           </Button>
           <Button className={btnClass} onClick={() => updateStatus.mutate({ id: job.id, data: { status: 'Started' } })}>Start Work</Button>
         </div>
@@ -75,8 +75,8 @@ export const JobDetail = () => {
       return (
         <div className="space-y-3">
           <input type="file" multiple accept="image/*" className="hidden" ref={fileInputRef} onChange={handlePhotoUpload} />
-          <Button variant="outline" className="w-full py-6 border-2 font-bold" onClick={() => fileInputRef.current?.click()} disabled={uploadPhotos.isPending}>
-            <Camera className="mr-2 h-5 w-5"/> {uploadPhotos.isPending ? 'Uploading...' : 'Upload Final Photos'}
+          <Button variant="outline" className="w-full py-4 border font-semibold rounded shadow-none" onClick={() => fileInputRef.current?.click()} disabled={uploadPhotos.isPending}>
+            <Camera className="mr-2 h-4 w-4"/> {uploadPhotos.isPending ? 'Uploading...' : 'Upload Final Photos'}
           </Button>
           <Button className={btnClass} onClick={() => updateStatus.mutate({ id: job.id, data: { status: 'Completed', completionNotes: 'Work finished' } })}>Complete Job</Button>
         </div>
@@ -90,15 +90,15 @@ export const JobDetail = () => {
       
       {/* Header */}
       <div className={isFieldStaff ? "bg-white px-4 py-4 border-b flex items-center gap-4 sticky top-0 z-10" : "flex items-center gap-4 mb-6"}>
-        <Button variant="ghost" size="icon" onClick={() => navigate(-1)} className={isFieldStaff ? "h-10 w-10 bg-slate-100 rounded-full" : ""}>
-          <ArrowLeft className="h-5 w-5" />
+        <Button variant="ghost" size="icon" onClick={() => navigate(-1)} className={isFieldStaff ? "h-9 w-9 bg-slate-100 rounded" : ""}>
+          <ArrowLeft className="h-4 w-4" />
         </Button>
         <div>
           <h1 className="text-xl font-bold">{job.job_id}</h1>
           <p className="text-sm text-muted-foreground">{job.booking?.service_name}</p>
         </div>
         <div className="ml-auto">
-          <Badge className="text-sm px-3 py-1">{job.status}</Badge>
+          <Badge className="text-sm px-3 py-1 rounded">{job.status}</Badge>
         </div>
       </div>
 
@@ -106,7 +106,7 @@ export const JobDetail = () => {
         
         {/* Main Info */}
         <div className={`space-y-6 ${isFieldStaff ? '' : 'md:col-span-2'}`}>
-          <div className="bg-white rounded-xl p-5 shadow-sm border">
+          <div className="bg-white rounded p-5 shadow-none border">
             <h3 className="font-semibold text-lg mb-4 flex items-center gap-2"><MapPin className="text-primary h-5 w-5"/> Location</h3>
             <p className="font-medium">{job.booking?.customer_name}</p>
             <p className="text-slate-600 mt-1">{job.booking?.address_line_1}, {job.booking?.area}</p>
@@ -118,7 +118,7 @@ export const JobDetail = () => {
             </div>
           </div>
 
-          <div className="bg-white rounded-xl p-5 shadow-sm border">
+          <div className="bg-white rounded p-5 shadow-none border">
             <h3 className="font-semibold text-lg mb-4 flex items-center gap-2"><Clock className="text-primary h-5 w-5"/> Timeline</h3>
             <div className="grid grid-cols-2 gap-4 text-sm">
               <div>
@@ -142,7 +142,7 @@ export const JobDetail = () => {
         {/* Sidebar / Secondary Info */}
         <div className="space-y-6">
           {canAssign && (
-            <div className="bg-white rounded-xl p-5 shadow-sm border">
+            <div className="bg-white rounded p-5 shadow-none border">
               <h3 className="font-semibold mb-4 flex items-center gap-2"><User className="text-primary h-5 w-5"/> Assignment</h3>
               {job.assignedUser ? (
                 <div>
@@ -161,7 +161,7 @@ export const JobDetail = () => {
                 <DialogContent>
                   <DialogHeader><DialogTitle>Assign Technician</DialogTitle></DialogHeader>
                   <div className="space-y-4 py-4">
-                    <select className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50" value={assignedTo} onChange={e => setAssignedTo(e.target.value)}>
+                    <select className="flex h-10 w-full rounded border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50" value={assignedTo} onChange={e => setAssignedTo(e.target.value)}>
                       <option value="">Select Technician...</option>
                       {usersResponse?.data?.map((u: any) => (
                         <option key={u.id} value={u.id}>{u.name} ({u.role?.name || 'User'})</option>
@@ -170,7 +170,7 @@ export const JobDetail = () => {
                     <Button 
                       onClick={() => assignJob.mutate({ id: job.id, data: { assigned_user_id: assignedTo } }, { onSuccess: () => setIsAssignOpen(false) })} 
                       disabled={!assignedTo || assignJob.isPending} 
-                      className="w-full"
+                      className="w-full rounded"
                     >
                       Confirm Assignment
                     </Button>
@@ -180,13 +180,13 @@ export const JobDetail = () => {
             </div>
           )}
 
-          <div className="bg-white rounded-xl p-5 shadow-sm border mb-6">
+          <div className="bg-white rounded p-5 shadow-none border mb-6">
              <h3 className="font-semibold mb-3 flex items-center gap-2"><ImageIcon className="text-primary h-5 w-5"/> Photos</h3>
              {job.media && job.media.length > 0 ? (
                <div className="grid grid-cols-2 gap-2 mt-2">
                  {job.media.map((m: any) => (
                    <a key={m.id} href={m.url} target="_blank" rel="noreferrer">
-                     <img src={m.url} alt="Job media" className="rounded-md w-full h-24 object-cover border" />
+                     <img src={m.url} alt="Job media" className="rounded w-full h-24 object-cover border" />
                    </a>
                  ))}
                </div>
@@ -195,7 +195,7 @@ export const JobDetail = () => {
              )}
           </div>
 
-          <div className="bg-white rounded-xl p-5 shadow-sm border">
+          <div className="bg-white rounded p-5 shadow-none border">
              <h3 className="font-semibold mb-3 flex items-center gap-2"><FileText className="text-primary h-5 w-5"/> Notes</h3>
              {job.internal_notes ? <p className="text-sm">{job.internal_notes}</p> : <p className="text-sm text-slate-500 italic">No notes provided</p>}
           </div>

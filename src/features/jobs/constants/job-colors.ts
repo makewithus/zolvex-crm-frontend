@@ -7,7 +7,7 @@ export const JOB_STATUS_COLORS: Record<string, { bg: string, text: string, borde
   Started: { bg: 'bg-purple-50', text: 'text-purple-700', border: 'border-purple-200' },
   Completed: { bg: 'bg-green-50', text: 'text-green-700', border: 'border-green-200' },
   Cancelled: { bg: 'bg-red-50', text: 'text-red-700', border: 'border-red-200' },
-  Failed: { bg: 'bg-red-100', text: 'text-red-800', border: 'border-red-300' },
+  Failed: { bg: 'bg-red-50', text: 'text-red-750', border: 'border-red-200' },
   NoAccess: { bg: 'bg-red-50', text: 'text-red-700', border: 'border-red-200' },
   CustomerNotAvailable: { bg: 'bg-red-50', text: 'text-red-700', border: 'border-red-200' },
   Rescheduled: { bg: 'bg-slate-100', text: 'text-slate-700', border: 'border-slate-200' },
