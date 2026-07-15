@@ -99,25 +99,21 @@ export const Dashboard = () => {
       label: 'Total Leads',
       value: kpis?.total_leads ?? '—',
       icon: Target,
-      wrapperClass: 'bg-blue-50 text-blue-600',
     },
     {
       label: 'Customers',
       value: kpis?.total_customers ?? '—',
       icon: Users,
-      wrapperClass: 'bg-emerald-50 text-emerald-600',
     },
     {
       label: 'Active Bookings',
       value: kpis?.active_bookings ?? '—',
       icon: Calendar,
-      wrapperClass: 'bg-indigo-50 text-indigo-600',
     },
     {
       label: 'Jobs Today',
       value: kpis?.jobs_today ?? '—',
       icon: Briefcase,
-      wrapperClass: 'bg-amber-50 text-amber-600',
     },
     {
       label: 'Booked Value',
@@ -125,76 +121,71 @@ export const Dashboard = () => {
         ? (revenue ? `₹${Number(revenue.mtd_revenue).toLocaleString('en-IN')}` : '—')
         : null,
       icon: DollarSign,
-      wrapperClass: 'bg-purple-50 text-purple-600',
     },
   ].filter(c => c.value !== null);
 
   return (
     <PageContainer>
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-3 mb-6">
         <PageHeader
           title="Overview"
           description="Live view of your CRM pipeline, bookings, and operations."
         />
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2">
           {hasAccess('/bookings') && (
-            <Button variant="outline" className="h-10 px-4 rounded-md font-semibold text-slate-700 bg-white border-slate-300 hover:bg-slate-50 shadow-sm" onClick={() => navigate('/bookings')}>
-              <Calendar className="h-4 w-4 mr-2 text-indigo-600" /> Bookings
+            <Button variant="outline" className="h-8 px-3 rounded text-[13px] font-medium text-slate-700 bg-white border-slate-300 hover:bg-slate-50 shadow-none" onClick={() => navigate('/bookings')}>
+              <Calendar className="h-3.5 w-3.5 mr-1.5 text-slate-500" /> Bookings
             </Button>
           )}
           {hasAccess('/leads') && (
-            <Button className="h-10 px-4 rounded-md font-semibold text-white bg-blue-600 hover:bg-blue-700 shadow-sm" onClick={() => navigate('/leads/new')}>
-              <Plus className="h-4 w-4 mr-2 text-white" /> New Lead
+            <Button className="h-8 px-3 rounded text-[13px] font-medium text-white bg-slate-900 hover:bg-slate-800 shadow-none" onClick={() => navigate('/leads/new')}>
+              <Plus className="h-3.5 w-3.5 mr-1.5 text-white" /> New Lead
             </Button>
           )}
         </div>
       </div>
 
       {/* Live KPI Row */}
-      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-5 mb-8">
+      <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-5 mb-6">
         {kpisLoading
           ? Array.from({ length: 4 }).map((_, i) => (
-              <Card key={i} className="shadow-sm border-slate-200 rounded-xl h-[120px] animate-pulse">
-                <CardContent className="p-6">
-                  <div className="h-5 bg-slate-100 rounded w-20 mb-4" />
-                  <div className="h-8 bg-slate-100 rounded w-24" />
+              <Card key={i} className="shadow-none border-slate-200 rounded h-[76px] bg-white animate-pulse">
+                <CardContent className="p-3">
+                  <div className="h-4 bg-slate-100 rounded w-16 mb-2" />
+                  <div className="h-6 bg-slate-100 rounded w-20" />
                 </CardContent>
               </Card>
             ))
-          : kpiCards.map(({ label, value, icon: Icon, wrapperClass }) => (
-              <Card key={label} className="shadow-sm border-slate-200 rounded-xl h-[120px]">
-                <CardHeader className="flex flex-row items-center justify-between p-6 pb-2 space-y-0">
-                  <CardTitle className="text-[14px] font-medium text-slate-500">{label}</CardTitle>
-                  <div className={`h-8 w-8 rounded-lg flex items-center justify-center ${wrapperClass}`}>
-                    <Icon className="h-4 w-4" />
-                  </div>
+          : kpiCards.map(({ label, value, icon: Icon }) => (
+              <Card key={label} className="shadow-none border-slate-200 rounded h-[76px] bg-white">
+                <CardHeader className="flex flex-row items-center justify-between p-3 pb-1 space-y-0">
+                  <CardTitle className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">{label}</CardTitle>
+                  <Icon className="h-3.5 w-3.5 text-slate-400" />
                 </CardHeader>
-                <CardContent className="px-6 pb-6">
-                  <div className="text-[36px] font-bold text-slate-900 tracking-tight leading-none mt-1">{value}</div>
+                <CardContent className="px-3 pb-3">
+                  <div className="text-xl font-bold text-slate-900 tracking-tight leading-none">{value}</div>
                 </CardContent>
               </Card>
             ))}
       </div>
 
       {/* Row 1: Activity & Upcoming Bookings */}
-      <div className="grid gap-6 md:grid-cols-2 mb-6">
+      <div className="grid gap-4 md:grid-cols-2 mb-4">
         {/* Recent Activity */}
-        <Card className="shadow-sm border-slate-200 rounded-xl flex flex-col">
-          <CardHeader className="p-6 border-b border-slate-100 pb-4">
-            <div className="flex items-center gap-3">
-              <div className="h-8 w-8 rounded-md bg-slate-100 flex items-center justify-center text-slate-600">
-                <Activity className="h-4 w-4" />
-              </div>
-              <CardTitle className="text-[16px] font-semibold text-slate-900">
+        <Card className="shadow-none border-slate-200 rounded flex flex-col bg-white">
+          <CardHeader className="p-3 border-b border-slate-100 pb-2">
+            <div className="flex items-center gap-2">
+              <Activity className="h-4 w-4 text-slate-500" />
+              <CardTitle className="text-[13px] font-bold text-slate-900">
                 Recent Activity
               </CardTitle>
             </div>
           </CardHeader>
           <CardContent className="p-0 flex-1">
             {activityLoading ? (
-              <div className="p-6 space-y-4">
+              <div className="p-3 space-y-2">
                 {Array.from({ length: 4 }).map((_, i) => (
-                  <div key={i} className="h-12 bg-slate-50 rounded animate-pulse" />
+                  <div key={i} className="h-10 bg-slate-50 rounded animate-pulse" />
                 ))}
               </div>
             ) : activity.length === 0 ? (
@@ -206,13 +197,13 @@ export const Dashboard = () => {
             ) : (
               <div className="divide-y divide-slate-100">
                 {activity.slice(0, 5).map((item: any, i: number) => (
-                  <div key={i} className="flex items-start gap-4 p-5 hover:bg-slate-50/50 transition-colors">
-                    <div className="mt-0.5 text-slate-400">
-                      {item.type === 'booking' ? <Calendar className="h-5 w-5" /> : <Briefcase className="h-5 w-5" />}
+                  <div key={i} className="flex items-center gap-3 py-2 px-3 hover:bg-slate-50/50 transition-colors">
+                    <div className="text-slate-400">
+                      {item.type === 'booking' ? <Calendar className="h-4 w-4" /> : <Briefcase className="h-4 w-4" />}
                     </div>
                     <div className="flex-1 min-w-0">
-                      <p className="text-[14px] font-medium text-slate-900 leading-tight truncate">{item.label}</p>
-                      <p className="text-[12px] text-slate-500 mt-1.5 font-medium tracking-wide uppercase">
+                      <p className="text-[13px] font-medium text-slate-900 leading-tight truncate">{item.label}</p>
+                      <p className="text-[11px] text-slate-400 mt-0.5">
                         {format(new Date(item.at), 'dd MMM, h:mm a')}
                       </p>
                     </div>
@@ -226,23 +217,21 @@ export const Dashboard = () => {
 
         {/* Upcoming Bookings */}
         {hasAccess('/bookings') && (
-          <Card className="shadow-sm border-slate-200 rounded-xl flex flex-col">
-            <CardHeader className="flex flex-row items-center justify-between p-6 border-b border-slate-100 pb-4">
-              <div className="flex items-center gap-3">
-                <div className="h-8 w-8 rounded-md bg-indigo-50 flex items-center justify-center text-indigo-600">
-                  <Calendar className="h-4 w-4" />
-                </div>
-                <CardTitle className="text-[16px] font-semibold text-slate-900">Upcoming Bookings</CardTitle>
+          <Card className="shadow-none border-slate-200 rounded flex flex-col bg-white">
+            <CardHeader className="flex flex-row items-center justify-between p-3 border-b border-slate-100 pb-2">
+              <div className="flex items-center gap-2">
+                <Calendar className="h-4 w-4 text-slate-500" />
+                <CardTitle className="text-[13px] font-bold text-slate-900">Upcoming Bookings</CardTitle>
               </div>
-              <button className="text-[13px] font-semibold text-indigo-600 hover:text-indigo-700 transition-colors" onClick={() => navigate('/bookings')}>
+              <button className="text-[12px] font-medium text-slate-600 hover:text-slate-900 transition-colors" onClick={() => navigate('/bookings')}>
                 View All
               </button>
             </CardHeader>
             <CardContent className="p-0 flex-1">
               {bookingsLoading ? (
-                <div className="p-6 space-y-4">
+                <div className="p-3 space-y-2">
                   {Array.from({ length: 4 }).map((_, i) => (
-                    <div key={i} className="h-16 bg-slate-50 rounded-lg animate-pulse" />
+                    <div key={i} className="h-12 bg-slate-50 rounded animate-pulse" />
                   ))}
                 </div>
               ) : upcomingBookings.length === 0 ? (
@@ -250,7 +239,6 @@ export const Dashboard = () => {
                   icon={Calendar} 
                   title="No upcoming bookings" 
                   description="There are no scheduled bookings for the next 48 hours." 
-                  // action="Schedule Booking"
                   onClick={() => navigate('/bookings')}
                 />
               ) : (
@@ -258,16 +246,16 @@ export const Dashboard = () => {
                   {upcomingBookings.slice(0, 5).map((b: any) => (
                     <div
                       key={b.id}
-                      className="flex items-center justify-between p-5 hover:bg-slate-50/50 cursor-pointer transition-colors"
+                      className="flex items-center justify-between py-2 px-3 hover:bg-slate-50/50 cursor-pointer transition-colors"
                       onClick={() => navigate(`/bookings/${b.id}`)}
                     >
                       <div className="min-w-0">
-                        <p className="text-[14px] font-semibold text-slate-900 truncate">{b.customer_name || 'Customer'}</p>
-                        <p className="text-[13px] text-slate-500 truncate mt-1">{b.service_name}</p>
+                        <p className="text-[13px] font-semibold text-slate-900 truncate leading-tight">{b.customer_name || 'Customer'}</p>
+                        <p className="text-[11px] text-slate-500 truncate mt-0.5">{b.service_name}</p>
                       </div>
-                      <div className="text-right shrink-0 ml-4">
-                        <p className="text-[13px] font-semibold text-slate-900">{format(new Date(b.scheduled_date), 'dd MMM')}</p>
-                        <p className="text-[12px] text-slate-500 mt-1 font-medium">{format(new Date(b.scheduled_date), 'h:mm a')}</p>
+                      <div className="text-right shrink-0 ml-3">
+                        <p className="text-[12px] font-semibold text-slate-900">{format(new Date(b.scheduled_date), 'dd MMM')}</p>
+                        <p className="text-[11px] text-slate-500 mt-0.5">{format(new Date(b.scheduled_date), 'h:mm a')}</p>
                       </div>
                     </div>
                   ))}
@@ -279,26 +267,24 @@ export const Dashboard = () => {
       </div>
 
       {/* Row 2: Leads & Jobs */}
-      <div className="grid gap-6 md:grid-cols-2 mb-6">
+      <div className="grid gap-4 md:grid-cols-2 mb-4">
         {/* Latest Leads */}
         {hasAccess('/leads') && (
-          <Card className="shadow-sm border-slate-200 rounded-xl flex flex-col">
-            <CardHeader className="flex flex-row items-center justify-between p-6 border-b border-slate-100 pb-4">
-              <div className="flex items-center gap-3">
-                <div className="h-8 w-8 rounded-md bg-blue-50 flex items-center justify-center text-blue-600">
-                  <Target className="h-4 w-4" />
-                </div>
-                <CardTitle className="text-[16px] font-semibold text-slate-900">Latest Leads</CardTitle>
+          <Card className="shadow-none border-slate-200 rounded flex flex-col bg-white">
+            <CardHeader className="flex flex-row items-center justify-between p-3 border-b border-slate-100 pb-2">
+              <div className="flex items-center gap-2">
+                <Target className="h-4 w-4 text-slate-500" />
+                <CardTitle className="text-[13px] font-bold text-slate-900">Latest Leads</CardTitle>
               </div>
-              <button className="text-[13px] font-semibold text-blue-600 hover:text-blue-700 transition-colors" onClick={() => navigate('/leads')}>
+              <button className="text-[12px] font-medium text-slate-600 hover:text-slate-900 transition-colors" onClick={() => navigate('/leads')}>
                 View All
               </button>
             </CardHeader>
             <CardContent className="p-0 flex-1">
               {leadsLoading ? (
-                <div className="p-6 space-y-4">
+                <div className="p-3 space-y-2">
                   {Array.from({ length: 4 }).map((_, i) => (
-                    <div key={i} className="h-16 bg-slate-50 rounded-lg animate-pulse" />
+                    <div key={i} className="h-12 bg-slate-50 rounded animate-pulse" />
                   ))}
                 </div>
               ) : latestLeads.length === 0 ? (
@@ -314,14 +300,14 @@ export const Dashboard = () => {
                   {latestLeads.map((lead: any) => (
                     <div
                       key={lead.id}
-                      className="flex items-center justify-between p-5 hover:bg-slate-50/50 cursor-pointer transition-colors"
+                      className="flex items-center justify-between py-2 px-3 hover:bg-slate-50/50 cursor-pointer transition-colors"
                       onClick={() => navigate(`/leads/${lead.id}`)}
                     >
                       <div className="min-w-0 flex-1">
-                        <p className="text-[14px] font-semibold text-slate-900 truncate">{lead.name || lead.phone}</p>
-                        <p className="text-[13px] text-slate-500 truncate mt-1">Source: {lead.source}</p>
+                        <p className="text-[13px] font-semibold text-slate-900 truncate leading-tight">{lead.name || lead.phone}</p>
+                        <p className="text-[11px] text-slate-500 truncate mt-0.5">Source: {lead.source}</p>
                       </div>
-                      <div className="ml-4 shrink-0">
+                      <div className="ml-3 shrink-0">
                         <StatusBadge status={getStatusColor(lead.status)} label={lead.status} />
                       </div>
                     </div>
@@ -334,23 +320,21 @@ export const Dashboard = () => {
 
         {/* Recent Jobs */}
         {hasAccess('/jobs') && (
-          <Card className="shadow-sm border-slate-200 rounded-xl flex flex-col">
-            <CardHeader className="flex flex-row items-center justify-between p-6 border-b border-slate-100 pb-4">
-              <div className="flex items-center gap-3">
-                <div className="h-8 w-8 rounded-md bg-amber-50 flex items-center justify-center text-amber-600">
-                  <Briefcase className="h-4 w-4" />
-                </div>
-                <CardTitle className="text-[16px] font-semibold text-slate-900">Recent Jobs</CardTitle>
+          <Card className="shadow-none border-slate-200 rounded flex flex-col bg-white">
+            <CardHeader className="flex flex-row items-center justify-between p-3 border-b border-slate-100 pb-2">
+              <div className="flex items-center gap-2">
+                <Briefcase className="h-4 w-4 text-slate-500" />
+                <CardTitle className="text-[13px] font-bold text-slate-900">Recent Jobs</CardTitle>
               </div>
-              <button className="text-[13px] font-semibold text-amber-600 hover:text-amber-700 transition-colors" onClick={() => navigate('/jobs')}>
+              <button className="text-[12px] font-medium text-slate-600 hover:text-slate-900 transition-colors" onClick={() => navigate('/jobs')}>
                 View All
               </button>
             </CardHeader>
             <CardContent className="p-0 flex-1">
               {jobsLoading ? (
-                <div className="p-6 space-y-4">
+                <div className="p-3 space-y-2">
                   {Array.from({ length: 4 }).map((_, i) => (
-                    <div key={i} className="h-16 bg-slate-50 rounded-lg animate-pulse" />
+                    <div key={i} className="h-12 bg-slate-50 rounded animate-pulse" />
                   ))}
                 </div>
               ) : recentJobs.length === 0 ? (
@@ -364,16 +348,16 @@ export const Dashboard = () => {
                   {recentJobs.map((job: any) => (
                     <div
                       key={job.id}
-                      className="flex items-center justify-between p-5 hover:bg-slate-50/50 cursor-pointer transition-colors"
+                      className="flex items-center justify-between py-2 px-3 hover:bg-slate-50/50 cursor-pointer transition-colors"
                       onClick={() => navigate(`/jobs/${job.id}`)}
                     >
                       <div className="min-w-0 flex-1">
-                        <p className="text-[14px] font-semibold text-slate-900 truncate">Job #{job.job_number || job.id.slice(0,6)}</p>
-                        <p className="text-[13px] text-slate-500 truncate mt-1">
+                        <p className="text-[13px] font-semibold text-slate-900 truncate leading-tight">Job #{job.job_number || job.id.slice(0,6)}</p>
+                        <p className="text-[11px] text-slate-500 truncate mt-0.5">
                           {job.booking?.customer_name || 'Customer'} • {job.booking?.service_name || 'Service'}
                         </p>
                       </div>
-                      <div className="ml-4 shrink-0 text-right">
+                      <div className="ml-3 shrink-0 text-right">
                         <StatusBadge status={getStatusColor(job.status)} label={job.status} />
                       </div>
                     </div>
@@ -387,34 +371,28 @@ export const Dashboard = () => {
 
       {/* Revenue summary — Super Admin / Finance only */}
       {canSeeRevenue && revenue && (
-        <div className="mt-6 mb-8">
-          <Card className="shadow-sm border-slate-200 rounded-xl overflow-hidden">
-            <CardHeader className="flex flex-row items-center justify-between p-6 bg-slate-50/50 border-b border-slate-100">
-              <div className="flex items-center gap-3">
-                <div className="h-8 w-8 rounded-md bg-purple-50 flex items-center justify-center text-purple-600">
-                  <DollarSign className="h-4 w-4" />
-                </div>
-                <CardTitle className="text-[18px] font-semibold text-slate-900">Revenue Overview</CardTitle>
+        <div className="mt-4">
+          <Card className="shadow-none border-slate-200 rounded overflow-hidden bg-white">
+            <CardHeader className="flex flex-row items-center justify-between p-3 border-b border-slate-100 bg-slate-50/50">
+              <div className="flex items-center gap-2">
+                <DollarSign className="h-4 w-4 text-slate-500" />
+                <CardTitle className="text-[13px] font-bold text-slate-900">Revenue Overview</CardTitle>
               </div>
-              <span className="text-[12px] font-semibold bg-white border border-slate-200 px-3 py-1 rounded-full text-slate-600 shadow-sm">Month to Date</span>
+              <span className="text-[11px] font-semibold bg-white border border-slate-200 px-2 py-0.5 rounded text-slate-600">Month to Date</span>
             </CardHeader>
-            <CardContent className="p-8 flex flex-col md:flex-row items-start md:items-center gap-12 bg-white">
+            <CardContent className="p-4 flex flex-col md:flex-row items-start md:items-center gap-6 bg-white">
               <div>
-                <p className="text-[40px] font-bold tracking-tight text-slate-900 leading-none">
+                <p className="text-2xl font-bold tracking-tight text-slate-900 leading-none">
                   ₹{Number(revenue.mtd_revenue).toLocaleString('en-IN')}
                 </p>
-                <div className="flex items-center gap-2 mt-4">
-                  
-                 
-                </div>
               </div>
               
-              <div className="hidden md:block h-16 w-px bg-slate-200"></div>
+              <div className="hidden md:block h-8 w-px bg-slate-200"></div>
 
               <div className="flex-1 max-w-[400px]">
-                 <p className="text-[15px] font-semibold text-slate-900">Performance Summary</p>
-                 <p className="text-[14px] text-slate-500 mt-2 leading-relaxed">
-                   Revenue generated from <strong className="text-slate-900 font-semibold">{revenue.completed_bookings_count}</strong> completed booking{revenue.completed_bookings_count !== 1 ? 's' : ''}. Ensure to follow up on pending invoices to maintain cash flow.
+                 <p className="text-[13px] font-semibold text-slate-900 leading-tight">Performance Summary</p>
+                 <p className="text-[12px] text-slate-500 mt-1 leading-relaxed">
+                   Revenue generated from <strong className="text-slate-950 font-semibold">{revenue.completed_bookings_count}</strong> completed booking{revenue.completed_bookings_count !== 1 ? 's' : ''}. Follow up on pending invoices to optimize cash flow.
                  </p>
               </div>
             </CardContent>
