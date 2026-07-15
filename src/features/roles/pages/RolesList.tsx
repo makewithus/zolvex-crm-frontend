@@ -155,7 +155,7 @@ export const RolesList = () => {
       key: 'permissions', 
       header: 'Permissions', 
       cell: (row) => (
-        <span className="text-sm font-medium px-2.5 py-1 bg-secondary text-secondary-foreground rounded-full border">
+        <span className="text-[11px] font-medium px-2 py-0.5 bg-secondary text-secondary-foreground rounded border">
           {row.name === 'Super Admin' ? 'All Access' : 'Custom Matrix'}
         </span>
       )
