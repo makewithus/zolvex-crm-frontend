@@ -22,7 +22,7 @@ export const ExportMenu = ({ domain, filters }: { domain: string; filters?: Reco
     <div className="relative inline-block text-left">
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="inline-flex items-center gap-2 justify-center px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-sm transition-colors"
+        className="inline-flex items-center gap-2 justify-center px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-slate-200 rounded hover:bg-gray-50 focus:outline-none focus:border-slate-400 focus:ring-0 shadow-none transition-colors"
       >
         <Download className="w-4 h-4" />
         Export
@@ -31,14 +31,14 @@ export const ExportMenu = ({ domain, filters }: { domain: string; filters?: Reco
       {isOpen && (
         <>
           <div className="fixed inset-0 z-10" onClick={() => setIsOpen(false)}></div>
-          <div className="absolute right-0 z-20 w-48 mt-2 origin-top-right bg-white border border-gray-200 rounded-md shadow-lg outline-none">
+          <div className="absolute right-0 z-20 w-48 mt-2 origin-top-right bg-white border border-slate-200 rounded shadow-none outline-none">
             <div className="py-1">
               <button
                 onClick={() => handleExport('csv')}
                 disabled={loadingFormat !== null}
                 className="flex w-full items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900 disabled:opacity-50"
               >
-                {loadingFormat === 'csv' ? <Loader2 className="w-4 h-4 animate-spin text-blue-500" /> : <FileSpreadsheet className="w-4 h-4 text-emerald-600" />}
+                {loadingFormat === 'csv' ? <Loader2 className="w-4 h-4 animate-spin text-slate-500" /> : <FileSpreadsheet className="w-4 h-4 text-slate-600" />}
                 Export as CSV
               </button>
               <button
@@ -46,7 +46,7 @@ export const ExportMenu = ({ domain, filters }: { domain: string; filters?: Reco
                 disabled={loadingFormat !== null}
                 className="flex w-full items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900 disabled:opacity-50"
               >
-                {loadingFormat === 'pdf' ? <Loader2 className="w-4 h-4 animate-spin text-blue-500" /> : <FileText className="w-4 h-4 text-rose-600" />}
+                {loadingFormat === 'pdf' ? <Loader2 className="w-4 h-4 animate-spin text-slate-500" /> : <FileText className="w-4 h-4 text-slate-600" />}
                 Export as PDF
               </button>
             </div>

@@ -28,10 +28,10 @@ export const GSTReport: React.FC = () => {
   const gst = data?.gst;
 
   const gstItems = [
-    { label: 'CGST', key: 'cgst' as const, color: 'text-blue-700', bg: 'bg-blue-50', border: 'border-blue-100', desc: 'Central Goods & Services Tax' },
-    { label: 'SGST', key: 'sgst' as const, color: 'text-violet-700', bg: 'bg-violet-50', border: 'border-violet-100', desc: 'State Goods & Services Tax' },
-    { label: 'IGST', key: 'igst' as const, color: 'text-orange-700', bg: 'bg-orange-50', border: 'border-orange-100', desc: 'Integrated Goods & Services Tax' },
-    { label: 'Total Tax', key: 'total_tax' as const, color: 'text-gray-900', bg: 'bg-gray-50', border: 'border-gray-200', desc: 'Total tax collected across all types' },
+    { label: 'CGST', key: 'cgst' as const, color: 'text-slate-800', bg: 'bg-slate-50', border: 'border-slate-200', desc: 'Central Goods & Services Tax' },
+    { label: 'SGST', key: 'sgst' as const, color: 'text-slate-800', bg: 'bg-slate-50', border: 'border-slate-200', desc: 'State Goods & Services Tax' },
+    { label: 'IGST', key: 'igst' as const, color: 'text-slate-800', bg: 'bg-slate-50', border: 'border-slate-200', desc: 'Integrated Goods & Services Tax' },
+    { label: 'Total Tax', key: 'total_tax' as const, color: 'text-slate-950', bg: 'bg-slate-50', border: 'border-slate-200', desc: 'Total tax collected across all types' },
   ];
 
   return (
@@ -50,13 +50,13 @@ export const GSTReport: React.FC = () => {
           </p>
         </div>
         <div className="flex items-center gap-4">
-          <div className="flex items-center gap-1 bg-gray-100 p-1 rounded-lg">
+          <div className="flex items-center gap-1 bg-slate-100 p-1 rounded">
             {PRESETS.map((p, i) => (
               <button
                 key={i}
                 onClick={() => setPreset(i)}
-                className={`px-3 py-1.5 text-xs font-medium rounded-md transition-colors ${
-                  preset === i ? 'bg-white shadow-sm text-gray-900' : 'text-gray-500 hover:text-gray-700'
+                className={`px-3 py-1.5 text-xs font-medium rounded transition-colors ${
+                  preset === i ? 'bg-white border border-slate-200 text-gray-900' : 'text-gray-500 hover:text-gray-700'
                 }`}
               >
                 {p.label}
@@ -72,7 +72,7 @@ export const GSTReport: React.FC = () => {
         {gstItems.map(item => (
           <Card key={item.key} className={`border ${item.border}`}>
             <CardContent className="p-5">
-              <div className={`w-10 h-10 ${item.bg} rounded-xl flex items-center justify-center mb-3`}>
+              <div className={`w-10 h-10 ${item.bg} rounded flex items-center justify-center mb-3`}>
                 <Receipt className={`w-5 h-5 ${item.color}`} />
               </div>
               <p className="text-xs text-gray-500 font-medium">{item.label}</p>
@@ -93,7 +93,7 @@ export const GSTReport: React.FC = () => {
       {!isLoading && gst && gst.total_tax === 0 && (
         <Card>
           <CardContent className="py-16 text-center">
-            <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gray-50 mb-4">
+            <div className="inline-flex items-center justify-center w-16 h-16 rounded bg-gray-50 mb-4">
               <FileText className="w-8 h-8 text-gray-300" />
             </div>
             <h3 className="text-base font-semibold text-gray-700 mb-1">No GST data for this period</h3>
@@ -114,7 +114,7 @@ export const GSTReport: React.FC = () => {
 
       {/* Drill-down */}
       <div className="flex gap-4 text-sm">
-        <Link to="/invoices" className="text-blue-600 hover:text-blue-800 flex items-center gap-1 font-medium transition-colors">
+        <Link to="/invoices" className="text-slate-800 hover:text-slate-950 flex items-center gap-1 font-medium transition-colors">
           View All Invoices <ChevronRight className="w-4 h-4" />
         </Link>
       </div>

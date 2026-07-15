@@ -24,7 +24,7 @@ const fmtMins = (mins: number) => {
 const UtilBar = ({ scheduled, actual }: { scheduled: number; actual: number }) => {
   const hasData = actual > 0;
   const pct = hasData && scheduled > 0 ? Math.min(100, Math.round((actual / scheduled) * 100)) : 0;
-  const color = pct >= 90 ? 'bg-emerald-500' : pct >= 70 ? 'bg-blue-500' : pct >= 50 ? 'bg-amber-500' : 'bg-red-400';
+  const color = pct >= 90 ? 'bg-emerald-600' : pct >= 70 ? 'bg-slate-700' : pct >= 50 ? 'bg-amber-500' : 'bg-rose-500';
 
   if (!hasData) {
     return <span className="text-xs text-gray-400 italic">No timing data</span>;
@@ -32,8 +32,8 @@ const UtilBar = ({ scheduled, actual }: { scheduled: number; actual: number }) =
 
   return (
     <div className="flex items-center gap-2">
-      <div className="flex-1 h-1.5 bg-gray-100 rounded-full overflow-hidden">
-        <div className={`h-full rounded-full ${color}`} style={{ width: `${pct}%` }} />
+      <div className="flex-1 h-1.5 bg-slate-100 rounded overflow-hidden">
+        <div className={`h-full rounded ${color}`} style={{ width: `${pct}%` }} />
       </div>
       <span className="text-xs text-gray-500 w-10 text-right">{pct}%</span>
     </div>
@@ -65,10 +65,10 @@ export const TechnicianReport: React.FC = () => {
           <p className="text-sm text-gray-500">Job completion, scheduled vs actual time per field staff.</p>
         </div>
         <div className="flex items-center gap-4">
-          <div className="flex items-center gap-1 bg-gray-100 p-1 rounded-lg">
+          <div className="flex items-center gap-1 bg-slate-100 p-1 rounded">
             {PRESETS.map((p, i) => (
               <button key={i} onClick={() => setPreset(i)}
-                className={`px-3 py-1.5 text-xs font-medium rounded-md transition-colors ${preset === i ? 'bg-white shadow-sm text-gray-900' : 'text-gray-500 hover:text-gray-700'}`}>
+                className={`px-3 py-1.5 text-xs font-medium rounded transition-colors ${preset === i ? 'bg-white border border-slate-200 text-gray-900' : 'text-gray-500 hover:text-gray-700'}`}>
                 {p.label}
               </button>
             ))}
@@ -111,7 +111,7 @@ export const TechnicianReport: React.FC = () => {
                       </td>
                       <td className="text-center py-3">
                         <span className="inline-flex items-center gap-1 font-semibold text-gray-900">
-                          <CheckCircle className="w-3.5 h-3.5 text-emerald-500" />
+                          <CheckCircle className="w-3.5 h-3.5 text-emerald-600" />
                           {stats.jobs_completed}
                         </span>
                       </td>

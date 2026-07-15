@@ -31,7 +31,7 @@ const SummaryCard = ({
           }
           <p className="text-xs text-gray-400 mt-1">{sub}</p>
         </div>
-        <div className={`p-3 rounded-xl ${bg}`}>
+        <div className={`p-3 rounded ${bg}`}>
           <Icon className={`w-5 h-5 ${color}`} />
         </div>
       </div>
@@ -71,13 +71,13 @@ export const FinancialReport: React.FC = () => {
         {/* Actions */}
         <div className="flex items-center gap-4">
           {/* Date Presets */}
-          <div className="flex items-center gap-1 bg-gray-100 p-1 rounded-lg">
+          <div className="flex items-center gap-1 bg-slate-100 p-1 rounded">
             {PRESETS.map((p, i) => (
               <button
                 key={i}
                 onClick={() => setPreset(i)}
-                className={`px-3 py-1.5 text-xs font-medium rounded-md transition-colors ${
-                  preset === i ? 'bg-white shadow-sm text-gray-900' : 'text-gray-500 hover:text-gray-700'
+                className={`px-3 py-1.5 text-xs font-medium rounded transition-colors ${
+                  preset === i ? 'bg-white border border-slate-200 text-gray-900' : 'text-gray-500 hover:text-gray-700'
                 }`}
               >
                 {p.label}
@@ -94,21 +94,21 @@ export const FinancialReport: React.FC = () => {
           title="Total Revenue"
           value={formatCurrency(revenue?.total_revenue ?? 0)}
           sub={`${revenue?.invoice_count ?? 0} issued invoices`}
-          icon={DollarSign} color="text-emerald-600" bg="bg-emerald-50"
+          icon={DollarSign} color="text-emerald-700" bg="bg-emerald-50 border border-emerald-100"
           loading={isLoading}
         />
         <SummaryCard
           title="Total Collections"
           value={formatCurrency(collections?.total_collected ?? 0)}
           sub={`${collections?.payment_count ?? 0} completed payments`}
-          icon={TrendingUp} color="text-blue-600" bg="bg-blue-50"
+          icon={TrendingUp} color="text-slate-800" bg="bg-slate-50 border border-slate-200"
           loading={isLoading}
         />
         <SummaryCard
           title="Outstanding"
           value={formatCurrency(outstanding?.total_outstanding ?? 0)}
           sub={`${outstanding?.outstanding_invoices_count ?? 0} invoices unpaid`}
-          icon={AlertCircle} color="text-amber-600" bg="bg-amber-50"
+          icon={AlertCircle} color="text-amber-700" bg="bg-amber-50 border border-amber-100"
           loading={isLoading}
         />
       </div>
@@ -129,12 +129,12 @@ export const FinancialReport: React.FC = () => {
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
               {[
-                { label: 'CGST', value: gst?.cgst ?? 0, color: 'text-blue-700', bg: 'bg-blue-50' },
-                { label: 'SGST', value: gst?.sgst ?? 0, color: 'text-violet-700', bg: 'bg-violet-50' },
-                { label: 'IGST', value: gst?.igst ?? 0, color: 'text-orange-700', bg: 'bg-orange-50' },
-                { label: 'Total Tax', value: gst?.total_tax ?? 0, color: 'text-gray-900', bg: 'bg-gray-100' },
+                { label: 'CGST', value: gst?.cgst ?? 0, color: 'text-slate-800', bg: 'bg-slate-50 border border-slate-200' },
+                { label: 'SGST', value: gst?.sgst ?? 0, color: 'text-slate-800', bg: 'bg-slate-50 border border-slate-200' },
+                { label: 'IGST', value: gst?.igst ?? 0, color: 'text-slate-800', bg: 'bg-slate-50 border border-slate-200' },
+                { label: 'Total Tax', value: gst?.total_tax ?? 0, color: 'text-slate-950', bg: 'bg-slate-100 border border-slate-200' },
               ].map(item => (
-                <div key={item.label} className={`${item.bg} rounded-xl p-4 text-center`}>
+                <div key={item.label} className={`${item.bg} rounded p-4 text-center`}>
                   <p className="text-xs font-medium text-gray-500 mb-1">{item.label}</p>
                   <p className={`text-xl font-bold ${item.color}`}>{formatCurrency(item.value)}</p>
                 </div>
@@ -146,10 +146,10 @@ export const FinancialReport: React.FC = () => {
 
       {/* Drill-down Links */}
       <div className="flex gap-4 text-sm">
-        <Link to="/invoices" className="text-blue-600 hover:text-blue-800 flex items-center gap-1 font-medium">
+        <Link to="/invoices" className="text-slate-800 hover:text-slate-950 flex items-center gap-1 font-medium transition-colors">
           View All Invoices <ChevronRight className="w-4 h-4" />
         </Link>
-        <Link to="/payments" className="text-blue-600 hover:text-blue-800 flex items-center gap-1 font-medium">
+        <Link to="/payments" className="text-slate-800 hover:text-slate-950 flex items-center gap-1 font-medium transition-colors">
           View All Payments <ChevronRight className="w-4 h-4" />
         </Link>
       </div>

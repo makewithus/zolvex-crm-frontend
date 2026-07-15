@@ -53,8 +53,8 @@ const StatusBar = ({
         <span className="text-muted-foreground">{label}</span>
         <span className="text-foreground">{count} <span className="text-muted-foreground/70 font-normal">({pct}%)</span></span>
       </div>
-      <div className="h-1.5 bg-muted rounded-full overflow-hidden">
-        <div className={`h-full rounded-full ${color}`} style={{ width: `${pct}%` }} />
+      <div className="h-1.5 bg-slate-100 rounded overflow-hidden">
+        <div className={`h-full rounded ${color}`} style={{ width: `${pct}%` }} />
       </div>
     </div>
   );
@@ -127,7 +127,7 @@ export const ReportsDashboard: React.FC = () => {
             <CardHeader className="pb-3">
               <div className="flex items-center justify-between">
                 <CardTitle className="text-base font-semibold text-gray-800">Bookings by Status</CardTitle>
-                <Link to="/reports/operational" className="text-xs text-blue-600 hover:underline flex items-center gap-0.5">
+                <Link to="/reports/operational" className="text-xs text-slate-800 hover:underline flex items-center gap-0.5">
                   View Report <ChevronRight className="w-3 h-3" />
                 </Link>
               </div>
@@ -147,10 +147,10 @@ export const ReportsDashboard: React.FC = () => {
                     count={count}
                     total={totalBookings}
                     color={
-                      status === 'Completed' ? 'bg-emerald-500' :
-                      status === 'Cancelled' ? 'bg-red-400' :
-                      status === 'InProgress' ? 'bg-blue-500' :
-                      'bg-amber-400'
+                      status === 'Completed' ? 'bg-emerald-600' :
+                      status === 'Cancelled' ? 'bg-rose-600' :
+                      status === 'InProgress' ? 'bg-slate-700' :
+                      'bg-amber-500'
                     }
                   />
                 ))
@@ -163,7 +163,7 @@ export const ReportsDashboard: React.FC = () => {
             <CardHeader className="pb-3">
               <div className="flex items-center justify-between">
                 <CardTitle className="text-base font-semibold text-gray-800">Jobs by Status</CardTitle>
-                <Link to="/reports/operational" className="text-xs text-blue-600 hover:underline flex items-center gap-0.5">
+                <Link to="/reports/operational" className="text-xs text-slate-800 hover:underline flex items-center gap-0.5">
                   View Report <ChevronRight className="w-3 h-3" />
                 </Link>
               </div>
@@ -183,11 +183,11 @@ export const ReportsDashboard: React.FC = () => {
                     count={count}
                     total={totalJobs}
                     color={
-                      status === 'Completed' ? 'bg-emerald-500' :
-                      status === 'Cancelled' ? 'bg-red-400' :
-                      status === 'Started' ? 'bg-blue-500' :
-                      status === 'Assigned' ? 'bg-indigo-500' :
-                      'bg-amber-400'
+                      status === 'Completed' ? 'bg-emerald-600' :
+                      status === 'Cancelled' ? 'bg-rose-600' :
+                      status === 'Started' ? 'bg-slate-700' :
+                      status === 'Assigned' ? 'bg-slate-500' :
+                      'bg-amber-500'
                     }
                   />
                 ))
