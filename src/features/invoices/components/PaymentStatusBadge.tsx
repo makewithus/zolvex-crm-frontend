@@ -16,7 +16,7 @@ export const PaymentStatusBadge: React.FC<Props> = ({ status }) => {
   };
 
   return (
-    <span className={`px-2.5 py-0.5 rounded-full text-xs font-medium border ${getStyle()}`}>
+    <span className={`px-2 py-0.5 rounded text-[11px] font-semibold border ${getStyle()}`}>
       {status}
     </span>
   );

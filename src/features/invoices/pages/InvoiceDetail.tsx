@@ -55,7 +55,7 @@ export const InvoiceDetail: React.FC = () => {
   return (
     <div className="p-6 max-w-5xl mx-auto space-y-6">
       <div className="flex items-center gap-4">
-        <Link to="/invoices" className="p-2 hover:bg-gray-100 rounded-full transition-colors">
+        <Link to="/invoices" className="p-2 hover:bg-gray-100 rounded transition-colors">
           <ArrowLeft className="w-5 h-5 text-gray-600" />
         </Link>
         <div>
@@ -73,7 +73,7 @@ export const InvoiceDetail: React.FC = () => {
             variant="outline" 
             onClick={handleDownload}
             disabled={isDownloading}
-            className="flex items-center gap-2"
+            className="flex items-center gap-2 rounded shadow-none"
           >
             <Download className="w-4 h-4" />
             {isDownloading ? 'Generating...' : 'Download PDF'}
@@ -83,7 +83,7 @@ export const InvoiceDetail: React.FC = () => {
             <Button 
               onClick={handleIssue} 
               disabled={isUpdating}
-              className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700"
+              className="flex items-center gap-2 bg-slate-900 hover:bg-slate-800 rounded shadow-none text-white"
             >
               <Send className="w-4 h-4" />
               Issue Invoice
@@ -91,7 +91,7 @@ export const InvoiceDetail: React.FC = () => {
           )}
 
           {invoice.status !== 'Draft' && (
-            <span className="flex items-center gap-1.5 text-sm font-medium text-emerald-600 bg-emerald-50 px-3 py-1.5 rounded-lg border border-emerald-200">
+            <span className="flex items-center gap-1.5 text-sm font-medium text-emerald-700 bg-emerald-50 px-3 py-1.5 rounded border border-emerald-100">
               <CheckCircle2 className="w-4 h-4" />
               Immutable Snapshot
             </span>
@@ -217,7 +217,7 @@ export const InvoiceDetail: React.FC = () => {
               {canRecordPayment && (
                 <div className="pt-3 border-t border-gray-100 mt-1">
                   <Button 
-                    className="w-full flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white"
+                    className="w-full flex items-center gap-2 bg-slate-900 hover:bg-slate-800 rounded shadow-none text-white"
                     onClick={() => setIsPaymentDialogOpen(true)}
                   >
                     <CreditCard className="w-4 h-4" />
@@ -242,7 +242,7 @@ export const InvoiceDetail: React.FC = () => {
                       <div className="absolute left-2.5 top-3 w-[1px] h-full bg-gray-200" />
                     )}
                     {/* Timeline dot */}
-                    <div className="absolute left-[7px] top-2 w-2 h-2 rounded-full bg-blue-500 ring-4 ring-white" />
+                    <div className="absolute left-[7px] top-2 w-2 h-2 rounded bg-slate-500 ring-4 ring-white" />
                     
                     <div className="text-sm font-medium text-gray-900">
                       {hist.action} <span className="text-gray-500 font-normal">to</span> {hist.to_status}
