@@ -89,7 +89,7 @@ export const PaymentsList: React.FC = () => {
                 ) : (
                   paginatedPayments.map(payment => (
                     <TableRow key={payment.id}>
-                      <TableCell className="font-medium text-blue-600">{payment.payment_number}</TableCell>
+                      <TableCell className="font-medium text-slate-800">{payment.payment_number}</TableCell>
                       <TableCell className="text-xs text-gray-500">{payment.invoice?.invoice_number ?? '—'}</TableCell>
                       <TableCell>{format(new Date(payment.payment_date), 'dd MMM yyyy')}</TableCell>
                       <TableCell>
@@ -97,14 +97,14 @@ export const PaymentsList: React.FC = () => {
                         <div className="text-xs text-gray-500">{payment.customer?.phone}</div>
                       </TableCell>
                       <TableCell>{payment.payment_method}</TableCell>
-                      <TableCell className="text-right font-medium text-emerald-600">
+                      <TableCell className="text-right font-medium text-slate-900">
                         ₹{Number(payment.amount).toLocaleString('en-IN')}
                       </TableCell>
                       <TableCell>
-                        <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
-                          payment.payment_status === 'Completed' ? 'bg-emerald-50 text-emerald-700' :
-                          payment.payment_status === 'Pending' ? 'bg-amber-50 text-amber-700' :
-                          'bg-red-50 text-red-700'
+                        <span className={`inline-flex items-center px-2 py-0.5 rounded text-[11px] font-semibold border ${
+                          payment.payment_status === 'Completed' ? 'bg-emerald-50 text-emerald-700 border-emerald-100' :
+                          payment.payment_status === 'Pending' ? 'bg-amber-50 text-amber-700 border-amber-100' :
+                          'bg-rose-50 text-rose-700 border-rose-100'
                         }`}>
                           {payment.payment_status}
                         </span>
