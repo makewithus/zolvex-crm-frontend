@@ -130,7 +130,7 @@ export default function CustomerDetail() {
                 { label: 'Tags', value: (
                   <div className="flex gap-2 flex-wrap mt-1">
                     {customer.tags && customer.tags.length > 0 ? customer.tags.map(tag => (
-                      <span key={tag} className="px-2 py-1 bg-secondary text-secondary-foreground text-xs rounded-full">
+                      <span key={tag} className="px-2 py-0.5 bg-secondary text-secondary-foreground text-[11px] font-medium rounded border">
                         {tag}
                       </span>
                     )) : <span className="text-sm text-muted-foreground italic">No tags assigned</span>}

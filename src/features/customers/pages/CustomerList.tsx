@@ -60,7 +60,7 @@ export default function CustomerList() {
       cell: (row) => (
         <div className="flex gap-1.5 flex-wrap items-center">
           {row.tags && row.tags.length > 0 ? row.tags.map((tag: string) => (
-            <span key={tag} className="px-2 py-0.5 bg-secondary text-secondary-foreground text-[11px] font-medium rounded-full border">
+            <span key={tag} className="px-2 py-0.5 bg-secondary text-secondary-foreground text-[11px] font-medium rounded border">
               {tag}
             </span>
           )) : (
