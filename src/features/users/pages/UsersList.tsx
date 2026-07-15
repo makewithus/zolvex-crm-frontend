@@ -55,7 +55,7 @@ export const UsersList = () => {
       key: 'role', 
       header: 'Security Role', 
       cell: (row) => (
-        <div className="flex items-center gap-1.5 text-sm font-medium px-2.5 py-1 bg-secondary text-secondary-foreground rounded-full border w-fit">
+        <div className="flex items-center gap-1.5 text-[11px] font-medium px-2 py-0.5 bg-secondary text-secondary-foreground rounded border w-fit">
           <Shield className="h-3 w-3" />
           {row.role.name}
         </div>
