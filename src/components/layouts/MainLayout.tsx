@@ -25,7 +25,7 @@ export const MainLayout = () => {
 
   return (
     <SidebarContext.Provider value={{ isCollapsed, toggleSidebar }}>
-      <div className="flex h-full flex-col bg-background overflow-hidden">
+      <div className="flex h-full flex-col bg-background overflow-hidden crm-app-container">
         <Header />
         <div className="flex flex-1 overflow-hidden min-h-0">
           <Sidebar />

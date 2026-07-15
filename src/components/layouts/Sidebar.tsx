@@ -64,38 +64,37 @@ export const Sidebar = () => {
 
   return (
     <aside
-      className={`flex-shrink-0 h-full overflow-y-auto transition-all duration-300 ease-in-out z-40 bg-white border-r border-slate-200 flex flex-col ${
+      className={`flex-shrink-0 h-full overflow-y-auto transition-all duration-300 ease-in-out z-40 bg-slate-50 border-r border-slate-200 flex flex-col ${
         isCollapsed
-          ? 'hidden lg:flex lg:w-[80px]'
-          : 'fixed inset-y-0 left-0 lg:static w-[260px] shadow-2xl lg:shadow-none'
+          ? 'hidden lg:flex lg:w-[64px]'
+          : 'fixed inset-y-0 left-0 lg:static w-[220px] lg:shadow-none'
       }`}
     >
       {/* Logo */}
-      <div className={`flex items-center gap-3 h-[72px] flex-shrink-0 ${isCollapsed ? 'justify-center px-4' : 'px-6 mt-2'}`}>
-        <div className="h-8 w-8 bg-blue-600 rounded-md flex-shrink-0 flex items-center justify-center font-bold text-white text-sm shadow-sm">Z</div>
+      <div className={`flex items-center gap-2 h-[48px] flex-shrink-0 border-b border-slate-200 ${isCollapsed ? 'justify-center px-2' : 'px-4'}`}>
+        <div className="h-6 w-6 bg-slate-800 rounded flex-shrink-0 flex items-center justify-center font-bold text-white text-[12px] shadow-sm">Z</div>
         {!isCollapsed && (
           <div>
-            <span className="font-bold text-slate-900 text-[16px] tracking-tight leading-none">ZOLVEX</span>
-            <p className="text-[10px] text-slate-500 mt-0.5 tracking-wide">CRM</p>
+            <span className="font-bold text-slate-800 text-[14px] tracking-tight leading-none">ZOLVEX CRM</span>
           </div>
         )}
       </div>
 
       {/* Navigation */}
-      <nav className="flex-1 overflow-y-auto py-2 space-y-4">
+      <nav className="flex-1 overflow-y-auto py-3 space-y-3">
         {SECTIONS.map((section) => {
           const allowedItems = section.items.filter(item => isAllowed(item.route));
           if (allowedItems.length === 0) return null;
 
           return (
-            <div key={section.title} className={isCollapsed ? 'px-4' : 'px-6'}>
+            <div key={section.title} className={isCollapsed ? 'px-2' : 'px-3'}>
               {!isCollapsed && (
-                <p className="mb-2 text-[12px] font-semibold text-slate-400 tracking-wider uppercase">
+                <p className="mb-1 px-2.5 text-[10px] font-bold text-slate-400 tracking-wider uppercase">
                   {section.title}
                 </p>
               )}
-              {isCollapsed && <div className="h-px bg-slate-200 my-4" />}
-              <div className="space-y-1">
+              {isCollapsed && <div className="h-px bg-slate-200 my-2" />}
+              <div className="space-y-0.5">
                 {allowedItems.map((item) => {
                   const isActive = location.pathname === item.route || (item.route !== '/' && location.pathname.startsWith(item.route));
                   return (
@@ -108,21 +107,15 @@ export const Sidebar = () => {
                           toggleSidebar();
                         }
                       }}
-                      className={`group relative flex items-center gap-3 rounded-md h-11 text-[14px] transition-colors ${
-                        isCollapsed ? 'justify-center px-0' : 'px-3'
+                      className={`group flex items-center gap-2.5 rounded h-8 text-[13px] transition-colors ${
+                        isCollapsed ? 'justify-center px-0' : 'px-2.5'
                       } ${
                         isActive
-                          ? 'bg-blue-50 text-blue-700 font-semibold'
-                          : 'text-slate-600 font-medium hover:bg-slate-50 hover:text-slate-900'
+                          ? 'bg-slate-200/80 text-slate-900 font-semibold border-l-2 border-slate-700 rounded-l-none'
+                          : 'text-slate-600 font-medium hover:bg-slate-100 hover:text-slate-950'
                       }`}
                     >
-                      {isActive && !isCollapsed && (
-                        <div className="absolute left-[-24px] top-1/2 -translate-y-1/2 h-full w-[3px] bg-blue-600 rounded-r-md" />
-                      )}
-                      {isActive && isCollapsed && (
-                        <div className="absolute left-[-16px] top-1/2 -translate-y-1/2 h-full w-[3px] bg-blue-600 rounded-r-md" />
-                      )}
-                      <item.icon className={`flex-shrink-0 h-5 w-5 ${isActive ? 'text-blue-600' : 'text-slate-400 group-hover:text-slate-500'}`} />
+                      <item.icon className={`flex-shrink-0 h-4 w-4 ${isActive ? 'text-slate-800' : 'text-slate-400 group-hover:text-slate-500'}`} />
                       {!isCollapsed && <span className="truncate">{item.name}</span>}
                     </Link>
                   );
@@ -135,14 +128,14 @@ export const Sidebar = () => {
 
       {/* Footer user hint */}
       {!isCollapsed && (
-        <div className="flex-shrink-0 border-t border-slate-200 px-6 py-4 mt-auto">
-          <div className="flex items-center gap-3">
-            <div className="h-9 w-9 rounded-full bg-slate-100 border border-slate-200 flex items-center justify-center text-slate-500 font-medium">
+        <div className="flex-shrink-0 border-t border-slate-200 px-4 py-2 mt-auto bg-slate-100/50">
+          <div className="flex items-center gap-2.5">
+            <div className="h-7 w-7 rounded bg-slate-200 border border-slate-300 flex items-center justify-center text-slate-600 text-xs font-semibold">
               {(currentUser?.name || 'U').charAt(0)}
             </div>
             <div className="overflow-hidden">
-              <p className="text-[14px] font-semibold text-slate-900 truncate">{currentUser?.name || 'User'}</p>
-              <p className="text-[12px] text-slate-500 truncate">{userRole}</p>
+              <p className="text-[12px] font-semibold text-slate-800 truncate leading-tight">{currentUser?.name || 'User'}</p>
+              <p className="text-[10px] text-slate-500 truncate mt-0.5">{userRole}</p>
             </div>
           </div>
         </div>
