@@ -56,8 +56,8 @@ export const PricingRulesList = () => {
         const hasVariant = row.bhk_type || row.tank_size;
         return hasVariant ? (
           <div className="flex gap-1.5">
-            {row.bhk_type && <span className="px-2 py-0.5 bg-secondary text-secondary-foreground text-[11px] font-medium rounded-full border">BHK: {row.bhk_type}</span>}
-            {row.tank_size && <span className="px-2 py-0.5 bg-secondary text-secondary-foreground text-[11px] font-medium rounded-full border">Size: {row.tank_size}</span>}
+            {row.bhk_type && <span className="px-2 py-0.5 bg-secondary text-secondary-foreground text-[11px] font-medium rounded border">BHK: {row.bhk_type}</span>}
+            {row.tank_size && <span className="px-2 py-0.5 bg-secondary text-secondary-foreground text-[11px] font-medium rounded border">Size: {row.tank_size}</span>}
           </div>
         ) : (
           <span className="text-sm text-muted-foreground italic flex items-center gap-1.5"><ListTree className="h-3.5 w-3.5" /> None</span>
