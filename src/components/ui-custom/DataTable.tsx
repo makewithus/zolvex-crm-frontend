@@ -70,7 +70,7 @@ export function DataTable<T>({
       </div>
 
       {/* Table Container */}
-      <div className="rounded-md border bg-card shadow-sm overflow-hidden relative min-h-[400px]">
+      <div className="rounded-md border bg-card shadow-sm overflow-x-auto relative min-h-[400px]">
         <Table>
           <TableHeader className="bg-muted/50">
             <TableRow className="hover:bg-transparent">
