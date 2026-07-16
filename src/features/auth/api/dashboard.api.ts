@@ -24,3 +24,14 @@ export const getMe = async () => {
   const { data } = await apiClient.get('/auth/me');
   return data.data;
 };
+
+export const getRecentTransactions = async (limit = 10) => {
+  const { data } = await apiClient.get('/dashboard/recent-transactions', { params: { limit } });
+  return data.data;
+};
+
+export const getServiceDistribution = async () => {
+  const { data } = await apiClient.get('/dashboard/service-distribution');
+  return data.data as Array<{ name: string; count: number; pct: number; revenue?: number }>;
+};
+
