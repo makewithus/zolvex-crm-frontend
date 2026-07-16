@@ -22,9 +22,9 @@ export const ExportMenu = ({ domain, filters }: { domain: string; filters?: Reco
     <div className="relative inline-block text-left">
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="inline-flex items-center gap-2 justify-center px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-slate-200 rounded hover:bg-gray-50 focus:outline-none focus:border-slate-400 focus:ring-0 shadow-none transition-colors"
+        className="inline-flex items-center gap-2 justify-center px-3.5 h-9 text-xs font-semibold text-gray-700 bg-white border border-slate-200 rounded hover:bg-gray-50 focus:outline-none focus:border-slate-400 focus:ring-0 shadow-none transition-colors"
       >
-        <Download className="w-4 h-4" />
+        <Download className="w-3.5 h-3.5" />
         Export
       </button>
 

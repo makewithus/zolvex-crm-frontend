@@ -91,7 +91,7 @@ export const FinancialReport: React.FC = () => {
       {/* KPI Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <SummaryCard
-          title="Total Revenue"
+          title="Invoice Revenue"
           value={formatCurrency(revenue?.total_revenue ?? 0)}
           sub={`${revenue?.invoice_count ?? 0} issued invoices`}
           icon={DollarSign} color="text-emerald-700" bg="bg-emerald-50 border border-emerald-100"

@@ -94,7 +94,7 @@ export const ReportsDashboard: React.FC = () => {
           <h2 className="text-xs font-semibold text-muted-foreground/60 uppercase tracking-wider mb-3">Financial</h2>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <KPICard
-              title="Revenue"
+              title="Invoice Revenue"
               value={isLoading ? '—' : formatCurrency(financial?.revenue ?? 0)}
               icon={DollarSign}
               link="/reports/financial"
