@@ -77,9 +77,9 @@ export const Header = () => {
           </div>
 
           <div className="flex items-center gap-3">
-            <button aria-label="Notifications" className="relative text-slate-500 hover:text-slate-900 transition-colors">
+            <button aria-label="Notifications" className="relative h-8 w-8 flex items-center justify-center text-slate-500 hover:text-slate-900 transition-colors">
               <Bell className="h-4.5 w-4.5" />
-              <span className="absolute -top-0.5 -right-0.5 h-1.5 w-1.5 rounded-full bg-red-600 border-[1px] border-white"></span>
+              <span className="absolute top-1.5 right-1.5 h-1.5 w-1.5 rounded-full bg-red-600 border-[1px] border-white"></span>
             </button>
             
             <div className="h-4 w-px bg-slate-200 mx-1"></div>
@@ -90,11 +90,11 @@ export const Header = () => {
                 <p className="text-[12px] font-semibold text-slate-950 leading-none">{userName}</p>
                 <p className="text-[10px] text-slate-500 mt-0.5">{userRole}</p>
               </div>
-              <div className="h-7 w-7 rounded bg-slate-100 border border-slate-200 flex items-center justify-center text-slate-500 font-medium">
-                <UserIcon className="h-3.5 w-3.5" />
+              <div className="h-8 w-8 rounded bg-slate-100 border border-slate-200 flex items-center justify-center text-slate-500 font-medium shrink-0">
+                <UserIcon className="h-4 w-4" />
               </div>
-              <button aria-label="Log out" onClick={logout} className="text-slate-400 hover:text-red-600 transition-colors ml-0.5" title="Log out">
-                <LogOut className="h-3.5 w-3.5" />
+              <button aria-label="Log out" onClick={logout} className="h-8 w-8 flex items-center justify-center text-slate-400 hover:text-red-600 transition-colors shrink-0" title="Log out">
+                <LogOut className="h-4 w-4" />
               </button>
             </div>
           </div>
