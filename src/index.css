@@ -13,8 +13,8 @@
     --popover: 0 0% 100%;
     --popover-foreground: 222.2 47.4% 11.2%;
 
-    /* Traditional Enterprise CRM Navy/Blue Theme */
-    --primary: 215 80% 33%;
+    /* Sleek Modern SaaS Slate-900 Theme */
+    --primary: 222.2 47.4% 11.2%;
     --primary-foreground: 0 0% 100%;
 
     --secondary: 210 40% 96.1%;
@@ -31,7 +31,7 @@
 
     --border: 214.3 31.8% 90%;
     --input: 214.3 31.8% 90%;
-    --ring: 215 80% 33%;
+    --ring: 222.2 47.4% 11.2%;
 
     /* Flat 4px border radius for enterprise systems */
     --radius: 4px;
@@ -84,7 +84,7 @@
 
   body {
     @apply bg-background text-foreground antialiased;
-    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    font-family: 'Plus Jakarta Sans', 'Inter', system-ui, -apple-system, sans-serif;
     font-feature-settings: "cv11", "ss01";
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
@@ -118,75 +118,6 @@
   background: #94a3b8;
 }
 
-/* Global Overrides for Enterprise CRM look & feel */
-.crm-app-container .rounded-xl, .crm-app-container .rounded-lg, .crm-app-container .rounded-md,
-[data-radix-portal] .rounded-xl, [data-radix-portal] .rounded-lg, [data-radix-portal] .rounded-md {
-  border-radius: var(--radius) !important;
-}
-
-/* Overwrite shadow classes to rely on thin borders instead of modern SaaS glow/elevated shadows */
-.crm-app-container .shadow, .crm-app-container .shadow-sm, .crm-app-container .shadow-md, .crm-app-container .shadow-lg, .crm-app-container .shadow-2xl, .crm-app-container .shadow-xl,
-[data-radix-portal] .shadow, [data-radix-portal] .shadow-sm, [data-radix-portal] .shadow-md, [data-radix-portal] .shadow-lg, [data-radix-portal] .shadow-2xl, [data-radix-portal] .shadow-xl {
-  box-shadow: none !important;
-  border: 1px solid #e2e8f0 !important;
-}
-
-/* Make layout padding high-density */
-.crm-app-container .p-6, .crm-app-container .p-5,
-[data-radix-portal] .p-6, [data-radix-portal] .p-5 {
-  padding: 12px 16px !important;
-}
-
-.crm-app-container .pb-6, [data-radix-portal] .pb-6 {
-  padding-bottom: 12px !important;
-}
-
-.crm-app-container .pt-6, [data-radix-portal] .pt-6 {
-  padding-top: 12px !important;
-}
-
-.crm-app-container .pb-2, [data-radix-portal] .pb-2 {
-  padding-bottom: 8px !important;
-}
-
-.crm-app-container .space-y-6 > :not([hidden]) ~ :not([hidden]),
-[data-radix-portal] .space-y-6 > :not([hidden]) ~ :not([hidden]) {
-  --tw-space-y-reverse: 0;
-  margin-top: 12px !important;
-}
-
-.crm-app-container .mb-8, [data-radix-portal] .mb-8 {
-  margin-bottom: 16px !important;
-}
-
-.crm-app-container .grid-cols-5, [data-radix-portal] .grid-cols-5 {
-  gap: 12px !important;
-}
-
-.crm-app-container .grid, [data-radix-portal] .grid {
-  gap: 12px !important;
-}
-
-/* Inputs and Forms density */
-.crm-app-container .h-10, .crm-app-container .h-11,
-[data-radix-portal] .h-10, [data-radix-portal] .h-11 {
-  height: 32px !important;
-}
-
-.crm-app-container .h-9, [data-radix-portal] .h-9 {
-  height: 28px !important;
-}
-
-.crm-app-container .py-2, [data-radix-portal] .py-2 {
-  padding-top: 6px !important;
-  padding-bottom: 6px !important;
-}
-
-/* Buttons sizing */
-.crm-app-container .px-4, [data-radix-portal] .px-4 {
-  padding-left: 12px !important;
-  padding-right: 12px !important;
-}
 
 /* Table styling for HubSpot style */
 .crm-app-container th, [data-radix-portal] th {
