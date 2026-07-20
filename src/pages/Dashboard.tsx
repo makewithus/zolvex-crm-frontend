@@ -303,17 +303,17 @@ export const Dashboard = () => {
     }
   }, [activeTab, upcomingBookings, recentJobs, latestLeads, logsSearch]);
 
-  // Recent transactions mapping (matches reference layout)
+  // Recent Invoices mapping — backend now returns Invoice table data (status=Issued)
   const recentTransactions = useMemo(() => {
-    return transactionList.map((b: any) => ({
-      id: b.booking_id || `BK-${b.id.slice(0, 4).toUpperCase()}`,
-      customer: b.customer_name || 'Anonymous Client',
-      product: b.service_name || 'General Operations',
-      status: b.status || 'Completed',
+    return transactionList.map((inv: any) => ({
+      id: inv.invoice_number || inv.booking_id || `INV-${(inv.id || '').slice(0, 4).toUpperCase()}`,
+      customer: inv.customer_name || 'Anonymous Client',
+      product: inv.service_name || 'General Operations',
+      status: inv.payment_status || inv.status || 'Unpaid',
       qty: 1,
-      unitPrice: b.base_price ? `₹${Number(b.base_price).toLocaleString('en-IN')}` : '₹0',
-      totalRevenue: b.final_amount ? `₹${Number(b.final_amount).toLocaleString('en-IN')}` : '₹0',
-      rawRow: b,
+      unitPrice: inv.base_price ? `₹${Number(inv.base_price).toLocaleString('en-IN')}` : '₹0',
+      totalRevenue: inv.final_amount ? `₹${Number(inv.final_amount).toLocaleString('en-IN')}` : '₹0',
+      rawRow: inv,
     }));
   }, [transactionList]);
 
@@ -332,12 +332,12 @@ export const Dashboard = () => {
     <PageContainer>
       <div className="space-y-8">
         {/* Top Header Section */}
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
           <div>
             <h1 className="text-[25px] font-extrabold text-slate-900 tracking-tight leading-tight">Operations Dashboard</h1>
           </div>
           
-          <div className="flex items-center gap-3 w-full sm:w-auto justify-end">
+          <div className="flex flex-wrap items-center gap-2 w-full sm:w-auto sm:justify-end">
             <span className="text-[10px] font-bold text-slate-450 uppercase tracking-wider flex items-center gap-1.5 bg-slate-50 border border-slate-200/60 px-2.5 py-1.5 rounded-lg shadow-sm">
               <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
               Last Updated: {format(new Date(), 'h:mm a')}
@@ -720,10 +720,10 @@ export const Dashboard = () => {
                   compact
                 />
               ) : (
-                <table className="w-full text-left border-collapse">
+                <table className="w-full text-left border-collapse min-w-[560px]">
                   <thead>
                     <tr className="border-b border-slate-100 bg-slate-50/50">
-                      <th className="text-[10px] font-semibold text-slate-450 py-2.5 px-4 w-28 uppercase tracking-wider">Booking</th>
+                      <th className="text-[10px] font-semibold text-slate-450 py-2.5 px-4 w-28 uppercase tracking-wider">Invoice #</th>
                       <th className="text-[10px] font-semibold text-slate-450 py-2.5 px-4 uppercase tracking-wider">Customer</th>
                       <th className="text-[10px] font-semibold text-slate-450 py-2.5 px-4 uppercase tracking-wider">Service</th>
                       <th className="text-[10px] font-semibold text-slate-455 py-2.5 px-4 w-32 uppercase tracking-wider">Status</th>
@@ -753,15 +753,16 @@ export const Dashboard = () => {
                             <DropdownMenuContent align="end" className="text-xs">
                               <DropdownMenuItem 
                                 onClick={() => {
+                                  // Navigate to the booking that owns this invoice, or fall back to invoices list
                                   if (row.rawRow?.id) {
-                                    navigate(`/bookings/${row.rawRow.id}`);
+                                    navigate(`/invoices/${row.rawRow.id}`);
                                   } else {
-                                    navigate('/bookings');
+                                    navigate('/invoices');
                                   }
                                 }}
                                 className="cursor-pointer"
                               >
-                                View Details
+                                View Invoice
                               </DropdownMenuItem>
                             </DropdownMenuContent>
                           </DropdownMenu>

@@ -77,12 +77,12 @@ export const ReportsDashboard: React.FC = () => {
   return (
     <div className="p-6 max-w-7xl mx-auto space-y-8">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
           <h1 className="text-2xl font-semibold tracking-tight text-foreground">Reports & Analytics</h1>
           <p className="text-sm text-muted-foreground mt-1">Live read-only view of the transaction engine.</p>
         </div>
-        <div className="flex items-center gap-2 text-xs text-muted-foreground bg-muted/40 border border-border/60 px-3 py-1.5 rounded-md">
+        <div className="flex items-center gap-2 text-xs text-muted-foreground bg-muted/40 border border-border/60 px-3 py-1.5 rounded-md flex-shrink-0">
           <BarChart3 className="w-3.5 h-3.5" />
           Read-only consumer
         </div>
