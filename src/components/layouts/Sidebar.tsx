@@ -2,7 +2,7 @@ import { Link, useLocation } from 'react-router-dom';
 import { 
   LayoutDashboard, Users, UserSquare2, CalendarDays, Briefcase, 
   Settings2, ShieldCheck, Map, Grid, DollarSign, FileText, 
-  CreditCard, PieChart, UsersIcon, Calendar
+  CreditCard, PieChart, UsersIcon, Calendar, ClipboardList, Star
 } from 'lucide-react';
 import { FEATURE_REGISTRY } from '@/config/features';
 import { useSidebar } from './MainLayout';
@@ -52,6 +52,13 @@ export const Sidebar = () => {
         { name: "Invoices", route: "/invoices", icon: FileText },
         { name: "Payments", route: "/payments", icon: CreditCard },
         { name: "Reports", route: "/reports", icon: PieChart },
+      ]
+    },
+    {
+      title: "Support",
+      items: [
+        { name: "Complaints", route: "/complaints", icon: ClipboardList },
+        { name: "Feedback",   route: "/feedback",   icon: Star },
       ]
     },
     {

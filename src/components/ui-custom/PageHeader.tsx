@@ -35,7 +35,7 @@ export const PageHeader = ({
           {description && <p className="text-sm text-muted-foreground mt-1">{description}</p>}
         </div>
       </div>
-      {children && <div className="flex items-center space-x-2">{children}</div>}
+      {children && <div className="flex flex-wrap items-center gap-2">{children}</div>}
     </div>
   );
 };

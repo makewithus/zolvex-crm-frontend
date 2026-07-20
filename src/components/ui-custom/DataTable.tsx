@@ -71,6 +71,7 @@ export function DataTable<T>({
 
       {/* Table Container */}
       <div className="rounded-md border bg-card shadow-sm overflow-x-auto relative min-h-[400px]">
+        <div className="min-w-[600px]">
         <Table>
           <TableHeader className="bg-muted/50">
             <TableRow className="hover:bg-transparent">
@@ -121,11 +122,12 @@ export function DataTable<T>({
             )}
           </TableBody>
         </Table>
+        </div>
       </div>
 
       {/* Pagination */}
       {pagination && pagination.totalPages > 0 && (
-        <div className="flex items-center justify-between px-2">
+        <div className="flex flex-wrap items-center justify-between gap-2 px-2">
           <p className="text-sm text-muted-foreground">
             Page <span className="font-medium text-foreground">{pagination.page}</span> of <span className="font-medium text-foreground">{pagination.totalPages}</span>
           </p>
