@@ -157,50 +157,7 @@ export const Dashboard = () => {
     return <span className="h-1.5 w-1.5 rounded-full bg-slate-400 shrink-0" />;
   };
 
-  // Real sparkline generator with premium gradients
-  const renderSmoothSparkline = (dataPoints: number[], color: 'indigo' | 'violet' | 'emerald' | 'blue' = 'indigo') => {
-    if (!dataPoints || dataPoints.length === 0) return null;
-    const hasData = dataPoints.some(v => v > 0);
-    if (!hasData) return null;
-      
-    const maxVal = Math.max(...dataPoints, 1);
-    const width = 60;
-    const height = 30;
-    const padding = 2;
-    const chartHeight = height - padding * 2;
 
-    const points = dataPoints.map((val, idx) => {
-      const x = idx * (width / (Math.max(1, dataPoints.length - 1)));
-      const h = (val / maxVal) * chartHeight;
-      const y = height - padding - h;
-      return { x, y };
-    });
-
-    const linePath = points.map((p, i) => `${i === 0 ? 'M' : 'L'} ${p.x} ${p.y}`).join(' ');
-    const areaPath = `${linePath} L ${points[points.length - 1].x} ${height} L ${points[0].x} ${height} Z`;
-
-    const colors = {
-      indigo: { stroke: 'rgb(99, 102, 241)' },
-      violet: { stroke: 'rgb(139, 92, 246)' },
-      emerald: { stroke: 'rgb(16, 185, 129)' },
-      blue: { stroke: 'rgb(59, 130, 246)' }
-    };
-    const c = colors[color] || colors.indigo;
-    const gradId = `spark-grad-${color}-${Math.random().toString(36).substr(2, 4)}`;
-
-    return (
-      <svg className="w-16 h-8 shrink-0 self-end mb-1" viewBox={`0 0 ${width} ${height}`}>
-        <defs>
-          <linearGradient id={gradId} x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor={c.stroke} stopOpacity="0.2" />
-            <stop offset="100%" stopColor={c.stroke} stopOpacity="0.0" />
-          </linearGradient>
-        </defs>
-        <path d={areaPath} fill={`url(#${gradId})`} />
-        <path d={linePath} fill="none" stroke={c.stroke} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
-      </svg>
-    );
-  };
 
   const kpiCards = [
     {
