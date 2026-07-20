@@ -160,5 +160,25 @@ export const FEATURE_REGISTRY: FeatureDefinition[] = [
     pageTitle: 'System Settings',
     category: 'Settings',
     order: 300,
-  }
+  },
+  {
+    id: 'complaints',
+    name: 'Complaints',
+    route: '/complaints',
+    sidebarVisibility: true,
+    requiredRoles: ['Super Admin', 'City Manager', 'Support Agent', 'Technician'],
+    pageTitle: 'Complaint Management',
+    category: 'Support',
+    order: 65,
+  },
+  {
+    id: 'feedback',
+    name: 'Feedback',
+    route: '/feedback',
+    sidebarVisibility: true,
+    requiredRoles: ['Super Admin', 'City Manager', 'Support Agent', 'Field Staff', 'Technician', 'Finance'],
+    pageTitle: 'Customer Feedback',
+    category: 'Support',
+    order: 66,
+  },
 ];

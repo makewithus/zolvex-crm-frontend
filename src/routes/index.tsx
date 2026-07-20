@@ -27,6 +27,10 @@ import { OperationalReport } from '@/features/reports/pages/OperationalReport';
 import { TechnicianReport } from '@/features/reports/pages/TechnicianReport';
 import { GSTReport } from '@/features/reports/pages/GSTReport';
 import { Settings } from '@/features/settings/pages/Settings';
+import ChecklistTemplates from '@/features/settings/pages/ChecklistTemplates';
+import ComplaintList from '@/features/complaints/pages/ComplaintList';
+import ComplaintDetail from '@/features/complaints/pages/ComplaintDetail';
+import FeedbackList from '@/features/feedback/pages/FeedbackList';
 
 const PrivateRoute = ({ children }: { children: React.ReactNode }) => {
   const token = localStorage.getItem('token');
@@ -80,6 +84,10 @@ export const AppRoutes = () => {
         <Route path="reports/technician" element={<TechnicianReport />} />
         <Route path="reports/gst" element={<GSTReport />} />
         <Route path="settings" element={<Settings />} />
+        <Route path="settings/checklists" element={<ChecklistTemplates />} />
+        <Route path="complaints" element={<ComplaintList />} />
+        <Route path="complaints/:id" element={<ComplaintDetail />} />
+        <Route path="feedback" element={<FeedbackList />} />
       </Route>
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
