@@ -9,6 +9,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/u
 import { useUsers } from '@/features/users/hooks/useUsers';
 import { useAssignJob } from '../hooks/useJobs';
 import { useCurrentUser } from '@/features/auth/hooks/useAuth';
+import { JobChecklistPanel } from '../components/JobChecklistPanel';
 
 export const JobDetail = () => {
   const { id } = useParams<{ id: string }>();
@@ -137,6 +138,26 @@ export const JobDetail = () => {
               )}
             </div>
           </div>
+
+          <div className="bg-white rounded p-5 shadow-none border">
+             <h3 className="font-semibold mb-3 flex items-center gap-2"><ImageIcon className="text-primary h-5 w-5"/> Photos</h3>
+             {job.media && job.media.length > 0 ? (
+               <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mt-2">
+                 {job.media.map((m: any) => (
+                   <a key={m.id} href={m.url} target="_blank" rel="noreferrer">
+                     <img src={m.url} alt="Job media" className="rounded w-full h-32 object-cover border" />
+                   </a>
+                 ))}
+               </div>
+             ) : (
+               <p className="text-sm text-slate-500 italic">No photos uploaded</p>
+             )}
+          </div>
+
+          <div className="bg-white rounded p-5 shadow-none border">
+             <h3 className="font-semibold mb-3 flex items-center gap-2"><FileText className="text-primary h-5 w-5"/> Notes</h3>
+             {job.internal_notes ? <p className="text-sm">{job.internal_notes}</p> : <p className="text-sm text-slate-500 italic">No notes provided</p>}
+          </div>
         </div>
 
         {/* Sidebar / Secondary Info */}
@@ -179,26 +200,12 @@ export const JobDetail = () => {
               </Dialog>
             </div>
           )}
-
-          <div className="bg-white rounded p-5 shadow-none border mb-6">
-             <h3 className="font-semibold mb-3 flex items-center gap-2"><ImageIcon className="text-primary h-5 w-5"/> Photos</h3>
-             {job.media && job.media.length > 0 ? (
-               <div className="grid grid-cols-2 gap-2 mt-2">
-                 {job.media.map((m: any) => (
-                   <a key={m.id} href={m.url} target="_blank" rel="noreferrer">
-                     <img src={m.url} alt="Job media" className="rounded w-full h-24 object-cover border" />
-                   </a>
-                 ))}
-               </div>
-             ) : (
-               <p className="text-sm text-slate-500 italic">No photos uploaded</p>
-             )}
-          </div>
-
-          <div className="bg-white rounded p-5 shadow-none border">
-             <h3 className="font-semibold mb-3 flex items-center gap-2"><FileText className="text-primary h-5 w-5"/> Notes</h3>
-             {job.internal_notes ? <p className="text-sm">{job.internal_notes}</p> : <p className="text-sm text-slate-500 italic">No notes provided</p>}
-          </div>
+          
+          <JobChecklistPanel 
+            jobId={job.id} 
+            canApply={canAssign} 
+            isFieldStaff={isFieldStaff || canAssign} 
+          />
         </div>
 
       </div>

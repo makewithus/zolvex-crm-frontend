@@ -170,63 +170,66 @@ export const JobCalendar = () => {
   const currentTimeTop = currentMinutesFromStart * PIXELS_PER_MINUTE;
 
   return (
-    <div className="p-6 h-[calc(100vh-64px)] flex flex-col">
+    <div className="px-4 md:p-6 py-4 h-[calc(100vh-64px)] flex flex-col">
       <PageHeader title="Dispatch Calendar" />
 
       {/* Toolbar */}
-      <div className="flex flex-col md:flex-row gap-4 mb-6 justify-between items-start md:items-center flex-shrink-0">
-        {/* Date Navigation */}
-        <div className="flex items-center gap-2">
-          <Button variant="outline" size="icon" onClick={() => handleDateChange(-1)} aria-label="Previous day">
-            <ChevronLeft className="h-4 w-4" />
-          </Button>
-          <div className="font-semibold w-44 text-center text-slate-800">
-            {format(parseISO(currentDateParam), 'EEEE, MMM d')}
-          </div>
-          <Button variant="outline" size="icon" onClick={() => handleDateChange(1)} aria-label="Next day">
-            <ChevronRight className="h-4 w-4" />
-          </Button>
-          <Button variant="outline" size="sm" onClick={() => {
-            const p = new URLSearchParams(searchParams);
-            p.set('date', format(new Date(), 'yyyy-MM-dd'));
-            setSearchParams(p);
-          }}>Today</Button>
-        </div>
-
-        {/* Right Controls */}
-        <div className="flex items-center gap-3 flex-wrap">
-          {/* Timezone indicator */}
-          <div className="flex items-center gap-1.5 text-xs text-slate-500 bg-slate-50 px-2.5 py-1.5 rounded-full border border-slate-200">
-            <Globe className="h-3.5 w-3.5 text-slate-400" />
-            <span><strong>{userTimezone}</strong></span>
+      <div className="flex flex-col gap-3 mb-5 flex-shrink-0">
+        {/* Date Navigation + Right Controls (wrap on mobile) */}
+        <div className="flex flex-col sm:flex-row gap-3 justify-between items-start sm:items-center">
+          {/* Date Navigation */}
+          <div className="flex items-center gap-2 flex-shrink-0">
+            <Button variant="outline" size="icon" onClick={() => handleDateChange(-1)} aria-label="Previous day">
+              <ChevronLeft className="h-4 w-4" />
+            </Button>
+            <div className="font-semibold w-44 text-center text-slate-800">
+              {format(parseISO(currentDateParam), 'EEEE, MMM d')}
+            </div>
+            <Button variant="outline" size="icon" onClick={() => handleDateChange(1)} aria-label="Next day">
+              <ChevronRight className="h-4 w-4" />
+            </Button>
+            <Button variant="outline" size="sm" onClick={() => {
+              const p = new URLSearchParams(searchParams);
+              p.set('date', format(new Date(), 'yyyy-MM-dd'));
+              setSearchParams(p);
+            }}>Today</Button>
           </div>
 
-          {/* Show Cancelled Toggle — Priority 3 */}
-          <Button
-            variant={showCancelled ? 'default' : 'outline'}
-            size="sm"
-            onClick={toggleShowCancelled}
-            aria-pressed={showCancelled}
-            className="gap-1.5"
-          >
-            {showCancelled ? <Eye className="h-3.5 w-3.5" /> : <EyeOff className="h-3.5 w-3.5" />}
-            {showCancelled ? 'Hide Cancelled' : 'Show Cancelled'}
-          </Button>
+          {/* Right Controls */}
+          <div className="flex items-center gap-2 flex-wrap w-full sm:w-auto">
+            {/* Timezone indicator */}
+            <div className="flex items-center gap-1.5 text-xs text-slate-500 bg-slate-50 px-2.5 py-1.5 rounded-full border border-slate-200">
+              <Globe className="h-3.5 w-3.5 text-slate-400" />
+              <span><strong>{userTimezone}</strong></span>
+            </div>
 
-          {/* Search */}
-          <div className="relative">
-            <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-slate-400" />
-            <Input
-              placeholder="Search ID or Customer..."
-              className="pl-9 w-[240px]"
-              value={searchQuery}
-              onChange={(e) => {
-                const p = new URLSearchParams(searchParams);
-                if (e.target.value) p.set('search', e.target.value);
-                else p.delete('search');
-                setSearchParams(p);
-              }}
-            />
+            {/* Show Cancelled Toggle */}
+            <Button
+              variant={showCancelled ? 'default' : 'outline'}
+              size="sm"
+              onClick={toggleShowCancelled}
+              aria-pressed={showCancelled}
+              className="gap-1.5"
+            >
+              {showCancelled ? <Eye className="h-3.5 w-3.5" /> : <EyeOff className="h-3.5 w-3.5" />}
+              {showCancelled ? 'Hide Cancelled' : 'Show Cancelled'}
+            </Button>
+
+            {/* Search */}
+            <div className="relative flex-1 sm:flex-none">
+              <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-slate-400" />
+              <Input
+                placeholder="Search ID or Customer..."
+                className="pl-9 w-full sm:w-[220px]"
+                value={searchQuery}
+                onChange={(e) => {
+                  const p = new URLSearchParams(searchParams);
+                  if (e.target.value) p.set('search', e.target.value);
+                  else p.delete('search');
+                  setSearchParams(p);
+                }}
+              />
+            </div>
           </div>
         </div>
       </div>
