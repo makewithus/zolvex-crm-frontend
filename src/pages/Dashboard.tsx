@@ -2,7 +2,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { 
   Users, DollarSign, Calendar, Plus, Activity, Briefcase, Target, 
-  Search, MoreHorizontal
+  Search, MoreHorizontal, PieChart, BarChart3, Receipt
 } from 'lucide-react';
 import { PageContainer } from '@/components/ui-custom/PageContainer';
 import { StatusBadge } from '@/components/ui-custom/StatusBadge';
@@ -45,7 +45,7 @@ export const Dashboard = () => {
   const { data: currentUser } = useCurrentUser();
   const userRole = currentUser?.role?.name || 'Super Admin';
 
-  const [activeTab, setActiveTab] = useState<'bookings' | 'jobs' | 'leads'>('bookings');
+  const [activeTab, setActiveTab] = useState<'bookings' | 'jobs' | 'leads'>('jobs');
   const [tableSearch, setTableSearch] = useState('');
   const [logsSearch, setLogsSearch] = useState('');
   // trendFilter removed: Weekly/Monthly/Yearly buttons were decorative (no API re-fetch); removed entirely
@@ -364,11 +364,16 @@ export const Dashboard = () => {
                 return (
                   <Card key={card.label} className="shadow-[0_1px_3px_rgba(0,0,0,0.03)] border border-slate-200/60 rounded-xl bg-white hover:shadow-md hover:border-slate-300 transition-all duration-200">
                     <CardContent className="p-4 flex justify-between items-center min-h-[96px] relative overflow-hidden">
-                      <div className="flex flex-col justify-between h-[68px]">
-                        <span className="text-[9.5px] font-bold text-slate-450 uppercase tracking-wider leading-none">
-                          {card.label}
-                        </span>
-                        <span className="text-[28px] font-extrabold text-slate-900 tracking-tight leading-none my-1">{card.value}</span>
+                      <div className="flex flex-col justify-between h-[68px] z-10 relative">
+                        <div className="flex items-center gap-1.5">
+                          <div className="p-1 rounded-md bg-slate-50 border border-slate-100/80 flex items-center justify-center">
+                            <card.icon className="h-3 w-3 text-slate-500" strokeWidth={2.5} />
+                          </div>
+                          <span className="text-[9.5px] font-bold text-slate-500 uppercase tracking-wider leading-none">
+                            {card.label}
+                          </span>
+                        </div>
+                        <span className="text-[28px] font-extrabold text-slate-900 tracking-tight leading-none mt-1.5 mb-1">{card.value}</span>
                         <div className="flex items-center">
                           {card.trend ? (
                             <span className="inline-flex items-center text-[9px] font-bold bg-emerald-50 text-emerald-700 px-1.5 py-0.5 rounded-full border border-emerald-100/50 leading-none">
@@ -382,11 +387,6 @@ export const Dashboard = () => {
                           )}
                         </div>
                       </div>
-                      {card.sparkline && (
-                        <div className="w-16 h-8 shrink-0 flex items-center justify-end">
-                          {renderSmoothSparkline(card.sparkline, card.color)}
-                        </div>
-                      )}
                     </CardContent>
                   </Card>
                 );
@@ -399,7 +399,10 @@ export const Dashboard = () => {
             <CardHeader className="px-4 py-2.5 border-b border-slate-100 flex flex-row items-center justify-between">
               <div className="flex flex-wrap items-center gap-3">
                 <div className="flex items-center">
-                  <CardTitle className="text-[12px] font-semibold text-slate-800">Invoice Revenue (Last 12 Months)</CardTitle>
+                  <CardTitle className="text-[12px] font-semibold text-slate-800 flex items-center gap-1.5">
+                    <BarChart3 className="w-3.5 h-3.5 text-slate-500" />
+                    Invoice Revenue (Last 12 Months)
+                  </CardTitle>
                 </div>
                 <div className="flex items-center gap-2.5 text-[8.5px] font-semibold text-slate-500 uppercase tracking-wider border-l border-slate-200 pl-3">
                   <div className="flex items-center gap-1"><div className="w-1.5 h-1.5 rounded-sm bg-slate-800"></div> Total</div>
@@ -471,7 +474,10 @@ export const Dashboard = () => {
           <Card className="shadow-sm border border-slate-200/60 rounded-xl bg-white lg:h-[265px] flex flex-col hover:shadow-md hover:border-slate-300 transition-all duration-200">
             <CardHeader className="px-4 py-2.5 border-b border-slate-100 pb-2.5">
               <div className="flex items-center gap-1.5">
-                <CardTitle className="text-[12px] font-semibold text-slate-800">Service Distribution</CardTitle>
+                <CardTitle className="text-[12px] font-semibold text-slate-800 flex items-center gap-1.5">
+                  <PieChart className="w-3.5 h-3.5 text-slate-500" />
+                  Service Distribution
+                </CardTitle>
               </div>
             </CardHeader>
             <CardContent className="px-4 py-3 flex-1 flex flex-col justify-between">
@@ -520,25 +526,28 @@ export const Dashboard = () => {
           <Card className="lg:col-span-2 shadow-sm border border-slate-200/60 rounded-xl bg-white overflow-hidden flex flex-col lg:h-[310px] hover:shadow-md hover:border-slate-300 transition-all duration-200">
             <CardHeader className="px-4 py-3 border-b border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-3">
               <div className="flex bg-slate-50 p-1 rounded-lg border border-slate-200 text-xs shrink-0">
-                <button 
-                  className={`px-3 py-1.5 rounded-md font-semibold transition-colors ${activeTab === 'bookings' ? 'bg-white text-slate-900 border border-slate-200/50 shadow-sm' : 'text-slate-500 hover:text-slate-800'}`}
-                  onClick={() => { setActiveTab('bookings'); setLogsSearch(''); }}
-                >
-                  Upcoming Bookings
-                </button>
                 {hasAccess('/jobs') && (
                   <button 
-                    className={`px-3 py-1.5 rounded-md font-semibold transition-colors ${activeTab === 'jobs' ? 'bg-white text-slate-900 border border-slate-200/50 shadow-sm' : 'text-slate-500 hover:text-slate-800'}`}
+                    className={`px-3 py-1.5 flex items-center gap-1.5 rounded-md font-semibold transition-colors ${activeTab === 'jobs' ? 'bg-white text-slate-900 border border-slate-200/50 shadow-sm' : 'text-slate-500 hover:text-slate-800'}`}
                     onClick={() => { setActiveTab('jobs'); setLogsSearch(''); }}
                   >
+                    <Briefcase className="w-3.5 h-3.5" />
                     Recent Jobs
                   </button>
                 )}
+                <button 
+                  className={`px-3 py-1.5 flex items-center gap-1.5 rounded-md font-semibold transition-colors ${activeTab === 'bookings' ? 'bg-white text-slate-900 border border-slate-200/50 shadow-sm' : 'text-slate-500 hover:text-slate-800'}`}
+                  onClick={() => { setActiveTab('bookings'); setLogsSearch(''); }}
+                >
+                  <Calendar className="w-3.5 h-3.5" />
+                  Upcoming Bookings
+                </button>
                 {hasAccess('/leads') && (
                   <button 
-                    className={`px-3 py-1.5 rounded-md font-semibold transition-colors ${activeTab === 'leads' ? 'bg-white text-slate-900 border border-slate-200/50 shadow-sm' : 'text-slate-500 hover:text-slate-800'}`}
+                    className={`px-3 py-1.5 flex items-center gap-1.5 rounded-md font-semibold transition-colors ${activeTab === 'leads' ? 'bg-white text-slate-900 border border-slate-200/50 shadow-sm' : 'text-slate-500 hover:text-slate-800'}`}
                     onClick={() => { setActiveTab('leads'); setLogsSearch(''); }}
                   >
+                    <Target className="w-3.5 h-3.5" />
                     Latest Leads
                   </button>
                 )}
@@ -635,7 +644,8 @@ export const Dashboard = () => {
           <Card className="shadow-sm border border-slate-200/60 rounded-xl bg-white overflow-hidden flex flex-col lg:h-[310px] hover:shadow-md hover:border-slate-300 transition-all duration-200">
             <CardHeader className="px-4 py-3 border-b border-slate-100 flex flex-row items-center justify-between">
               <div className="flex items-center">
-                <CardTitle className="text-[12px] font-semibold text-slate-800">
+                <CardTitle className="text-[12px] font-semibold text-slate-800 flex items-center gap-1.5">
+                  <Activity className="w-3.5 h-3.5 text-slate-500" />
                   System Activity
                 </CardTitle>
               </div>
@@ -686,7 +696,10 @@ export const Dashboard = () => {
         <Card className="shadow-sm border border-slate-200/60 rounded-xl bg-white overflow-hidden hover:shadow-md hover:border-slate-300 transition-all duration-200">
           <CardHeader className="px-4 py-3 border-b border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-3">
             <div className="flex items-center">
-              <CardTitle className="text-[12px] font-semibold text-slate-800">Recent Invoices</CardTitle>
+              <CardTitle className="text-[12px] font-semibold text-slate-800 flex items-center gap-1.5">
+                <Receipt className="w-3.5 h-3.5 text-slate-500" />
+                Recent Invoices
+              </CardTitle>
             </div>
             
             <div className="flex items-center gap-2 w-full sm:w-auto">
