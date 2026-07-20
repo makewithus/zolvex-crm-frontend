@@ -47,15 +47,15 @@ export const BookingsList = () => {
         </div>
       </div>
 
-      <div className="flex items-center gap-4 bg-white p-4 rounded-lg border shadow-sm">
-        <div className="relative flex-1 max-w-sm">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 bg-white p-4 rounded-lg border shadow-sm">
+        <div className="relative w-full sm:max-w-sm">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           <Input
             placeholder="Search by Booking ID..."
             value={searchTerm}
             onChange={(e) => {
               setSearchTerm(e.target.value);
-              setPage(1); // Reset page on search
+              setPage(1);
             }}
             className="pl-9"
           />
@@ -64,7 +64,7 @@ export const BookingsList = () => {
 
       <div className="bg-white rounded-lg border shadow-sm overflow-hidden">
         <div className="overflow-x-auto">
-          <table className="w-full text-sm text-left">
+          <table className="w-full text-sm text-left min-w-[640px]">
             <thead className="text-xs text-muted-foreground uppercase bg-muted/50 border-b">
               <tr>
                 <th className="px-6 py-4 font-medium">Booking ID</th>
@@ -102,7 +102,7 @@ export const BookingsList = () => {
                 </tr>
               ) : (
                 data.bookings.map((booking: any) => (
-                  <tr key={booking.id} className="hover:bg-muted/50 transition-colors">
+                  <tr key={booking.id} className="hover:bg-muted/50 transition-colors align-top">
                     <td className="px-6 py-4">
                       <Link to={`/bookings/${booking.id}`} className="font-medium text-primary hover:underline">
                         {booking.booking_id}
@@ -174,7 +174,7 @@ export const BookingsList = () => {
         </div>
         {/* Pagination Controls */}
         {(data?.total || 0) > 0 && (
-          <div className="flex items-center justify-between px-6 py-4 border-t">
+          <div className="flex flex-wrap items-center justify-between gap-2 px-4 md:px-6 py-4 border-t">
             <p className="text-sm text-muted-foreground">
               Showing <span className="font-medium">{(page - 1) * limit + 1}</span> to{' '}
               <span className="font-medium">{Math.min(page * limit, data?.total || 0)}</span> of{' '}

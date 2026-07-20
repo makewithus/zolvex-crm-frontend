@@ -20,10 +20,32 @@ import { Card, CardContent } from '@/components/ui/card';
 import { FormGroup } from '@/components/ui-custom/FormGroup';
 import { customerFormSchema, CustomerFormInput } from '../schemas/customer.schema';
 import { CustomerLead } from '../types/customer.types';
-import { CalendarIcon, FileText, CreditCard } from 'lucide-react';
+import { CalendarIcon, FileText, CreditCard, MapPin, Plus, Trash2, Star } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { Badge } from '@/components/ui/badge';
 import { toast } from 'sonner';
+import { apiClient as api } from '@/lib/axios';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+
+// ── Customer Address types ───────────────────────────────────────────────────
+interface CustomerAddress {
+  id: string;
+  label: string;
+  address: string;
+  city?: string;
+  pincode?: string;
+  is_default: boolean;
+}
+
+const useCustomerAddresses = (customerId: string) =>
+  useQuery<CustomerAddress[]>({
+    queryKey: ['customer-addresses', customerId],
+    queryFn: async () => {
+      const res = await api.get(`/customers/${customerId}/addresses`);
+      return res.data.data;
+    },
+    enabled: !!customerId,
+  });
 
 export default function CustomerDetail() {
   const { id } = useParams<{ id: string }>();
@@ -32,8 +54,37 @@ export default function CustomerDetail() {
   const { data: invoices, isLoading: isLoadingInvoices } = useCustomerInvoices(id as string);
   const { data: payments, isLoading: isLoadingPayments } = usePayments({ customer_id: id });
   const { mutate: updateCustomer, isPending: isUpdating } = useUpdateCustomer();
+  const { data: addresses } = useCustomerAddresses(id as string);
+  const queryClient = useQueryClient();
 
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+  const [isAddressDialogOpen, setIsAddressDialogOpen] = useState(false);
+  const [newAddress, setNewAddress] = useState({ label: 'Home', address: '', city: '', pincode: '', is_default: false });
+
+  const addAddressMutation = useMutation({
+    mutationFn: (data: typeof newAddress) => api.post(`/customers/${id}/addresses`, data),
+    onSuccess: () => {
+      toast.success('Address saved');
+      setIsAddressDialogOpen(false);
+      setNewAddress({ label: 'Home', address: '', city: '', pincode: '', is_default: false });
+      queryClient.invalidateQueries({ queryKey: ['customer-addresses', id] });
+    },
+    onError: () => toast.error('Failed to save address')
+  });
+
+  const deleteAddressMutation = useMutation({
+    mutationFn: (addressId: string) => api.delete(`/customers/${id}/addresses/${addressId}`),
+    onSuccess: () => {
+      toast.success('Address removed');
+      queryClient.invalidateQueries({ queryKey: ['customer-addresses', id] });
+    },
+    onError: () => toast.error('Failed to remove address')
+  });
+
+  const setDefaultMutation = useMutation({
+    mutationFn: (addressId: string) => api.patch(`/customers/${id}/addresses/${addressId}`, { is_default: true }),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['customer-addresses', id] })
+  });
 
   const form = useForm<CustomerFormInput>({
     resolver: zodResolver(customerFormSchema) as unknown as Resolver<CustomerFormInput>,
@@ -138,6 +189,87 @@ export default function CustomerDetail() {
                 ) }
               ]} 
             />
+          </Section>
+
+          {/* ── Saved Addresses ─────────────────────────────────────── */}
+          <Section>
+            <div className="flex items-center justify-between mb-3">
+              <SectionHeader title={`Saved Addresses (${addresses?.length || 0})`} />
+              <Dialog open={isAddressDialogOpen} onOpenChange={setIsAddressDialogOpen}>
+                <DialogTrigger asChild>
+                  <Button size="sm" variant="outline"><Plus className="h-4 w-4 mr-1" />Add Address</Button>
+                </DialogTrigger>
+                <DialogContent>
+                  <DialogHeader><DialogTitle>Add Saved Address</DialogTitle></DialogHeader>
+                  <div className="space-y-4 py-4">
+                    <FormGroup label="Label">
+                      <Input value={newAddress.label} onChange={e => setNewAddress(p => ({ ...p, label: e.target.value }))} placeholder="Home / Office / Site" />
+                    </FormGroup>
+                    <FormGroup label="Address">
+                      <Input value={newAddress.address} onChange={e => setNewAddress(p => ({ ...p, address: e.target.value }))} placeholder="Full address" />
+                    </FormGroup>
+                    <div className="grid grid-cols-2 gap-3">
+                      <FormGroup label="City">
+                        <Input value={newAddress.city} onChange={e => setNewAddress(p => ({ ...p, city: e.target.value }))} placeholder="City" />
+                      </FormGroup>
+                      <FormGroup label="Pincode">
+                        <Input value={newAddress.pincode} onChange={e => setNewAddress(p => ({ ...p, pincode: e.target.value }))} placeholder="400001" />
+                      </FormGroup>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <input type="checkbox" id="is-default" checked={newAddress.is_default} onChange={e => setNewAddress(p => ({ ...p, is_default: e.target.checked }))} className="w-4 h-4" />
+                      <label htmlFor="is-default" className="text-sm">Set as default address</label>
+                    </div>
+                    <div className="flex justify-end gap-2 pt-2">
+                      <Button variant="outline" onClick={() => setIsAddressDialogOpen(false)}>Cancel</Button>
+                      <Button onClick={() => addAddressMutation.mutate(newAddress)} disabled={!newAddress.address || addAddressMutation.isPending}>
+                        {addAddressMutation.isPending ? 'Saving...' : 'Save Address'}
+                      </Button>
+                    </div>
+                  </div>
+                </DialogContent>
+              </Dialog>
+            </div>
+            <Card>
+              <CardContent className="p-4">
+                {!addresses || addresses.length === 0 ? (
+                  <div className="flex flex-col items-center justify-center py-4 text-center">
+                    <MapPin className="h-7 w-7 text-muted-foreground/30 mb-2" />
+                    <p className="text-sm text-muted-foreground">No saved addresses</p>
+                  </div>
+                ) : (
+                  <div className="space-y-3">
+                    {addresses.map((addr: CustomerAddress) => (
+                      <div key={addr.id} className="flex items-start justify-between p-3 rounded-lg bg-secondary/40 border">
+                        <div className="flex gap-3 items-start">
+                          <MapPin className="h-4 w-4 text-muted-foreground mt-0.5 flex-shrink-0" />
+                          <div>
+                            <div className="flex items-center gap-2">
+                              <span className="text-sm font-medium">{addr.label}</span>
+                              {addr.is_default && <Badge variant="outline" className="text-[10px] bg-emerald-50 text-emerald-700">Default</Badge>}
+                            </div>
+                            <p className="text-xs text-muted-foreground mt-0.5">{addr.address}</p>
+                            {(addr.city || addr.pincode) && (
+                              <p className="text-xs text-muted-foreground">{[addr.city, addr.pincode].filter(Boolean).join(' — ')}</p>
+                            )}
+                          </div>
+                        </div>
+                        <div className="flex gap-1 ml-2 flex-shrink-0">
+                          {!addr.is_default && (
+                            <Button size="icon" variant="ghost" className="h-7 w-7" title="Set as default" onClick={() => setDefaultMutation.mutate(addr.id)}>
+                              <Star className="h-3.5 w-3.5" />
+                            </Button>
+                          )}
+                          <Button size="icon" variant="ghost" className="h-7 w-7 text-destructive hover:text-destructive" onClick={() => deleteAddressMutation.mutate(addr.id)}>
+                            <Trash2 className="h-3.5 w-3.5" />
+                          </Button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </CardContent>
+            </Card>
           </Section>
 
           <Section>

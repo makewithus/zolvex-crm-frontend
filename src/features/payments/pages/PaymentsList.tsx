@@ -46,8 +46,8 @@ export const PaymentsList: React.FC = () => {
       </div>
 
       <Card>
-        <div className="p-4 border-b border-gray-100 flex items-center gap-4 bg-gray-50/50">
-          <div className="relative flex-1 max-w-md">
+        <div className="p-4 border-b border-gray-100 flex flex-col sm:flex-row items-start sm:items-center gap-3 bg-gray-50/50">
+          <div className="relative w-full sm:max-w-md">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
             <Input 
               placeholder="Search by Receipt No, Customer Name..." 
@@ -60,7 +60,7 @@ export const PaymentsList: React.FC = () => {
 
         <CardContent className="p-0">
           <div className="overflow-x-auto">
-            <Table>
+            <Table className="min-w-[700px]">
               <TableHeader>
                 <TableRow>
                   <TableHead>Receipt No</TableHead>
@@ -131,7 +131,7 @@ export const PaymentsList: React.FC = () => {
             </Table>
           </div>
           {filteredPayments && filteredPayments.length > 0 && (
-            <div className="flex items-center justify-between px-6 py-4 border-t">
+            <div className="flex flex-wrap items-center justify-between gap-2 px-4 md:px-6 py-4 border-t">
               <p className="text-sm text-gray-500">
                 Showing <span className="font-medium">{(page - 1) * limit + 1}</span> to{' '}
                 <span className="font-medium">{Math.min(page * limit, filteredPayments.length)}</span> of{' '}

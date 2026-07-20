@@ -33,7 +33,7 @@ export const InvoiceList: React.FC = () => {
 
   return (
     <div className="p-6 max-w-7xl mx-auto space-y-6">
-      <div className="flex justify-between items-center">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
         <div>
           <h1 className="text-2xl font-bold text-gray-900">Invoices</h1>
           <p className="text-sm text-gray-500">Manage financial records and billing.</p>
@@ -42,8 +42,8 @@ export const InvoiceList: React.FC = () => {
 
       <Card>
         <CardHeader className="border-b border-gray-100 pb-4">
-          <div className="flex flex-col sm:flex-row justify-between gap-4">
-             <div className="relative flex-1 max-w-md">
+          <div className="flex flex-col sm:flex-row justify-between gap-3">
+             <div className="relative w-full sm:max-w-md">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
               <input
                 type="text"
@@ -54,12 +54,12 @@ export const InvoiceList: React.FC = () => {
               />
             </div>
             <div className="flex items-center gap-3">
-              <div className="relative">
+              <div className="relative w-full sm:w-auto">
                 <Filter className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
                 <select
                   value={statusFilter}
                   onChange={(e) => { setStatusFilter(e.target.value); setPage(1); }}
-                  className="pl-10 pr-8 py-2 border border-slate-200 rounded focus:outline-none focus:border-slate-400 focus:ring-0 text-sm appearance-none bg-white"
+                  className="w-full sm:w-auto pl-10 pr-8 py-2 border border-slate-200 rounded focus:outline-none focus:border-slate-400 focus:ring-0 text-sm appearance-none bg-white"
                 >
                   <option value="">All Statuses</option>
                   <option value="Draft">Draft</option>
@@ -87,7 +87,7 @@ export const InvoiceList: React.FC = () => {
             </div>
           ) : (
             <div className="overflow-x-auto">
-              <table className="w-full text-left text-sm">
+              <table className="w-full text-left text-sm min-w-[640px]">
                 <thead className="bg-gray-50 text-gray-600 font-medium border-b border-gray-200">
                   <tr>
                     <th className="px-6 py-4">Invoice #</th>
@@ -138,7 +138,7 @@ export const InvoiceList: React.FC = () => {
             </div>
           )}
           {filteredInvoices && filteredInvoices.length > 0 && (
-            <div className="flex items-center justify-between px-6 py-4 border-t">
+            <div className="flex flex-wrap items-center justify-between gap-2 px-4 md:px-6 py-4 border-t">
               <p className="text-sm text-gray-500">
                 Showing <span className="font-medium">{(page - 1) * limit + 1}</span> to{' '}
                 <span className="font-medium">{Math.min(page * limit, filteredInvoices.length)}</span> of{' '}
