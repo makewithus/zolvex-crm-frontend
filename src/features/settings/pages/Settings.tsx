@@ -4,9 +4,10 @@ import { PageHeader } from '@/components/ui-custom/PageHeader';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Building2, Landmark, CheckCircle2, Info } from 'lucide-react';
+import { Building2, Landmark, CheckCircle2, Info, Phone, ClipboardList, ExternalLink } from 'lucide-react';
 import { toast } from 'sonner';
 import { apiClient } from '@/lib/axios';
+import { useNavigate } from 'react-router-dom';
 
 const INDIAN_STATES = [
   'Andhra Pradesh', 'Arunachal Pradesh', 'Assam', 'Bihar', 'Chhattisgarh',
@@ -18,8 +19,9 @@ const INDIAN_STATES = [
 ];
 
 const TABS = [
-  { id: 'company', label: 'Company Information', icon: Building2 },
-  { id: 'gst',     label: 'GST Configuration',   icon: Landmark   },
+  { id: 'company',  label: 'Company Information', icon: Building2 },
+  { id: 'gst',      label: 'GST Configuration',   icon: Landmark  },
+  { id: 'contact',  label: 'Support Contact',      icon: Phone     },
 ];
 
 export const Settings = () => {
@@ -27,11 +29,15 @@ export const Settings = () => {
   const [isSaving, setIsSaving]     = useState(false);
   const [isLoading, setIsLoading]   = useState(true);
   const isSuperAdmin = localStorage.getItem('userRole') === 'Super Admin';
+  const navigate = useNavigate();
 
   // Live values fetched from the DB
   const [registeredState, setRegisteredState] = useState('Maharashtra');
   const [gstin, setGstin]                     = useState('');
   const [companyName, setCompanyName]         = useState('Zolvex Services Pvt. Ltd.');
+  const [supportPhone, setSupportPhone]       = useState('');
+  const [supportEmail, setSupportEmail]       = useState('support@zolvex.in');
+  const [invoiceFooter, setInvoiceFooter]     = useState('Thank you for choosing Zolvex Services.');
 
   // Load current settings from the backend on mount
   useEffect(() => {
@@ -40,6 +46,9 @@ export const Settings = () => {
       setRegisteredState(s.company_registered_state ?? 'Maharashtra');
       setGstin(s.company_gstin ?? '');
       setCompanyName(s.company_name ?? 'Zolvex Services Pvt. Ltd.');
+      setSupportPhone(s.company_support_phone ?? '');
+      setSupportEmail(s.company_support_email ?? 'support@zolvex.in');
+      setInvoiceFooter(s.invoice_footer_note ?? 'Thank you for choosing Zolvex Services.');
     }).catch(() => {
       // Non-critical — form still works with defaults
     }).finally(() => setIsLoading(false));
@@ -60,10 +69,15 @@ export const Settings = () => {
       if (activeTab === 'gst') {
         await saveSetting('company_registered_state', registeredState, 'Company Registered State');
         await saveSetting('company_gstin', gstin, 'GSTIN');
-        toast.success(`GST settings saved. Company state is now "${registeredState}". All future bookings will use this state for CGST/SGST vs IGST determination.`);
+        toast.success(`GST settings saved. Company state is now "${registeredState}".`);
       } else if (activeTab === 'company') {
         await saveSetting('company_name', companyName, 'Company Name');
         toast.success('Company information saved.');
+      } else if (activeTab === 'contact') {
+        await saveSetting('company_support_phone', supportPhone, 'Support Phone');
+        await saveSetting('company_support_email', supportEmail, 'Support Email');
+        await saveSetting('invoice_footer_note', invoiceFooter, 'Invoice Footer Note');
+        toast.success('Support contact settings saved.');
       } else {
         toast.success('Settings saved.');
       }
@@ -100,6 +114,16 @@ export const Settings = () => {
               </button>
             ))}
           </nav>
+
+          {/* Checklists quick link */}
+          <button
+            onClick={() => navigate('/settings/checklists')}
+            className="flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium text-muted-foreground hover:bg-muted hover:text-foreground transition-colors w-full mt-1"
+          >
+            <ClipboardList className="w-4 h-4" />
+            Checklist Templates
+            <ExternalLink className="w-3 h-3 ml-auto" />
+          </button>
 
           {/* Access notice */}
           {!isSuperAdmin && (
@@ -210,6 +234,47 @@ export const Settings = () => {
             )}
 
 
+
+            {activeTab === 'contact' && (
+              <Card>
+                <CardHeader>
+                  <CardTitle>Support Contact &amp; Invoice Settings</CardTitle>
+                  <CardDescription>Details shown on invoice footer and customer-facing communications.</CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="grid md:grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <label className="text-sm font-medium">Support Phone</label>
+                      <Input
+                        value={supportPhone}
+                        onChange={e => setSupportPhone(e.target.value)}
+                        placeholder="+91 9999999999"
+                        disabled={!isSuperAdmin}
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <label className="text-sm font-medium">Support Email</label>
+                      <Input
+                        value={supportEmail}
+                        onChange={e => setSupportEmail(e.target.value)}
+                        placeholder="support@zolvex.in"
+                        disabled={!isSuperAdmin}
+                      />
+                    </div>
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium">Invoice Footer Note</label>
+                    <Input
+                      value={invoiceFooter}
+                      onChange={e => setInvoiceFooter(e.target.value)}
+                      placeholder="Thank you for choosing Zolvex Services."
+                      disabled={!isSuperAdmin}
+                    />
+                    <p className="text-xs text-muted-foreground">This text appears at the bottom of every generated invoice.</p>
+                  </div>
+                </CardContent>
+              </Card>
+            )}
 
             {isSuperAdmin && (
               <div className="mt-6 flex justify-end">
