@@ -65,11 +65,13 @@ export const MessageThread: React.FC<Props> = ({ messages, loading }) => {
               <div
                 className={`max-w-[70%] rounded-2xl px-3.5 py-2 shadow-sm ${
                   isOutbound
-                    ? 'bg-blue-600 text-white rounded-br-sm'
-                    : 'bg-white border border-slate-200 text-slate-800 rounded-bl-sm'
+                    ? 'bg-blue-600 rounded-br-sm'
+                    : 'bg-white border border-slate-200 rounded-bl-sm'
                 }`}
               >
-                <p className="text-sm leading-relaxed whitespace-pre-wrap break-words">{msg.body}</p>
+                <p className={`text-sm leading-relaxed whitespace-pre-wrap break-words ${isOutbound ? 'text-white' : 'text-slate-800'}`}>
+                  {msg.body}
+                </p>
                 <div className={`flex items-center gap-1 mt-1 justify-end ${isOutbound ? 'text-blue-200' : 'text-slate-400'}`}>
                   <span className="text-[10px]">
                     {format(new Date(msg.created_at), 'h:mm a')}
