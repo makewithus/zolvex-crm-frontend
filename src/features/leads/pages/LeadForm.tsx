@@ -41,7 +41,13 @@ export const LeadForm = () => {
 
   useEffect(() => {
     if (isEdit && lead) {
-      form.reset({ status: lead.status, assigned_to: lead.assigned_to || '' });
+      form.reset({
+        status: lead.status,
+        assigned_to: lead.assigned_to || '',
+        name: lead.name || '',
+        city_id: lead.city_id || '',
+        service_id: lead.service_id || ''
+      });
     }
   }, [isEdit, lead, form]);
 
@@ -79,16 +85,14 @@ export const LeadForm = () => {
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
           <FormSection title={isEdit ? "Assignment & Status" : "Lead Details"}>
             <FormGrid columns={2}>
-              {!isEdit && (
-                <>
                   <FormGroup label="Phone" error={form.formState.errors.phone?.message as string} required>
-                    <Input {...form.register('phone')} placeholder="e.g. 9876543210" />
+                    <Input {...form.register('phone')} placeholder="e.g. 9876543210" disabled={isEdit} />
                   </FormGroup>
                   <FormGroup label="Name" error={form.formState.errors.name?.message as string}>
                     <Input {...form.register('name')} placeholder="e.g. John Doe" />
                   </FormGroup>
                   <FormGroup label="Source" error={form.formState.errors.source?.message as string} required>
-                    <select {...form.register('source')} className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 transition-colors shadow-sm">
+                    <select {...form.register('source')} disabled={isEdit} className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 transition-colors shadow-sm">
                       <option value="Phone">Phone</option>
                       <option value="WhatsApp">WhatsApp</option>
                       <option value="WebsiteForm">Website Form</option>
@@ -114,8 +118,6 @@ export const LeadForm = () => {
                       ))}
                     </select>
                   </FormGroup>
-                </>
-              )}
               {isEdit && (
                 <>
                   <FormGroup label="Stage" error={form.formState.errors.status?.message as string}>

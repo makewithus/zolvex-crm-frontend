@@ -13,8 +13,11 @@ export const leadFormSchema = z.object({
 }));
 
 export const leadUpdateSchema = z.object({
+  name: z.string().optional(),
+  city_id: z.string().optional(),
+  service_id: z.string().optional(),
   status: z.enum(['New', 'Contacted', 'FollowUp', 'Qualified', 'QuotationSent', 'Booked', 'Lost']).optional(),
-  assigned_to: z.string().uuid().optional().nullable().or(z.literal('')),
+  assigned_to: z.string().optional(),
 }).transform(data => ({
   ...data,
   assigned_to: data.assigned_to === '' ? undefined : data.assigned_to,
