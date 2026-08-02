@@ -181,4 +181,14 @@ export const FEATURE_REGISTRY: FeatureDefinition[] = [
     category: 'Support',
     order: 66,
   },
+  {
+    id: 'whatsapp',
+    name: 'WhatsApp Inbox',
+    route: '/whatsapp',
+    sidebarVisibility: true,
+    requiredRoles: ['Super Admin', 'City Manager', 'Support Agent'],
+    pageTitle: 'WhatsApp Inbox',
+    category: 'Support',
+    order: 67,
+  },
 ];

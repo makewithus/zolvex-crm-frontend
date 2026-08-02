@@ -31,6 +31,7 @@ import ChecklistTemplates from '@/features/settings/pages/ChecklistTemplates';
 import ComplaintList from '@/features/complaints/pages/ComplaintList';
 import ComplaintDetail from '@/features/complaints/pages/ComplaintDetail';
 import FeedbackList from '@/features/feedback/pages/FeedbackList';
+import WhatsAppInbox from '@/features/whatsapp/pages/WhatsAppInbox';
 
 const PrivateRoute = ({ children }: { children: React.ReactNode }) => {
   const token = localStorage.getItem('token');
@@ -88,6 +89,7 @@ export const AppRoutes = () => {
         <Route path="complaints" element={<ComplaintList />} />
         <Route path="complaints/:id" element={<ComplaintDetail />} />
         <Route path="feedback" element={<FeedbackList />} />
+        <Route path="whatsapp" element={<WhatsAppInbox />} />
       </Route>
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
