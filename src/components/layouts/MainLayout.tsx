@@ -36,7 +36,7 @@ export const MainLayout = () => {
               onClick={toggleSidebar}
             />
           )}
-          <main className="flex-1 overflow-y-auto relative bg-[#F8FAFC]" id="main-content">
+          <main className="flex-1 overflow-y-auto overflow-x-hidden min-w-0 relative bg-[#F8FAFC]" id="main-content">
             <div className="max-w-[1600px] mx-auto p-4 md:p-6 lg:p-8">
               <Outlet />
             </div>

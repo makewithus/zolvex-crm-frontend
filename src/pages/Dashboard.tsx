@@ -307,7 +307,7 @@ export const Dashboard = () => {
         </div>
 
         {/* KPI Cards Row */}
-        <div className="grid gap-6 grid-cols-2 lg:grid-cols-5">
+        <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5">
           {kpisLoading
             ? Array.from({ length: 5 }).map((_, i) => (
                 <Card key={i} className="shadow-[0_1px_3px_rgba(0,0,0,0.03)] border border-slate-200/50 rounded-xl bg-white min-h-[96px] animate-pulse">
@@ -352,7 +352,7 @@ export const Dashboard = () => {
 
         {/* Row 2: Sales Trend vs Revenue Breakdown */}
         <div className="grid gap-6 lg:grid-cols-3">
-          <Card className="lg:col-span-2 shadow-sm border border-slate-200/60 rounded-xl bg-white lg:h-[265px] flex flex-col hover:shadow-md hover:border-slate-300 transition-all duration-200">
+          <Card className="lg:col-span-2 min-w-0 shadow-sm border border-slate-200/60 rounded-xl bg-white lg:h-[265px] flex flex-col hover:shadow-md hover:border-slate-300 transition-all duration-200">
             <CardHeader className="px-4 py-2.5 border-b border-slate-100 flex flex-row items-center justify-between">
               <div className="flex flex-wrap items-center gap-3">
                 <div className="flex items-center">
@@ -376,59 +376,61 @@ export const Dashboard = () => {
               </div>
 
               {/* Custom SVG Column Bars */}
-              <div className="relative flex justify-between items-end h-[140px] pt-2 border-b border-slate-200 pr-12">
-                {/* Horizontal dashed backdrop lines to mimic professional charts */}
-                <div className="absolute inset-x-0 top-2 bottom-0.5 flex flex-col justify-between pointer-events-none z-0 pr-12">
-                  <div className="border-b border-dashed border-slate-200/80 w-full relative">
-                    <span className="absolute right-[-48px] text-[7.5px] font-bold text-slate-400/80 leading-none -translate-y-1/2">{formatYAxisLabel(maxRevenueValue)}</span>
-                  </div>
-                  <div className="border-b border-dashed border-slate-200/80 w-full relative">
-                    <span className="absolute right-[-48px] text-[7.5px] font-bold text-slate-400/80 leading-none -translate-y-1/2">{formatYAxisLabel(maxRevenueValue / 2)}</span>
-                  </div>
-                  <div className="w-full relative">
-                    <span className="absolute right-[-48px] text-[7.5px] font-bold text-slate-400/80 leading-none -translate-y-1/2">₹0</span>
-                  </div>
-                </div>
-
-                {(!kpis?.monthly_revenue_trend || kpis.monthly_revenue_trend.length === 0) ? (
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <EmptyWidget 
-                       icon={Activity} 
-                       title="No trend data available" 
-                       description="Historical monthly revenue trends will appear here once aggregated." 
-                       compact
-                    />
-                  </div>
-                ) : (
-                  kpis.monthly_revenue_trend.map((d: any) => (
-                    <div key={d.month} className="flex flex-col items-center flex-1 group z-10">
-                      <div className="w-full flex items-end justify-center gap-[2px] h-[115px] px-[2px]">
-                        <div 
-                          className="w-1/3 max-w-[8px] bg-slate-800 rounded-t-sm transition-all hover:bg-slate-950"
-                          style={{ height: d.revenuePct > 0 ? `${d.revenuePct}%` : '2px', minHeight: '2px' }}
-                          title={`Total Revenue: ₹${d.revenue.toLocaleString('en-IN', { maximumFractionDigits: 0 })}`}
-                        />
-                        <div 
-                          className="w-1/3 max-w-[8px] bg-emerald-500 rounded-t-sm transition-all hover:bg-emerald-600"
-                          style={{ height: d.collectionsPct > 0 ? `${d.collectionsPct}%` : '2px', minHeight: '2px' }}
-                          title={`Collected: ₹${(d.collections || 0).toLocaleString('en-IN', { maximumFractionDigits: 0 })}`}
-                        />
-                        <div 
-                          className="w-1/3 max-w-[8px] bg-rose-500 rounded-t-sm transition-all hover:bg-rose-600"
-                          style={{ height: d.outstandingPct > 0 ? `${d.outstandingPct}%` : '2px', minHeight: '2px' }}
-                          title={`Due: ₹${(d.outstanding || 0).toLocaleString('en-IN', { maximumFractionDigits: 0 })}`}
-                        />
-                      </div>
-                      <span className="text-[8.5px] font-bold text-slate-400 mt-1.5 uppercase leading-none">{d.month}</span>
+              <div className="overflow-x-auto w-full scrollbar-thin">
+                <div className={`relative flex justify-between items-end h-[140px] pt-2 border-b border-slate-200 pr-12 ${(!kpis?.monthly_revenue_trend || kpis.monthly_revenue_trend.length === 0) ? 'w-full' : 'min-w-[600px] md:min-w-0'}`}>
+                  {/* Horizontal dashed backdrop lines to mimic professional charts */}
+                  <div className="absolute inset-x-0 top-2 bottom-0.5 flex flex-col justify-between pointer-events-none z-0 pr-12">
+                    <div className="border-b border-dashed border-slate-200/80 w-full relative">
+                      <span className="absolute right-[-48px] text-[7.5px] font-bold text-slate-400/80 leading-none -translate-y-1/2">{formatYAxisLabel(maxRevenueValue)}</span>
                     </div>
-                  ))
-                )}
+                    <div className="border-b border-dashed border-slate-200/80 w-full relative">
+                      <span className="absolute right-[-48px] text-[7.5px] font-bold text-slate-400/80 leading-none -translate-y-1/2">{formatYAxisLabel(maxRevenueValue / 2)}</span>
+                    </div>
+                    <div className="w-full relative">
+                      <span className="absolute right-[-48px] text-[7.5px] font-bold text-slate-400/80 leading-none -translate-y-1/2">₹0</span>
+                    </div>
+                  </div>
+
+                  {(!kpis?.monthly_revenue_trend || kpis.monthly_revenue_trend.length === 0) ? (
+                    <div className="absolute inset-0 flex items-center justify-center">
+                      <EmptyWidget 
+                         icon={Activity} 
+                         title="No trend data available" 
+                         description="Historical monthly revenue trends will appear here once aggregated." 
+                         compact
+                      />
+                    </div>
+                  ) : (
+                    kpis.monthly_revenue_trend.map((d: any) => (
+                      <div key={d.month} className="flex flex-col items-center flex-1 group z-10">
+                        <div className="w-full flex items-end justify-center gap-[2px] h-[115px] px-[2px]">
+                          <div 
+                            className="w-1/3 max-w-[8px] bg-slate-800 rounded-t-sm transition-all hover:bg-slate-950"
+                            style={{ height: d.revenuePct > 0 ? `${d.revenuePct}%` : '2px', minHeight: '2px' }}
+                            title={`Total Revenue: ₹${d.revenue.toLocaleString('en-IN', { maximumFractionDigits: 0 })}`}
+                          />
+                          <div 
+                            className="w-1/3 max-w-[8px] bg-emerald-500 rounded-t-sm transition-all hover:bg-emerald-600"
+                            style={{ height: d.collectionsPct > 0 ? `${d.collectionsPct}%` : '2px', minHeight: '2px' }}
+                            title={`Collected: ₹${(d.collections || 0).toLocaleString('en-IN', { maximumFractionDigits: 0 })}`}
+                          />
+                          <div 
+                            className="w-1/3 max-w-[8px] bg-rose-500 rounded-t-sm transition-all hover:bg-rose-600"
+                            style={{ height: d.outstandingPct > 0 ? `${d.outstandingPct}%` : '2px', minHeight: '2px' }}
+                            title={`Due: ₹${(d.outstanding || 0).toLocaleString('en-IN', { maximumFractionDigits: 0 })}`}
+                          />
+                        </div>
+                        <span className="text-[8.5px] font-bold text-slate-400 mt-1.5 uppercase leading-none">{d.month}</span>
+                      </div>
+                    ))
+                  )}
+                </div>
               </div>
             </CardContent>
           </Card>
 
           {/* Revenue Breakdown */}
-          <Card className="shadow-sm border border-slate-200/60 rounded-xl bg-white lg:h-[265px] flex flex-col hover:shadow-md hover:border-slate-300 transition-all duration-200">
+          <Card className="min-w-0 shadow-sm border border-slate-200/60 rounded-xl bg-white lg:h-[265px] flex flex-col hover:shadow-md hover:border-slate-300 transition-all duration-200">
             <CardHeader className="px-4 py-2.5 border-b border-slate-100 pb-2.5">
               <div className="flex items-center gap-1.5">
                 <CardTitle className="text-[12px] font-semibold text-slate-800 flex items-center gap-1.5">
@@ -480,12 +482,12 @@ export const Dashboard = () => {
         {/* Row 3: Tabbed Workspaces & System Activity Audit Feed */}
         <div className="grid gap-6 lg:grid-cols-3">
           {/* Left Side: Consolidated Tabbed CRM Logs (2/3 width) */}
-          <Card className="lg:col-span-2 shadow-sm border border-slate-200/60 rounded-xl bg-white overflow-hidden flex flex-col lg:h-[310px] hover:shadow-md hover:border-slate-300 transition-all duration-200">
-            <CardHeader className="px-4 py-3 border-b border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-3">
-              <div className="flex bg-slate-50 p-1 rounded-lg border border-slate-200 text-xs shrink-0">
+          <Card className="lg:col-span-2 min-w-0 shadow-sm border border-slate-200/60 rounded-xl bg-white overflow-hidden flex flex-col lg:h-[310px] hover:shadow-md hover:border-slate-300 transition-all duration-200">
+            <CardHeader className="px-4 py-3 border-b border-slate-100 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
+              <div className="flex bg-slate-50 p-1 rounded-lg border border-slate-200 text-xs shrink-0 overflow-x-auto max-w-full scrollbar-none">
                 {hasAccess('/jobs') && (
                   <button 
-                    className={`px-3 py-1.5 flex items-center gap-1.5 rounded-md font-semibold transition-colors ${activeTab === 'jobs' ? 'bg-white text-slate-900 border border-slate-200/50 shadow-sm' : 'text-slate-500 hover:text-slate-800'}`}
+                    className={`px-3 py-1.5 flex items-center gap-1.5 rounded-md font-semibold transition-colors shrink-0 ${activeTab === 'jobs' ? 'bg-white text-slate-900 border border-slate-200/50 shadow-sm' : 'text-slate-500 hover:text-slate-800'}`}
                     onClick={() => { setActiveTab('jobs'); setLogsSearch(''); }}
                   >
                     <Briefcase className="w-3.5 h-3.5" />
@@ -493,7 +495,7 @@ export const Dashboard = () => {
                   </button>
                 )}
                 <button 
-                  className={`px-3 py-1.5 flex items-center gap-1.5 rounded-md font-semibold transition-colors ${activeTab === 'bookings' ? 'bg-white text-slate-900 border border-slate-200/50 shadow-sm' : 'text-slate-500 hover:text-slate-800'}`}
+                  className={`px-3 py-1.5 flex items-center gap-1.5 rounded-md font-semibold transition-colors shrink-0 ${activeTab === 'bookings' ? 'bg-white text-slate-900 border border-slate-200/50 shadow-sm' : 'text-slate-500 hover:text-slate-800'}`}
                   onClick={() => { setActiveTab('bookings'); setLogsSearch(''); }}
                 >
                   <Calendar className="w-3.5 h-3.5" />
@@ -501,7 +503,7 @@ export const Dashboard = () => {
                 </button>
                 {hasAccess('/leads') && (
                   <button 
-                    className={`px-3 py-1.5 flex items-center gap-1.5 rounded-md font-semibold transition-colors ${activeTab === 'leads' ? 'bg-white text-slate-900 border border-slate-200/50 shadow-sm' : 'text-slate-500 hover:text-slate-800'}`}
+                    className={`px-3 py-1.5 flex items-center gap-1.5 rounded-md font-semibold transition-colors shrink-0 ${activeTab === 'leads' ? 'bg-white text-slate-900 border border-slate-200/50 shadow-sm' : 'text-slate-500 hover:text-slate-800'}`}
                     onClick={() => { setActiveTab('leads'); setLogsSearch(''); }}
                   >
                     <Target className="w-3.5 h-3.5" />
@@ -510,7 +512,7 @@ export const Dashboard = () => {
                 )}
               </div>
               
-              <div className="flex items-center gap-2 w-full md:w-auto">
+              <div className="flex items-center gap-2 w-full sm:w-auto sm:justify-end">
 
                 <Button 
                   onClick={() => {
@@ -518,7 +520,7 @@ export const Dashboard = () => {
                     else if (activeTab === 'jobs') navigate('/jobs');
                     else navigate('/leads/new');
                   }}
-                  className="h-9 px-3.5 rounded-lg text-xs font-semibold text-white bg-slate-900 hover:bg-slate-800 shadow-none flex items-center gap-1.5 shrink-0"
+                  className="h-9 px-3.5 rounded-lg text-xs font-semibold text-white bg-slate-900 hover:bg-slate-800 shadow-none flex items-center gap-1.5 w-full sm:w-auto justify-center"
                 >
                   {activeTab === 'leads' ? <Plus className="w-3.5 h-3.5" /> : null}
                   {activeTab === 'bookings' ? 'Manage Bookings' : activeTab === 'jobs' ? 'Manage Jobs' : 'Add Lead'}
@@ -527,7 +529,7 @@ export const Dashboard = () => {
             </CardHeader>
             
             <CardContent className="p-0 flex-1 overflow-auto flex flex-col justify-between">
-              <div className="min-w-full flex-1">
+              <div className="w-full flex-1 overflow-x-auto">
                 {((activeTab === 'bookings' && bookingsLoading) || (activeTab === 'jobs' && jobsLoading) || (activeTab === 'leads' && leadsLoading)) ? (
                   <div className="p-4 space-y-2">
                     {Array.from({ length: 4 }).map((_, i) => (
@@ -546,10 +548,10 @@ export const Dashboard = () => {
                     <table className="w-full text-left border-collapse">
                       <thead>
                         <tr className="border-b border-slate-100 bg-slate-50/50">
-                          <th className="text-[10px] font-semibold text-slate-450 py-2.5 px-4 w-28 uppercase tracking-wider">{activeTab === 'bookings' ? 'Booking' : activeTab === 'jobs' ? 'Job' : 'Lead'}</th>
+                          <th className="text-[10px] font-semibold text-slate-450 py-2.5 px-4 w-20 sm:w-28 uppercase tracking-wider">{activeTab === 'bookings' ? 'Booking' : activeTab === 'jobs' ? 'Job' : 'Lead'}</th>
                           <th className="text-[10px] font-semibold text-slate-450 py-2.5 px-4 uppercase tracking-wider">Customer</th>
-                          <th className="text-[10px] font-semibold text-slate-450 py-2.5 px-4 uppercase tracking-wider">Service</th>
-                          <th className="text-[10px] font-semibold text-slate-450 py-2.5 px-4 uppercase tracking-wider">{activeTab === 'leads' ? 'Contact' : 'Schedule'}</th>
+                          <th className="text-[10px] font-semibold text-slate-450 py-2.5 px-4 uppercase tracking-wider hidden md:table-cell">Service</th>
+                          <th className="text-[10px] font-semibold text-slate-455 py-2.5 px-4 uppercase tracking-wider hidden md:table-cell">{activeTab === 'leads' ? 'Contact' : 'Schedule'}</th>
                           <th className="text-[10px] font-semibold text-slate-455 py-2.5 px-4 w-32 uppercase tracking-wider">Status</th>
                           <th className="text-[10px] font-semibold text-slate-450 py-2.5 px-4 w-16 text-center"></th>
                         </tr>
@@ -559,8 +561,8 @@ export const Dashboard = () => {
                           <tr key={row.id} className="hover:bg-slate-50/60 transition-colors">
                             <td className="py-2 px-4 font-mono text-[11px] font-medium text-slate-500">{row.id}</td>
                             <td className="py-2 px-4 font-semibold text-slate-900 text-xs">{row.name}</td>
-                            <td className="py-2 px-4 text-slate-500 text-xs">{row.detail}</td>
-                            <td className="py-2 px-4 text-slate-500 text-xs">
+                            <td className="py-2 px-4 text-slate-500 text-xs hidden md:table-cell">{row.detail}</td>
+                            <td className="py-2 px-4 text-slate-500 text-xs hidden md:table-cell">
                               {row.date ?? <span className="text-slate-300">—</span>}
                             </td>
                             <td className="py-2 px-4">
@@ -598,7 +600,7 @@ export const Dashboard = () => {
           </Card>
 
           {/* Right Side: System Activity Audit Feed (1/3 width) */}
-          <Card className="shadow-sm border border-slate-200/60 rounded-xl bg-white overflow-hidden flex flex-col lg:h-[310px] hover:shadow-md hover:border-slate-300 transition-all duration-200">
+          <Card className="min-w-0 shadow-sm border border-slate-200/60 rounded-xl bg-white overflow-hidden flex flex-col lg:h-[310px] hover:shadow-md hover:border-slate-300 transition-all duration-200">
             <CardHeader className="px-4 py-3 border-b border-slate-100 flex flex-row items-center justify-between">
               <div className="flex items-center">
                 <CardTitle className="text-[12px] font-semibold text-slate-800 flex items-center gap-1.5">
@@ -650,7 +652,7 @@ export const Dashboard = () => {
           </Card>
         </div>
         {/* Row 4: Recent Invoices Card at the very bottom */}
-        <Card className="shadow-sm border border-slate-200/60 rounded-xl bg-white overflow-hidden hover:shadow-md hover:border-slate-300 transition-all duration-200">
+        <Card className="min-w-0 shadow-sm border border-slate-200/60 rounded-xl bg-white overflow-hidden hover:shadow-md hover:border-slate-300 transition-all duration-200">
           <CardHeader className="px-4 py-3 border-b border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-3">
             <div className="flex items-center">
               <CardTitle className="text-[12px] font-semibold text-slate-800 flex items-center gap-1.5">
@@ -690,14 +692,14 @@ export const Dashboard = () => {
                   compact
                 />
               ) : (
-                <table className="w-full text-left border-collapse min-w-[560px]">
+                <table className="w-full text-left border-collapse min-w-[360px] md:min-w-[560px]">
                   <thead>
                     <tr className="border-b border-slate-100 bg-slate-50/50">
-                      <th className="text-[10px] font-semibold text-slate-450 py-2.5 px-4 w-28 uppercase tracking-wider">Invoice #</th>
+                      <th className="text-[10px] font-semibold text-slate-450 py-2.5 px-4 w-20 md:w-28 uppercase tracking-wider">Invoice #</th>
                       <th className="text-[10px] font-semibold text-slate-450 py-2.5 px-4 uppercase tracking-wider">Customer</th>
-                      <th className="text-[10px] font-semibold text-slate-450 py-2.5 px-4 uppercase tracking-wider">Service</th>
+                      <th className="text-[10px] font-semibold text-slate-450 py-2.5 px-4 uppercase tracking-wider hidden md:table-cell">Service</th>
                       <th className="text-[10px] font-semibold text-slate-455 py-2.5 px-4 w-32 uppercase tracking-wider">Status</th>
-                      <th className="text-[10px] font-semibold text-slate-450 py-2.5 px-4 w-28 text-right uppercase tracking-wider">Unit Price</th>
+                      <th className="text-[10px] font-semibold text-slate-450 py-2.5 px-4 w-28 text-right uppercase tracking-wider hidden md:table-cell">Unit Price</th>
                       <th className="text-[10px] font-semibold text-slate-455 py-2.5 px-4 w-32 text-right uppercase tracking-wider">Amount</th>
                       <th className="text-[10px] font-semibold text-slate-450 py-2.5 px-4 w-16 text-center"></th>
                     </tr>
@@ -707,11 +709,11 @@ export const Dashboard = () => {
                       <tr key={row.id} className="hover:bg-slate-50/60 transition-colors">
                         <td className="py-1.5 px-4 font-mono text-[11px] font-medium text-slate-500">{row.id}</td>
                         <td className="py-1.5 px-4 font-semibold text-slate-900 text-xs">{row.customer}</td>
-                        <td className="py-1.5 px-4 text-slate-500 text-xs">{row.product}</td>
+                        <td className="py-1.5 px-4 text-slate-500 text-xs hidden md:table-cell">{row.product}</td>
                         <td className="py-1.5 px-4">
                           <StatusBadge status={getStatusColor(row.status)} label={row.status} />
                         </td>
-                        <td className="py-1.5 px-4 text-right text-slate-700 text-xs">{row.unitPrice}</td>
+                        <td className="py-1.5 px-4 text-right text-slate-700 text-xs hidden md:table-cell">{row.unitPrice}</td>
                         <td className="py-1.5 px-4 text-right font-semibold text-slate-900 text-xs">{row.totalRevenue}</td>
                         <td className="py-1.5 px-4 text-center">
                           <DropdownMenu>

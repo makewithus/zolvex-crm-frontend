@@ -138,6 +138,17 @@
   border-bottom: 1px solid #f1f5f9 !important;
 }
 
+@media (max-width: 640px) {
+  .crm-app-container th, [data-radix-portal] th {
+    padding: 6px 8px !important;
+    font-size: 10px !important;
+  }
+  .crm-app-container td, [data-radix-portal] td {
+    padding: 6px 8px !important;
+    font-size: 11.5px !important;
+  }
+}
+
 .crm-app-container tr:hover, [data-radix-portal] tr:hover {
   background-color: #f8fafc !important;
 }
