@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import { formatEnumLabel } from '@/lib/utils';
 import { PageContainer } from '@/components/ui-custom/PageContainer';
 import { PageHeader } from '@/components/ui-custom/PageHeader';
 import { DetailCard } from '@/components/ui-custom/DetailCard';
@@ -127,13 +128,13 @@ export const LeadDetail = () => {
               <div className="space-y-4 py-4">
                 <select className="w-full h-9 rounded-md border px-3 text-sm bg-background" value={newStage} onChange={e => setNewStage(e.target.value as LeadStatus)}>
                   <option value="">Select Stage...</option>
-                  <option value="New">New</option>
-                  <option value="Contacted">Contacted</option>
-                  <option value="FollowUp">FollowUp</option>
-                  <option value="Qualified">Qualified</option>
-                  <option value="QuotationSent">QuotationSent</option>
-                  <option value="Booked">Booked</option>
-                  <option value="Lost">Lost</option>
+                  <option value="New">{formatEnumLabel("New")}</option>
+                  <option value="Contacted">{formatEnumLabel("Contacted")}</option>
+                  <option value="FollowUp">{formatEnumLabel("FollowUp")}</option>
+                  <option value="Qualified">{formatEnumLabel("Qualified")}</option>
+                  <option value="QuotationSent">{formatEnumLabel("QuotationSent")}</option>
+                  <option value="Booked">{formatEnumLabel("Booked")}</option>
+                  <option value="Lost">{formatEnumLabel("Lost")}</option>
                 </select>
 
                 {newStage === 'Lost' && (
@@ -184,8 +185,8 @@ export const LeadDetail = () => {
             <DetailCard 
               title="Lead Information" 
               data={[
-                { label: 'Status', value: <StatusBadge status={lead.status === 'Lost' ? 'error' : lead.status === 'Booked' ? 'success' : 'info'} label={lead.status} /> },
-                { label: 'Source', value: <StatusBadge status="default" label={lead.source} /> },
+                { label: 'Status', value: <StatusBadge status={lead.status === 'Lost' ? 'error' : lead.status === 'Booked' ? 'success' : 'info'} label={formatEnumLabel(lead.status)} /> },
+                { label: 'Source', value: <StatusBadge status="default" label={formatEnumLabel(lead.source)} /> },
                 { label: 'City', value: lead.city?.name || 'Unassigned' },
                 { label: 'Service', value: lead.service?.name || 'Unassigned' },
                 { label: 'Assigned To', value: lead.assignedTo?.name || 'Unassigned' },
@@ -247,7 +248,7 @@ export const LeadDetail = () => {
                         
                         <div className="ml-4">
                           <p className="text-sm font-medium text-foreground">
-                            {event.from_stage ? `${event.from_stage} → ${event.to_stage}` : `Created as ${event.to_stage}`}
+                            {event.from_stage ? `${formatEnumLabel(event.from_stage)} → ${formatEnumLabel(event.to_stage)}` : `Created as ${formatEnumLabel(event.to_stage)}`}
                           </p>
                           <div className="flex flex-col mt-1">
                             <p className="text-xs text-muted-foreground">

@@ -1,4 +1,5 @@
 import { useEffect } from 'react';
+import { formatEnumLabel } from '@/lib/utils';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useForm, Resolver } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -93,13 +94,13 @@ export const LeadForm = () => {
                   </FormGroup>
                   <FormGroup label="Source" error={form.formState.errors.source?.message as string} required>
                     <select {...form.register('source')} disabled={isEdit} className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 transition-colors shadow-sm">
-                      <option value="Phone">Phone</option>
-                      <option value="WhatsApp">WhatsApp</option>
-                      <option value="WebsiteForm">Website Form</option>
-                      <option value="MetaAds">Meta Ads</option>
-                      <option value="ManualEntry">Manual Entry</option>
-                      <option value="Justdial">Justdial</option>
-                      <option value="Referrals">Referrals</option>
+                      <option value="Phone">{formatEnumLabel("Phone")}</option>
+                      <option value="WhatsApp">{formatEnumLabel("WhatsApp")}</option>
+                      <option value="WebsiteForm">{formatEnumLabel("WebsiteForm")}</option>
+                      <option value="MetaAds">{formatEnumLabel("MetaAds")}</option>
+                      <option value="ManualEntry">{formatEnumLabel("ManualEntry")}</option>
+                      <option value="Justdial">{formatEnumLabel("Justdial")}</option>
+                      <option value="Referrals">{formatEnumLabel("Referrals")}</option>
                     </select>
                   </FormGroup>
                   <FormGroup label="City" error={form.formState.errors.city_id?.message as string}>
@@ -114,7 +115,7 @@ export const LeadForm = () => {
                     <select {...form.register('service_id')} className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 transition-colors shadow-sm">
                       <option value="">Select a service...</option>
                       {servicesResponse?.data?.map((service: any) => (
-                        <option key={service.id} value={service.id}>{service.name}</option>
+                        <option key={service.id} value={service.id}>{formatEnumLabel(service.name)}</option>
                       ))}
                     </select>
                   </FormGroup>
@@ -122,13 +123,13 @@ export const LeadForm = () => {
                 <>
                   <FormGroup label="Stage" error={form.formState.errors.status?.message as string}>
                     <select {...form.register('status')} className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 transition-colors shadow-sm">
-                      <option value="New">New</option>
-                      <option value="Contacted">Contacted</option>
-                      <option value="FollowUp">FollowUp</option>
-                      <option value="Qualified">Qualified</option>
-                      <option value="QuotationSent">QuotationSent</option>
-                      <option value="Booked">Booked</option>
-                      <option value="Lost">Lost</option>
+                      <option value="New">{formatEnumLabel("New")}</option>
+                      <option value="Contacted">{formatEnumLabel("Contacted")}</option>
+                      <option value="FollowUp">{formatEnumLabel("FollowUp")}</option>
+                      <option value="Qualified">{formatEnumLabel("Qualified")}</option>
+                      <option value="QuotationSent">{formatEnumLabel("QuotationSent")}</option>
+                      <option value="Booked">{formatEnumLabel("Booked")}</option>
+                      <option value="Lost">{formatEnumLabel("Lost")}</option>
                     </select>
                   </FormGroup>
                   <FormGroup label="Assigned To" error={form.formState.errors.assigned_to?.message as string}>

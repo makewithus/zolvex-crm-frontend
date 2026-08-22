@@ -10,6 +10,7 @@ import { FormGroup } from '@/components/ui-custom/FormGroup';
 import { FormGrid } from '@/components/ui-custom/FormGrid';
 import { useServices } from '@/features/services/hooks/useServices';
 import { useCities } from '@/features/cities/hooks/useCities';
+import { formatEnumLabel } from '@/lib/utils';
 import { PricingRule } from '../types/pricingRule.types';
 import { toast } from 'sonner';
 
@@ -106,7 +107,7 @@ export const PricingRuleEditDialog = ({ rule, open, onOpenChange }: PricingRuleE
                 className="flex h-10 w-full rounded-md border border-input bg-muted px-3 py-2 text-sm ring-offset-background cursor-not-allowed"
               >
                 <option value="">Select a service...</option>
-                {services.map(s => <option key={s.id} value={s.id}>{s.name}</option>)}
+                {services.map(s => <option key={s.id} value={s.id}>{formatEnumLabel(s.name)}</option>)}
               </select>
             </FormGroup>
 
@@ -116,7 +117,7 @@ export const PricingRuleEditDialog = ({ rule, open, onOpenChange }: PricingRuleE
                 className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
               >
                 <option value="">Global Rule</option>
-                {cities.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
+                {cities.map(c => <option key={c.id} value={c.id}>{formatEnumLabel(c.name)}</option>)}
               </select>
             </FormGroup>
           </FormGrid>

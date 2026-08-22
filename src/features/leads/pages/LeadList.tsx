@@ -1,6 +1,8 @@
 import { useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { FilterPopover, FilterState } from '@/components/ui-custom/FilterPopover';
 import { useLeads } from '../hooks/useLeads';
+import { formatEnumLabel } from '@/lib/utils';
 import { DataTable, Column } from '@/components/ui-custom/DataTable';
 import { StatusBadge } from '@/components/ui-custom/StatusBadge';
 import { PageHeader } from '@/components/ui-custom/PageHeader';
@@ -15,15 +17,54 @@ export const LeadList = () => {
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState('');
   const [page, setPage] = useState(1);
+  const [filters, setFilters] = useState<FilterState>({});
 
   const filteredLeads = useMemo(() => {
     let leads = leadsResponse?.data || [];
-    leads = [...leads].sort((a: any, b: any) => new Date(b.created_at || 0).getTime() - new Date(a.created_at || 0).getTime());
-    return leads.filter((lead: Lead) =>
-      (lead.name && lead.name.toLowerCase().includes(searchQuery.toLowerCase())) ||
-      lead.phone.includes(searchQuery)
-    );
-  }, [leadsResponse, searchQuery]);
+
+    // Apply Search
+    if (searchQuery) {
+      const q = searchQuery.toLowerCase();
+      leads = leads.filter((lead: Lead) =>
+        (lead.name && lead.name.toLowerCase().includes(q)) ||
+        lead.phone.includes(searchQuery)
+      );
+    }
+
+    // Apply Filters
+    if (filters.city_id) leads = leads.filter((l: any) => l.city_id === filters.city_id);
+    if (filters.service_id) leads = leads.filter((l: any) => l.service_id === filters.service_id);
+    if (filters.status) leads = leads.filter((l: any) => l.status === filters.status);
+    
+    if (filters.date_from || filters.date_to) {
+      leads = leads.filter((l: any) => {
+        const createdStr = l.history?.find((h: any) => h.to_stage === 'New')?.changed_at || l.created_at;
+        if (!createdStr) return true; // keep if no date (fallback)
+        const created = new Date(createdStr).getTime();
+        
+        let pass = true;
+        if (filters.date_from) {
+          pass = pass && created >= new Date(filters.date_from).getTime();
+        }
+        if (filters.date_to) {
+          const toDate = new Date(filters.date_to);
+          toDate.setDate(toDate.getDate() + 1); // include the whole day
+          pass = pass && created < toDate.getTime();
+        }
+        return pass;
+      });
+    }
+
+    // Sort
+    leads = [...leads].sort((a: any, b: any) => {
+      const getCreationTime = (lead: any) => lead.history?.find((h: any) => h.to_stage === 'New')?.changed_at || lead.created_at || 0;
+      const timeDiff = new Date(getCreationTime(b)).getTime() - new Date(getCreationTime(a)).getTime();
+      if (timeDiff !== 0) return timeDiff;
+      return (a.phone || '').localeCompare(b.phone || '');
+    });
+
+    return leads;
+  }, [leadsResponse, searchQuery, filters]);
 
   const limit = 10;
   const totalPages = Math.max(1, Math.ceil(filteredLeads.length / limit));
@@ -48,7 +89,7 @@ export const LeadList = () => {
     {
       key: 'source',
       header: 'Source',
-      cell: (row) => <StatusBadge status="default" label={row.source} />,
+      cell: (row) => <StatusBadge status="default" label={formatEnumLabel(row.source)} />,
     },
     {
       key: 'assignment',
@@ -76,7 +117,7 @@ export const LeadList = () => {
       cell: (row) => (
         <StatusBadge 
           status={row.status === 'Lost' ? 'error' : row.status === 'Booked' ? 'success' : 'info'} 
-          label={row.status} 
+          label={formatEnumLabel(row.status)} 
         />
       ),
     },
@@ -131,6 +172,13 @@ export const LeadList = () => {
         pagination={{ page, totalPages, onPageChange: setPage }}
         emptyStateTitle="No leads in pipeline"
         emptyStateDescription="Add a prospect to begin the conversion process."
+        filterControls={
+          <FilterPopover 
+            filters={filters}
+            onFilterChange={f => { setFilters(f); setPage(1); }}
+            statusOptions={['New', 'Contacted', 'Qualified', 'QuotationSent', 'Negotiation', 'Booked', 'Lost']}
+          />
+        }
       />
     </PageContainer>
   );

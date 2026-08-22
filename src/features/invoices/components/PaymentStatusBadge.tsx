@@ -1,4 +1,5 @@
 import React from 'react';
+import { formatEnumLabel } from '@/lib/utils';
 import { PaymentStatus } from '../types/invoice.types';
 
 interface Props {
@@ -17,7 +18,7 @@ export const PaymentStatusBadge: React.FC<Props> = ({ status }) => {
 
   return (
     <span className={`px-2 py-0.5 rounded text-[11px] font-semibold border ${getStyle()}`}>
-      {status}
+      {formatEnumLabel(status)}
     </span>
   );
 };

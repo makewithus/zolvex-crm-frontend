@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { apiClient as api } from '@/lib/axios';
 import { PageContainer } from '@/components/ui-custom/PageContainer';
@@ -6,12 +6,13 @@ import { PageHeader } from '@/components/ui-custom/PageHeader';
 import { DataTable } from '@/components/ui-custom/DataTable';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogDescription, DialogFooter } from '@/components/ui/dialog';
 import { FormGroup } from '@/components/ui-custom/FormGroup';
 import { EmptyState } from '@/components/ui-custom/EmptyState';
 import { toast } from 'sonner';
 import { format } from 'date-fns';
-import { Star, Plus, BarChart3 } from 'lucide-react';
+import { Star, Plus, BarChart3, MoreHorizontal, Pencil, Trash2 } from 'lucide-react';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 
 const STAR_COLORS = ['', 'text-red-400', 'text-orange-400', 'text-yellow-400', 'text-blue-400', 'text-emerald-400'];
 
@@ -95,6 +96,10 @@ export default function FeedbackList() {
   const [showStats, setShowStats] = useState(false);
   const [page, setPage] = useState(1);
   const limit = 12;
+  const [searchQuery, setSearchQuery] = useState('');
+  const [editingFeedback, setEditingFeedback] = useState<any | null>(null);
+  const [deletingFeedback, setDeletingFeedback] = useState<any | null>(null);
+  const [editForm, setEditForm] = useState({ rating: 5, comment: '' });
 
   const [form, setForm] = useState({
     customer_id: '', booking_id: '', job_id: '',
@@ -169,7 +174,7 @@ export default function FeedbackList() {
     sub: `${j.booking?.service_name || ''} · ${j.status || ''}`.trim().replace(/^·\s*/, ''),
   }));
 
-  // ── Mutation — payload shape IDENTICAL to before ─────────────────────────
+  // ── Mutations ─────────────────────────────────────────────────────────────
   const createMutation = useMutation({
     mutationFn: (data: any) => api.post('/feedback', data),
     onSuccess: () => {
@@ -180,6 +185,28 @@ export default function FeedbackList() {
       queryClient.invalidateQueries({ queryKey: ['feedback-stats'] });
     },
     onError: (err: any) => toast.error(err.response?.data?.message || 'Failed to save feedback')
+  });
+
+  const updateMutation = useMutation({
+    mutationFn: ({ id, data }: { id: string; data: any }) => api.put(`/feedback/${id}`, data),
+    onSuccess: () => {
+      toast.success('Feedback updated');
+      setEditingFeedback(null);
+      queryClient.invalidateQueries({ queryKey: ['feedbacks'] });
+      queryClient.invalidateQueries({ queryKey: ['feedback-stats'] });
+    },
+    onError: (err: any) => toast.error(err.response?.data?.message || 'Failed to update feedback')
+  });
+
+  const deleteMutation = useMutation({
+    mutationFn: (id: string) => api.delete(`/feedback/${id}`),
+    onSuccess: () => {
+      toast.success('Feedback deleted');
+      setDeletingFeedback(null);
+      queryClient.invalidateQueries({ queryKey: ['feedbacks'] });
+      queryClient.invalidateQueries({ queryKey: ['feedback-stats'] });
+    },
+    onError: (err: any) => toast.error(err.response?.data?.message || 'Failed to delete feedback')
   });
 
   const handleSubmit = () => {
@@ -193,8 +220,19 @@ export default function FeedbackList() {
 
   // ── Table ─────────────────────────────────────────────────────────────────
   const list = feedbacks || [];
-  const totalPages = Math.max(1, Math.ceil(list.length / limit));
-  const paged = list.slice((page - 1) * limit, page * limit);
+
+  const filteredList = useMemo(() => {
+    if (!searchQuery.trim()) return list;
+    const q = searchQuery.toLowerCase();
+    return list.filter((fb: any) =>
+      fb.customer?.name?.toLowerCase().includes(q) ||
+      fb.customer?.phone?.includes(q) ||
+      fb.comment?.toLowerCase().includes(q)
+    );
+  }, [list, searchQuery]);
+
+  const totalPages = Math.max(1, Math.ceil(filteredList.length / limit));
+  const paged = filteredList.slice((page - 1) * limit, page * limit);
 
   const columns = [
     {
@@ -236,6 +274,34 @@ export default function FeedbackList() {
       key: 'created_at',
       header: 'Date',
       cell: (row: any) => <span className="text-xs text-muted-foreground">{format(new Date(row.created_at), 'dd MMM yyyy')}</span>
+    },
+    {
+      key: 'actions',
+      header: '',
+      align: 'right' as const,
+      cell: (row: any) => (
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="ghost" className="h-8 w-8 p-0">
+              <MoreHorizontal className="h-4 w-4" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            <DropdownMenuItem
+              className="cursor-pointer"
+              onClick={() => { setEditingFeedback(row); setEditForm({ rating: row.rating, comment: row.comment || '' }); }}
+            >
+              <Pencil className="h-4 w-4 mr-2" /> Edit
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              className="cursor-pointer text-destructive focus:text-destructive"
+              onClick={() => setDeletingFeedback(row)}
+            >
+              <Trash2 className="h-4 w-4 mr-2" /> Delete
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      )
     }
   ];
 
@@ -358,16 +424,81 @@ export default function FeedbackList() {
         <EmptyState title="No Feedback Yet" description="Record your first customer feedback after a completed service." />
       ) : (
         <div className="bg-card rounded-lg border shadow-sm">
-          <DataTable
+          <DataTable hideFilters
             data={paged}
             columns={columns}
             keyExtractor={(row: any) => row.id}
             isLoading={isLoading}
-            searchPlaceholder="Search by customer, comment..."
+            onSearch={(q) => { setSearchQuery(q); setPage(1); }}
+            searchPlaceholder="Search by customer name, phone or comment..."
             pagination={{ page, totalPages, onPageChange: setPage }}
           />
         </div>
       )}
+
+      {/* Edit Feedback Dialog */}
+      <Dialog open={!!editingFeedback} onOpenChange={(open) => !open && setEditingFeedback(null)}>
+        <DialogContent>
+          <DialogHeader><DialogTitle>Edit Feedback</DialogTitle></DialogHeader>
+          <div className="space-y-4 py-2">
+            <FormGroup label="Rating (1–5)">
+              <div className="flex gap-2 items-center">
+                {[1,2,3,4,5].map(n => (
+                  <button
+                    key={n}
+                    type="button"
+                    onClick={() => setEditForm(p => ({ ...p, rating: n }))}
+                    className="transition-transform hover:scale-110"
+                  >
+                    <Star className={`h-7 w-7 transition-colors ${n <= editForm.rating ? STAR_COLORS[editForm.rating] + ' fill-current' : 'text-muted-foreground/30'}`} />
+                  </button>
+                ))}
+                <span className="text-sm text-muted-foreground ml-1">{editForm.rating} / 5</span>
+              </div>
+            </FormGroup>
+            <FormGroup label="Comment (optional)">
+              <textarea
+                value={editForm.comment}
+                onChange={e => setEditForm(p => ({ ...p, comment: e.target.value }))}
+                placeholder="Update comment..."
+                rows={3}
+                className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring resize-none"
+              />
+            </FormGroup>
+            <div className="flex justify-end gap-2 pt-2">
+              <Button variant="outline" onClick={() => setEditingFeedback(null)}>Cancel</Button>
+              <Button
+                onClick={() => updateMutation.mutate({ id: editingFeedback.id, data: editForm })}
+                disabled={updateMutation.isPending}
+              >
+                {updateMutation.isPending ? 'Saving...' : 'Save Changes'}
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Delete Confirmation */}
+      <Dialog open={!!deletingFeedback} onOpenChange={(open) => !open && setDeletingFeedback(null)}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Delete Feedback?</DialogTitle>
+            <DialogDescription>
+              This will permanently remove the feedback from <strong>{deletingFeedback?.customer?.name || 'this customer'}</strong>. This action cannot be undone.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter className="mt-4">
+            <Button variant="outline" onClick={() => setDeletingFeedback(null)}>Cancel</Button>
+            <Button
+              variant="destructive"
+              onClick={() => deletingFeedback && deleteMutation.mutate(deletingFeedback.id)}
+              disabled={deleteMutation.isPending}
+            >
+              {deleteMutation.isPending ? 'Deleting...' : 'Delete'}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </PageContainer>
   );
 }

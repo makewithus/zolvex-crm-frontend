@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { apiClient as api } from '@/lib/axios';
 import { useNavigate } from 'react-router-dom';
@@ -32,6 +32,7 @@ export default function ComplaintList() {
   const navigate = useNavigate();
   const [statusFilter, setStatusFilter] = useState('');
   const [page, setPage] = useState(1);
+  const [searchQuery, setSearchQuery] = useState('');
   const [showForm, setShowForm] = useState(false);
   const limit = 12;
 
@@ -46,8 +47,20 @@ export default function ComplaintList() {
   });
 
   const list: any[] = Array.isArray(complaints) ? complaints : [];
-  const totalPages = Math.max(1, Math.ceil(list.length / limit));
-  const paged = list.slice((page - 1) * limit, page * limit);
+
+  const filteredList = useMemo(() => {
+    if (!searchQuery.trim()) return list;
+    const q = searchQuery.toLowerCase();
+    return list.filter((c: any) =>
+      c.complaint_id?.toLowerCase().includes(q) ||
+      c.customer?.name?.toLowerCase().includes(q) ||
+      c.customer?.phone?.includes(q) ||
+      c.subject?.toLowerCase().includes(q)
+    );
+  }, [list, searchQuery]);
+
+  const totalPages = Math.max(1, Math.ceil(filteredList.length / limit));
+  const paged = filteredList.slice((page - 1) * limit, page * limit);
 
   const columns = [
     {
@@ -150,6 +163,7 @@ export default function ComplaintList() {
             columns={columns}
             keyExtractor={(row: any) => row.id}
             isLoading={isLoading}
+            onSearch={(q) => { setSearchQuery(q); setPage(1); }}
             searchPlaceholder="Search by ID, customer, subject..."
             pagination={{ page, totalPages, onPageChange: setPage }}
           />

@@ -1,4 +1,5 @@
 import React, { useState, useMemo } from 'react';
+import { formatEnumLabel } from '@/lib/utils';
 import { useInvoices } from '../hooks/useInvoices';
 import { Link } from 'react-router-dom';
 import { format } from 'date-fns';
@@ -62,9 +63,9 @@ export const InvoiceList: React.FC = () => {
                   className="w-full sm:w-auto pl-10 pr-8 py-2 border border-slate-200 rounded focus:outline-none focus:border-slate-400 focus:ring-0 text-sm appearance-none bg-white"
                 >
                   <option value="">All Statuses</option>
-                  <option value="Draft">Draft</option>
-                  <option value="Issued">Issued</option>
-                  <option value="Cancelled">Cancelled</option>
+                  <option value="Draft">{formatEnumLabel("Draft")}</option>
+                  <option value="Issued">{formatEnumLabel("Issued")}</option>
+                  <option value="Cancelled">{formatEnumLabel("Cancelled")}</option>
                 </select>
               </div>
             </div>

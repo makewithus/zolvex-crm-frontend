@@ -671,9 +671,6 @@ export const Dashboard = () => {
                   className="pl-8 h-9 rounded-lg text-xs bg-white border-slate-300 shadow-none focus-visible:ring-1 focus-visible:ring-slate-700 w-full"
                 />
               </div>
-              <Button variant="ghost" className="h-9 w-9 p-0 rounded-lg hover:bg-slate-100 border border-slate-205 flex items-center justify-center shrink-0">
-                <MoreHorizontal className="h-4 w-4 text-slate-550" />
-              </Button>
             </div>
           </CardHeader>
           <CardContent className="p-0">

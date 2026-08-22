@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { formatEnumLabel } from '@/lib/utils';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
@@ -62,7 +63,7 @@ export const PricingRuleFormDialog = () => {
                 className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
               >
                 <option value="">Select a service...</option>
-                {services.map(s => <option key={s.id} value={s.id}>{s.name}</option>)}
+                {services.map(s => <option key={s.id} value={s.id}>{formatEnumLabel(s.name)}</option>)}
               </select>
             </FormGroup>
 
@@ -72,7 +73,7 @@ export const PricingRuleFormDialog = () => {
                 className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
               >
                 <option value="">Global Rule</option>
-                {cities.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
+                {cities.map(c => <option key={c.id} value={c.id}>{formatEnumLabel(c.name)}</option>)}
               </select>
             </FormGroup>
           </FormGrid>

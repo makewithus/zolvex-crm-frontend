@@ -2,6 +2,7 @@ import { createContext, useContext, useState } from 'react';
 import { Outlet } from 'react-router-dom';
 import { Header } from './Header';
 import { Sidebar } from './Sidebar';
+import { SessionTimeoutGuard } from './SessionTimeoutGuard';
 
 export const SidebarContext = createContext({
   isCollapsed: false,
@@ -26,7 +27,8 @@ export const MainLayout = () => {
 
   return (
     <SidebarContext.Provider value={{ isCollapsed, toggleSidebar }}>
-      <div className="flex h-full flex-col bg-background overflow-hidden crm-app-container">
+      <SessionTimeoutGuard>
+        <div className="flex h-full flex-col bg-background overflow-hidden crm-app-container">
         <Header />
         <div className="flex flex-1 overflow-hidden min-h-0 relative">
           <Sidebar />
@@ -42,7 +44,8 @@ export const MainLayout = () => {
             </div>
           </main>
         </div>
-      </div>
+        </div>
+      </SessionTimeoutGuard>
     </SidebarContext.Provider>
   );
 };

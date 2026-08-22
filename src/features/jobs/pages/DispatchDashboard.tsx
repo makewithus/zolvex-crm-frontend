@@ -1,5 +1,6 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { useJobs } from '../hooks/useJobs';
+import { FilterPopover, FilterState } from '@/components/ui-custom/FilterPopover';
 import { PageHeader } from '@/components/ui-custom/PageHeader';
 import { DataTable } from '@/components/ui-custom/DataTable';
 import { Badge } from '@/components/ui/badge';
@@ -8,19 +9,34 @@ import { useNavigate } from 'react-router-dom';
 import { JOB_STATUS_COLORS } from '../constants/job-colors';
 
 export const DispatchDashboard = () => {
-  const [filters] = useState({
-    // BUG-D FIX: Pass as separate params — axios serializes arrays as status[]=...
-    // The backend getJobs service now handles arrays via Prisma `in`
-    status: ['Pending', 'Assigned', 'Accepted'],
-  });
-  const { data: jobs, isLoading } = useJobs(filters);
+  const [userFilters, setUserFilters] = useState<FilterState>({});
+  const [searchQuery, setSearchQuery] = useState('');
+
+  const activeFilters = {
+    ...userFilters,
+    status: userFilters.status || ['Pending', 'Assigned', 'Accepted', 'Travelling', 'Arrived', 'Started'],
+  };
+
+  const { data: jobs, isLoading } = useJobs(activeFilters);
   const navigate = useNavigate();
 
   const [page, setPage] = useState(1);
   const limit = 10;
   
-  const totalPages = Math.max(1, Math.ceil((jobs?.length || 0) / limit));
-  const sortedJobs = [...(jobs || [])].sort((a: any, b: any) => new Date(b.created_at || 0).getTime() - new Date(a.created_at || 0).getTime());
+  const filteredJobs = useMemo(() => {
+    let list = jobs || [];
+    if (searchQuery) {
+      const q = searchQuery.toLowerCase();
+      list = list.filter((j: any) => 
+        j.job_id?.toLowerCase().includes(q) ||
+        j.booking?.customer_name?.toLowerCase().includes(q)
+      );
+    }
+    return list;
+  }, [jobs, searchQuery]);
+
+  const totalPages = Math.max(1, Math.ceil(filteredJobs.length / limit));
+  const sortedJobs = [...filteredJobs].sort((a: any, b: any) => new Date(b.created_at || 0).getTime() - new Date(a.created_at || 0).getTime());
   const paginatedJobs = sortedJobs.slice((page - 1) * limit, page * limit);
 
   const columns = [
@@ -84,8 +100,16 @@ export const DispatchDashboard = () => {
           columns={columns}
           keyExtractor={(row: any) => row.id}
           isLoading={isLoading}
+          onSearch={(q) => { setSearchQuery(q); setPage(1); }}
           searchPlaceholder="Search by Job ID, customer..."
           pagination={{ page, totalPages, onPageChange: setPage }}
+          filterControls={
+            <FilterPopover 
+              filters={userFilters}
+              onFilterChange={f => { setUserFilters(f); setPage(1); }}
+              statusOptions={['Pending', 'Assigned', 'Accepted', 'Travelling', 'Arrived', 'Started', 'Completed', 'Cancelled', 'Failed', 'NoAccess', 'CustomerNotAvailable']}
+            />
+          }
         />
       </div>
     </div>

@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useBookings } from '../hooks/useBookings';
+import { FilterPopover, FilterState } from '@/components/ui-custom/FilterPopover';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Link } from 'react-router-dom';
@@ -16,12 +17,13 @@ import {
 
 export const BookingsList = () => {
   const [searchTerm, setSearchTerm] = useState('');
+  const [filters, setFilters] = useState<FilterState>({});
   
   // Minimal pagination for now
   const [page, setPage] = useState(1);
   const limit = 10;
   
-  const { data, isLoading, isError } = useBookings({ page, limit, booking_id: searchTerm || undefined });
+  const { data, isLoading, isError } = useBookings({ page, limit, booking_id: searchTerm || undefined, ...filters });
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -60,6 +62,11 @@ export const BookingsList = () => {
             className="pl-9"
           />
         </div>
+        <FilterPopover 
+          filters={filters}
+          onFilterChange={f => { setFilters(f); setPage(1); }}
+          statusOptions={['Draft', 'Pending', 'Confirmed', 'Scheduled', 'Assigned', 'InProgress', 'Completed', 'Cancelled', 'NoShow']}
+        />
       </div>
 
       <div className="bg-white rounded-lg border shadow-sm overflow-hidden">

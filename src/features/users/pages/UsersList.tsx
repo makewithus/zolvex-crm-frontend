@@ -19,7 +19,14 @@ export const UsersList = () => {
 
   const users = useMemo(() => {
     const all = usersResponse?.data || [];
-    const sorted = [...all].sort((a: any, b: any) => new Date(b.created_at || 0).getTime() - new Date(a.created_at || 0).getTime());
+    const sorted = [...all].sort((a: any, b: any) => {
+      if (!a.joining_date && !b.joining_date) return (a.name || '').localeCompare(b.name || '');
+      if (!a.joining_date) return 1;
+      if (!b.joining_date) return -1;
+      const timeDiff = new Date(b.joining_date).getTime() - new Date(a.joining_date).getTime();
+      if (timeDiff !== 0) return timeDiff;
+      return (a.name || '').localeCompare(b.name || '');
+    });
     if (!searchQuery.trim()) return sorted;
     const q = searchQuery.toLowerCase();
     return sorted.filter((u: any) =>
@@ -124,7 +131,7 @@ export const UsersList = () => {
       >
         <UserFormDialog />
       </PageHeader>
-      <DataTable
+      <DataTable hideFilters
         columns={columns}
         data={paginatedUsers}
         keyExtractor={(user) => user.id}

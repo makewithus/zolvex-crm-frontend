@@ -18,7 +18,11 @@ export default function CustomerList() {
 
   const filteredCustomers = useMemo(() => {
     let custs = customers || [];
-    custs = [...custs].sort((a: any, b: any) => new Date(b.created_at || 0).getTime() - new Date(a.created_at || 0).getTime());
+    custs = [...custs].sort((a: any, b: any) => {
+      const nameCompare = (a.name || '').localeCompare(b.name || '');
+      if (nameCompare !== 0) return nameCompare;
+      return (a.phone || '').localeCompare(b.phone || '');
+    });
     return custs.filter((customer: Customer) =>
       (customer.name && customer.name.toLowerCase().includes(searchQuery.toLowerCase())) ||
       customer.phone.includes(searchQuery)
@@ -112,7 +116,7 @@ export default function CustomerList() {
         description="Comprehensive view of all active clientele and interaction histories." 
       />
       
-      <DataTable
+      <DataTable hideFilters
         columns={columns}
         data={paginatedCustomers}
         keyExtractor={(r) => r.id}

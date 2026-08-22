@@ -12,6 +12,7 @@ import { useRoles } from '@/features/roles/hooks/useRoles';
 import { User } from '../types/user.types';
 import { toast } from 'sonner';
 import { useCities } from '@/features/cities/hooks/useCities';
+import { formatEnumLabel } from '@/lib/utils';
 
 interface UserEditDialogProps {
   user: User | null;
@@ -108,7 +109,7 @@ export const UserEditDialog = ({ user, open, onOpenChange }: UserEditDialogProps
               >
                 <option value="">Select a role...</option>
                 {roles.map(r => (
-                  <option key={r.id} value={r.id}>{r.name}</option>
+                  <option key={r.id} value={r.id}>{formatEnumLabel(r.name)}</option>
                 ))}
               </select>
             </FormGroup>
@@ -130,7 +131,7 @@ export const UserEditDialog = ({ user, open, onOpenChange }: UserEditDialogProps
               >
                 <option value="">Global Access (All Cities)</option>
                 {cities.map(c => (
-                  <option key={c.id} value={c.id}>{c.name}</option>
+                  <option key={c.id} value={c.id}>{formatEnumLabel(c.name)}</option>
                 ))}
               </select>
             </FormGroup>

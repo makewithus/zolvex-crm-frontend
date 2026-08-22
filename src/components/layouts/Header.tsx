@@ -1,7 +1,9 @@
+import { useState } from 'react';
 import { useLocation } from 'react-router-dom';
 
-import { Input } from '../ui/input';
-import { Search, Bell, ChevronRight, User as UserIcon, LogOut, Menu } from 'lucide-react';
+import { Button } from '../ui/button';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '../ui/dialog';
+import { ChevronRight, User as UserIcon, LogOut, Menu } from 'lucide-react';
 import { logout } from '@/features/auth';
 import { FEATURE_REGISTRY } from '@/config/features';
 import { useSidebar } from './MainLayout';
@@ -9,6 +11,7 @@ import { useSidebar } from './MainLayout';
 import { useCurrentUser } from '@/features/auth/hooks/useAuth';
 
 export const Header = () => {
+  const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
   const { data: currentUser } = useCurrentUser();
   const userName = currentUser?.name || localStorage.getItem('userName') || 'User';
   const userRole = currentUser?.role?.name || localStorage.getItem('userRole') || 'Staff';
@@ -65,24 +68,7 @@ export const Header = () => {
         </div>
 
         <div className="flex items-center gap-4 flex-1 justify-end">
-          {/* Global Search */}
-          <div className="relative w-full max-w-[280px] hidden md:block">
-            <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-slate-400" />
-            <Input
-              type="search"
-              aria-label="Global Search"
-              placeholder="Search leads, customers, jobs..."
-              className="w-full bg-white border-slate-300 pl-8 h-8 rounded text-[13px] focus-visible:ring-1 focus-visible:ring-slate-700 transition-colors shadow-none"
-            />
-          </div>
-
           <div className="flex items-center gap-3">
-            <button aria-label="Notifications" className="relative h-8 w-8 flex items-center justify-center text-slate-500 hover:text-slate-900 transition-colors">
-              <Bell className="h-4.5 w-4.5" />
-              <span className="absolute top-1.5 right-1.5 h-1.5 w-1.5 rounded-full bg-red-600 border-[1px] border-white"></span>
-            </button>
-            
-            <div className="h-4 w-px bg-slate-200 mx-1"></div>
 
             {/* User Profile */}
             <div className="flex items-center gap-2">
@@ -93,13 +79,28 @@ export const Header = () => {
               <div className="h-8 w-8 rounded bg-slate-100 border border-slate-200 flex items-center justify-center text-slate-500 font-medium shrink-0">
                 <UserIcon className="h-4 w-4" />
               </div>
-              <button aria-label="Log out" onClick={logout} className="h-8 w-8 flex items-center justify-center text-slate-400 hover:text-red-600 transition-colors shrink-0" title="Log out">
+              <button aria-label="Log out" onClick={() => setIsLogoutModalOpen(true)} className="h-8 w-8 flex items-center justify-center text-slate-400 hover:text-red-600 transition-colors shrink-0" title="Log out">
                 <LogOut className="h-4 w-4" />
               </button>
             </div>
           </div>
         </div>
       </div>
+      
+      <Dialog open={isLogoutModalOpen} onOpenChange={setIsLogoutModalOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Confirm Logout</DialogTitle>
+            <DialogDescription>
+              Are you sure you want to log out of your session?
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setIsLogoutModalOpen(false)}>Cancel</Button>
+            <Button variant="destructive" onClick={logout}>Log Out</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </header>
   );
 };

@@ -10,6 +10,7 @@ import { FormGroup } from '@/components/ui-custom/FormGroup';
 import { FormGrid } from '@/components/ui-custom/FormGrid';
 import { useRoles } from '@/features/roles/hooks/useRoles';
 import { useCities } from '@/features/cities/hooks/useCities';
+import { formatEnumLabel } from '@/lib/utils';
 
 export const UserFormDialog = () => {
   const [open, setOpen] = useState(false);
@@ -72,7 +73,7 @@ export const UserFormDialog = () => {
               >
                 <option value="">Select a role...</option>
                 {roles.map(r => (
-                  <option key={r.id} value={r.id}>{r.name}</option>
+                  <option key={r.id} value={r.id}>{formatEnumLabel(r.name)}</option>
                 ))}
               </select>
             </FormGroup>
@@ -88,7 +89,7 @@ export const UserFormDialog = () => {
               >
                 <option value="">Global Access (All Cities)</option>
                 {cities.map(c => (
-                  <option key={c.id} value={c.id}>{c.name}</option>
+                  <option key={c.id} value={c.id}>{formatEnumLabel(c.name)}</option>
                 ))}
               </select>
             </FormGroup>

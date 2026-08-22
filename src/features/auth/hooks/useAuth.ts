@@ -14,6 +14,7 @@ export const useLogin = () => {
       localStorage.setItem('userRole', data.data.user.role.name);
       localStorage.setItem('userId', data.data.user.id);
       localStorage.setItem('userName', data.data.user.name);
+      localStorage.setItem('crm_last_activity', Date.now().toString());
 
       // 2. Validate against server (/me) — overwrites with authoritative values
       try {
@@ -49,6 +50,7 @@ export const logout = () => {
   localStorage.removeItem('userId');
   localStorage.removeItem('userName');
   localStorage.removeItem('userCityId');
+  localStorage.removeItem('crm_last_activity');
   window.location.href = '/login';
 };
 

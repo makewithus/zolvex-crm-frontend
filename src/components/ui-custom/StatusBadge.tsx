@@ -1,3 +1,5 @@
+import { formatEnumLabel } from '@/lib/utils';
+
 type StatusType = 'success' | 'warning' | 'error' | 'info' | 'default';
 
 export const StatusBadge = ({ status, label }: { status: StatusType; label: string }) => {
@@ -10,7 +12,7 @@ export const StatusBadge = ({ status, label }: { status: StatusType; label: stri
   };
   return (
     <span className={`inline-flex items-center px-2 py-0.5 rounded text-[11px] font-semibold border ${styles[status]}`}>
-      {label}
+      {formatEnumLabel(label)}
     </span>
   );
 };

@@ -88,6 +88,31 @@ export const ReportsDashboard: React.FC = () => {
         </div>
       </div>
 
+      {/* Navigation Cards */}
+      <section>
+        <h2 className="text-xs font-semibold text-muted-foreground/60 uppercase tracking-wider mb-3">Detailed Reports</h2>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          {[
+            { label: 'Financial Report', desc: 'Revenue, Outstanding, Collections, GST', icon: DollarSign, link: '/reports/financial', show: canSeeFinancial },
+            { label: 'Operational Report', desc: 'Bookings and Jobs summary', icon: Calendar, link: '/reports/operational', show: true },
+            { label: 'Technician Report', desc: 'Productivity and utilization', icon: Briefcase, link: '/reports/technician', show: true },
+            { label: 'GST Report', desc: 'CGST, SGST, IGST breakdown', icon: BarChart3, link: '/reports/gst', show: canSeeFinancial },
+          ].filter(c => c.show).map(card => (
+            <Link key={card.link} to={card.link}>
+              <Card className="hover:border-border hover:bg-muted/30 transition-colors shadow-sm cursor-pointer h-full border-border/60">
+                <CardContent className="p-5 flex flex-col h-full justify-between">
+                  <div>
+                    <card.icon className="w-5 h-5 text-muted-foreground mb-3" />
+                    <p className="font-semibold text-foreground text-sm tracking-tight">{card.label}</p>
+                    <p className="text-xs text-muted-foreground leading-relaxed mt-1">{card.desc}</p>
+                  </div>
+                </CardContent>
+              </Card>
+            </Link>
+          ))}
+        </div>
+      </section>
+
       {/* Financial KPIs */}
       {canSeeFinancial && (
         <section>
@@ -197,30 +222,7 @@ export const ReportsDashboard: React.FC = () => {
         </div>
       </section>
 
-      {/* Navigation Cards */}
-      <section>
-        <h2 className="text-xs font-semibold text-muted-foreground/60 uppercase tracking-wider mb-3">Detailed Reports</h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          {[
-            { label: 'Financial Report', desc: 'Revenue, Outstanding, Collections, GST', icon: DollarSign, link: '/reports/financial', show: canSeeFinancial },
-            { label: 'Operational Report', desc: 'Bookings and Jobs summary', icon: Calendar, link: '/reports/operational', show: true },
-            { label: 'Technician Report', desc: 'Productivity and utilization', icon: Briefcase, link: '/reports/technician', show: true },
-            { label: 'GST Report', desc: 'CGST, SGST, IGST breakdown', icon: BarChart3, link: '/reports/gst', show: canSeeFinancial },
-          ].filter(c => c.show).map(card => (
-            <Link key={card.link} to={card.link}>
-              <Card className="hover:border-border hover:bg-muted/30 transition-colors shadow-sm cursor-pointer h-full border-border/60">
-                <CardContent className="p-5 flex flex-col h-full justify-between">
-                  <div>
-                    <card.icon className="w-5 h-5 text-muted-foreground mb-3" />
-                    <p className="font-semibold text-foreground text-sm tracking-tight">{card.label}</p>
-                    <p className="text-xs text-muted-foreground leading-relaxed mt-1">{card.desc}</p>
-                  </div>
-                </CardContent>
-              </Card>
-            </Link>
-          ))}
-        </div>
-      </section>
+
     </div>
   );
 };

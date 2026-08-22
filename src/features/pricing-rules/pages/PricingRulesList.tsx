@@ -19,7 +19,13 @@ export const PricingRulesList = () => {
 
   const pricingRules = useMemo(() => {
     const all = pricingRulesResponse?.data || [];
-    return [...all].sort((a: any, b: any) => new Date(b.created_at || 0).getTime() - new Date(a.created_at || 0).getTime());
+    return [...all].sort((a: any, b: any) => {
+      const srvCompare = (a.service?.name || '').localeCompare(b.service?.name || '');
+      if (srvCompare !== 0) return srvCompare;
+      const cityCompare = (a.city?.name || '').localeCompare(b.city?.name || '');
+      if (cityCompare !== 0) return cityCompare;
+      return (a.id || '').localeCompare(b.id || '');
+    });
   }, [pricingRulesResponse]);
 
   const totalPages = Math.max(1, Math.ceil(pricingRules.length / limit));
@@ -122,7 +128,7 @@ export const PricingRulesList = () => {
       >
         <PricingRuleFormDialog />
       </PageHeader>
-      <DataTable
+      <DataTable hideFilters
         columns={columns}
         data={paginatedRules}
         keyExtractor={(rule) => rule.id}

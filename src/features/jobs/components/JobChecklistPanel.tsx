@@ -4,6 +4,7 @@ import { apiClient as api } from '@/lib/axios';
 import { Button } from '@/components/ui/button';
 import { ClipboardList, Plus, Trash2, CheckCircle2 } from 'lucide-react';
 import { toast } from 'sonner';
+import { formatEnumLabel } from '@/lib/utils';
 
 interface JobChecklistPanelProps {
   jobId: string;
@@ -87,7 +88,7 @@ export const JobChecklistPanel = ({ jobId, canApply, isFieldStaff }: JobChecklis
           >
             <option value="">Select a template...</option>
             {templates?.map((t: any) => (
-              <option key={t.id} value={t.id}>{t.name}</option>
+              <option key={t.id} value={t.id}>{formatEnumLabel(t.name)}</option>
             ))}
           </select>
           <div className="flex gap-2">

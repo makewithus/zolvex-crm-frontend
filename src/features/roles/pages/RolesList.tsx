@@ -109,7 +109,11 @@ export const RolesList = () => {
 
   const roles = useMemo(() => {
     const all = rolesResponse?.data || [];
-    return [...all].sort((a: any, b: any) => new Date(b.created_at || 0).getTime() - new Date(a.created_at || 0).getTime());
+    return [...all].sort((a: any, b: any) => {
+      const nameCompare = (a.name || '').localeCompare(b.name || '');
+      if (nameCompare !== 0) return nameCompare;
+      return (a.id || '').localeCompare(b.id || '');
+    });
   }, [rolesResponse]);
 
   const totalPages = Math.max(1, Math.ceil(roles.length / limit));
@@ -201,7 +205,7 @@ export const RolesList = () => {
   return (
     <PageContainer>
       <PageHeader title="Roles & Permissions" description="Manage security roles and access matrices." />
-      <DataTable
+      <DataTable hideFilters
         columns={columns}
         data={paginatedRoles}
         keyExtractor={(role) => role.id}

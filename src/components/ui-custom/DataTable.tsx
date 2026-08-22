@@ -27,6 +27,8 @@ interface DataTableProps<T> {
   emptyStateTitle?: string;
   emptyStateDescription?: string;
   onRowClick?: (row: T) => void;
+  hideFilters?: boolean;
+  filterControls?: React.ReactNode;
 }
 
 export function DataTable<T>({ 
@@ -39,7 +41,9 @@ export function DataTable<T>({
   pagination,
   emptyStateTitle = "No records found",
   emptyStateDescription = "Get started by creating a new record.",
-  onRowClick
+  onRowClick,
+  hideFilters = false,
+  filterControls
 }: DataTableProps<T>) {
   
   const [query, setQuery] = useState('');
@@ -64,9 +68,12 @@ export function DataTable<T>({
             />
           </div>
         )}
-        <Button variant="outline" size="sm" className="w-full sm:w-auto shadow-sm gap-2">
-          <SlidersHorizontal className="h-4 w-4" /> Filters
-        </Button>
+        {!hideFilters && !filterControls && (
+          <Button variant="outline" size="sm" className="w-full sm:w-auto shadow-sm gap-2">
+            <SlidersHorizontal className="h-4 w-4" /> Filters
+          </Button>
+        )}
+        {filterControls}
       </div>
 
       {/* Table Container */}
