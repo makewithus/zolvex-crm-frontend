@@ -17,7 +17,7 @@ export const useCreateCity = () => {
   return useMutation<CreateCityResponse, AxiosError<{ message?: string }>, CityFormData>({
     mutationFn: createCity,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['cities'] });
+      return queryClient.invalidateQueries({ queryKey: ['cities'] });
     },
   });
 };

@@ -5,9 +5,10 @@ import { useNavigate } from 'react-router-dom';
 import { PageHeader } from '@/components/ui-custom/PageHeader';
 import { PageContainer } from '@/components/ui-custom/PageContainer';
 import { DataTable } from '@/components/ui-custom/DataTable';
-import { EmptyState } from '@/components/ui-custom/EmptyState';
+
 import { Button } from '@/components/ui/button';
 import { ComplaintForm } from '@/features/complaints/components/ComplaintForm';
+import { FilterPopover, FilterState } from '@/components/ui-custom/FilterPopover';
 import { format } from 'date-fns';
 import { Plus } from 'lucide-react';
 import { useCurrentUser } from '@/features/auth/hooks/useAuth';
@@ -31,16 +32,22 @@ const PRIORITY_STYLES: Record<string, string> = {
 export default function ComplaintList() {
   const navigate = useNavigate();
   const [statusFilter, setStatusFilter] = useState('');
+  const [filters, setFilters] = useState<FilterState>({});
   const [page, setPage] = useState(1);
   const [searchQuery, setSearchQuery] = useState('');
   const [showForm, setShowForm] = useState(false);
   const limit = 12;
 
   const { data: complaints, isLoading } = useQuery({
-    queryKey: ['complaints', statusFilter],
+    queryKey: ['complaints', statusFilter, filters],
     queryFn: async () => {
       const params: any = {};
       if (statusFilter) params.status = statusFilter;
+      if (filters.status) params.status = filters.status; // FilterPopover status takes precedence if both somehow exist
+      if (filters.city_id) params.city_id = filters.city_id;
+      if (filters.service_id) params.service_id = filters.service_id;
+      if (filters.date_from) params.date_from = filters.date_from;
+      if (filters.date_to) params.date_to = filters.date_to;
       const res = await api.get('/complaints', { params });
       return res.data;
     }
@@ -154,21 +161,24 @@ export default function ComplaintList() {
         </div>
       </PageHeader>
 
-      {!isLoading && list.length === 0 ? (
-        <EmptyState title="No Complaints" description="No complaints have been raised yet." />
-      ) : (
-        <div className="bg-card rounded-lg border shadow-sm">
-          <DataTable
-            data={paged}
-            columns={columns}
-            keyExtractor={(row: any) => row.id}
-            isLoading={isLoading}
-            onSearch={(q) => { setSearchQuery(q); setPage(1); }}
-            searchPlaceholder="Search by ID, customer, subject..."
-            pagination={{ page, totalPages, onPageChange: setPage }}
+      <DataTable
+        data={paged}
+        columns={columns}
+        keyExtractor={(row: any) => row.id}
+        isLoading={isLoading}
+        onSearch={(q) => { setSearchQuery(q); setPage(1); }}
+        searchPlaceholder="Search by ID, customer, subject..."
+        emptyStateTitle="No Complaints"
+        emptyStateDescription="No complaints match your filters or search query."
+        filterControls={
+          <FilterPopover 
+            filters={filters} 
+            onFilterChange={(f) => { setFilters(f); setPage(1); }} 
+            statusOptions={STATUSES.filter(Boolean)}
           />
-        </div>
-      )}
+        }
+        pagination={{ page, totalPages, onPageChange: setPage }}
+      />
     </PageContainer>
   );
 }

@@ -12,7 +12,7 @@ import { useRoles } from '@/features/roles/hooks/useRoles';
 import { useCities } from '@/features/cities/hooks/useCities';
 import { formatEnumLabel } from '@/lib/utils';
 
-export const UserFormDialog = () => {
+export const UserFormDialog = ({ onSuccess }: { onSuccess?: () => void }) => {
   const [open, setOpen] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
   const createUser = useCreateUser();
@@ -32,6 +32,7 @@ export const UserFormDialog = () => {
       onSuccess: () => {
         reset();
         setOpen(false);
+        onSuccess?.();
       },
       onError: (error) => {
         setErrorMsg(error.response?.data?.message || 'Failed to create user');

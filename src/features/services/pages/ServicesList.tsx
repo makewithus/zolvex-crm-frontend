@@ -17,12 +17,7 @@ export const ServicesList = () => {
   const limit = 10;
 
   const services = useMemo(() => {
-    const all = servicesResponse?.data || [];
-    return [...all].sort((a: any, b: any) => {
-      const nameCompare = (a.name || '').localeCompare(b.name || '');
-      if (nameCompare !== 0) return nameCompare;
-      return (a.id || '').localeCompare(b.id || '');
-    });
+    return servicesResponse?.data || [];
   }, [servicesResponse]);
 
   const totalPages = Math.max(1, Math.ceil(services.length / limit));
@@ -114,7 +109,7 @@ export const ServicesList = () => {
         title="Service Offerings" 
         description="Manage standard services and base pricing."
       >
-        <ServiceFormDialog />
+        <ServiceFormDialog onSuccess={() => setPage(1)} />
       </PageHeader>
       <DataTable hideFilters
         columns={columns}

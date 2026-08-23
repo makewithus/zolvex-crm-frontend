@@ -108,12 +108,7 @@ export const RolesList = () => {
   const limit = 10;
 
   const roles = useMemo(() => {
-    const all = rolesResponse?.data || [];
-    return [...all].sort((a: any, b: any) => {
-      const nameCompare = (a.name || '').localeCompare(b.name || '');
-      if (nameCompare !== 0) return nameCompare;
-      return (a.id || '').localeCompare(b.id || '');
-    });
+    return rolesResponse?.data || [];
   }, [rolesResponse]);
 
   const totalPages = Math.max(1, Math.ceil(roles.length / limit));

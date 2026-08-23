@@ -17,7 +17,7 @@ export const useCreatePricingRule = () => {
   return useMutation<CreatePricingRuleResponse, AxiosError<{ message?: string }>, PricingRuleFormData>({
     mutationFn: createPricingRule,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['pricing-rules'] });
+      return queryClient.invalidateQueries({ queryKey: ['pricing-rules'] });
     },
   });
 };

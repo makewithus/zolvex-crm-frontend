@@ -17,7 +17,7 @@ export const useCreateService = () => {
   return useMutation<CreateServiceResponse, AxiosError<{ message?: string }>, ServiceFormData>({
     mutationFn: createService,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['services'] });
+      return queryClient.invalidateQueries({ queryKey: ['services'] });
     },
   });
 };

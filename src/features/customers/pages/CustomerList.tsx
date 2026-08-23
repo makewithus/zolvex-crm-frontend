@@ -18,11 +18,6 @@ export default function CustomerList() {
 
   const filteredCustomers = useMemo(() => {
     let custs = customers || [];
-    custs = [...custs].sort((a: any, b: any) => {
-      const nameCompare = (a.name || '').localeCompare(b.name || '');
-      if (nameCompare !== 0) return nameCompare;
-      return (a.phone || '').localeCompare(b.phone || '');
-    });
     return custs.filter((customer: Customer) =>
       (customer.name && customer.name.toLowerCase().includes(searchQuery.toLowerCase())) ||
       customer.phone.includes(searchQuery)

@@ -9,7 +9,7 @@ import { citySchema, CityFormData } from '../schemas/city.schema';
 import { FormGroup } from '@/components/ui-custom/FormGroup';
 import { INDIAN_STATES } from '@/config/states';
 
-export const CityFormDialog = () => {
+export const CityFormDialog = ({ onSuccess }: { onSuccess?: () => void }) => {
   const [open, setOpen] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
   const createCity = useCreateCity();
@@ -24,6 +24,7 @@ export const CityFormDialog = () => {
       onSuccess: () => {
         reset();
         setOpen(false);
+        onSuccess?.();
       },
       onError: (error) => {
         setErrorMsg(error.response?.data?.message || 'Failed to create city');

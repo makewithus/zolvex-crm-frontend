@@ -18,14 +18,7 @@ export const PricingRulesList = () => {
   const limit = 10;
 
   const pricingRules = useMemo(() => {
-    const all = pricingRulesResponse?.data || [];
-    return [...all].sort((a: any, b: any) => {
-      const srvCompare = (a.service?.name || '').localeCompare(b.service?.name || '');
-      if (srvCompare !== 0) return srvCompare;
-      const cityCompare = (a.city?.name || '').localeCompare(b.city?.name || '');
-      if (cityCompare !== 0) return cityCompare;
-      return (a.id || '').localeCompare(b.id || '');
-    });
+    return pricingRulesResponse?.data || [];
   }, [pricingRulesResponse]);
 
   const totalPages = Math.max(1, Math.ceil(pricingRules.length / limit));
@@ -126,7 +119,7 @@ export const PricingRulesList = () => {
         title="Pricing Engine" 
         description="Manage regional variants and dynamic price overrides."
       >
-        <PricingRuleFormDialog />
+        <PricingRuleFormDialog onSuccess={() => setPage(1)} />
       </PageHeader>
       <DataTable hideFilters
         columns={columns}

@@ -8,7 +8,7 @@ import { useCreateService } from '../hooks/useServices';
 import { serviceSchema, ServiceFormData } from '../schemas/service.schema';
 import { FormGroup } from '@/components/ui-custom/FormGroup';
 
-export const ServiceFormDialog = () => {
+export const ServiceFormDialog = ({ onSuccess }: { onSuccess?: () => void }) => {
   const [open, setOpen] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
   const createService = useCreateService();
@@ -23,6 +23,7 @@ export const ServiceFormDialog = () => {
       onSuccess: () => {
         reset();
         setOpen(false);
+        onSuccess?.();
       },
       onError: (error) => {
         setErrorMsg(error.response?.data?.message || 'Failed to create service');

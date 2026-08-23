@@ -12,7 +12,7 @@ import { FormGrid } from '@/components/ui-custom/FormGrid';
 import { useServices } from '@/features/services/hooks/useServices';
 import { useCities } from '@/features/cities/hooks/useCities';
 
-export const PricingRuleFormDialog = () => {
+export const PricingRuleFormDialog = ({ onSuccess }: { onSuccess?: () => void }) => {
   const [open, setOpen] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
   const createPricingRule = useCreatePricingRule();
@@ -33,6 +33,7 @@ export const PricingRuleFormDialog = () => {
       onSuccess: () => {
         reset();
         setOpen(false);
+        onSuccess?.();
       },
       onError: (error) => {
         setErrorMsg(error.response?.data?.message || 'Failed to create pricing rule');

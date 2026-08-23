@@ -17,7 +17,7 @@ export const useCreateUser = () => {
   return useMutation<CreateUserResponse, AxiosError<{ message?: string }>, UserFormData>({
     mutationFn: createUser,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['users'] });
+      return queryClient.invalidateQueries({ queryKey: ['users'] });
     },
   });
 };

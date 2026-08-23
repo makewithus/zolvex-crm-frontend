@@ -17,12 +17,7 @@ export const CitiesList = () => {
   const limit = 10;
 
   const cities = useMemo(() => {
-    const all = citiesResponse?.data || [];
-    return [...all].sort((a: any, b: any) => {
-      const nameCompare = (a.name || '').localeCompare(b.name || '');
-      if (nameCompare !== 0) return nameCompare;
-      return (a.id || '').localeCompare(b.id || '');
-    });
+    return citiesResponse?.data || [];
   }, [citiesResponse]);
 
   const totalPages = Math.max(1, Math.ceil(cities.length / limit));
@@ -114,7 +109,7 @@ export const CitiesList = () => {
         title="Geographic Regions" 
         description="Manage operational cities and localized settings."
       >
-        <CityFormDialog />
+        <CityFormDialog onSuccess={() => setPage(1)} />
       </PageHeader>
       <DataTable hideFilters
         columns={columns}
