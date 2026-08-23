@@ -4,6 +4,8 @@ import { useLocation } from 'react-router-dom';
 import { Button } from '../ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '../ui/dialog';
 import { ChevronRight, User as UserIcon, LogOut, Menu } from 'lucide-react';
+import { GlobalSearch } from './GlobalSearch';
+import { NotificationBell } from './NotificationBell';
 import { logout } from '@/features/auth';
 import { FEATURE_REGISTRY } from '@/config/features';
 import { useSidebar } from './MainLayout';
@@ -70,8 +72,14 @@ export const Header = () => {
         <div className="flex items-center gap-4 flex-1 justify-end">
           <div className="flex items-center gap-3">
 
+            {/* Global Search */}
+            <GlobalSearch />
+
+            {/* Notifications */}
+            <NotificationBell />
+
             {/* User Profile */}
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 border-l border-slate-200 pl-4 ml-1">
               <div className="hidden md:block text-right">
                 <p className="text-[12px] font-semibold text-slate-950 leading-none">{userName}</p>
                 <p className="text-[10px] text-slate-500 mt-0.5">{userRole}</p>
