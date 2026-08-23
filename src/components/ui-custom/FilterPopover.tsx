@@ -119,7 +119,7 @@ export function FilterPopover({ filters, onFilterChange, statusOptions, hideDate
                   type="date"
                   value={localFilters.date_from || ''}
                   onChange={e => setLocalFilters(prev => ({ ...prev, date_from: e.target.value }))}
-                  className="flex h-9 w-full rounded-md border border-input bg-background px-3 py-1 text-sm shadow-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+                  className="flex h-9 w-full rounded-md border border-input bg-background pl-2 pr-1 py-1 text-xs shadow-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring [&::-webkit-calendar-picker-indicator]:p-0 [&::-webkit-calendar-picker-indicator]:m-0"
                 />
               </FormGroup>
               <FormGroup label="To Date">
@@ -127,7 +127,7 @@ export function FilterPopover({ filters, onFilterChange, statusOptions, hideDate
                   type="date"
                   value={localFilters.date_to || ''}
                   onChange={e => setLocalFilters(prev => ({ ...prev, date_to: e.target.value }))}
-                  className="flex h-9 w-full rounded-md border border-input bg-background px-3 py-1 text-sm shadow-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+                  className="flex h-9 w-full rounded-md border border-input bg-background pl-2 pr-1 py-1 text-xs shadow-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring [&::-webkit-calendar-picker-indicator]:p-0 [&::-webkit-calendar-picker-indicator]:m-0"
                 />
               </FormGroup>
             </div>
