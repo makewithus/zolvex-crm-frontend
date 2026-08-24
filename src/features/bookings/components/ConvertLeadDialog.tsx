@@ -149,7 +149,12 @@ export const ConvertLeadDialog = ({ lead, isOpen, onClose }: Props) => {
 
           <div className="space-y-2">
             <label className="text-sm font-medium">Special Instructions</label>
-            <Input placeholder="e.g. Bring own ladder" {...register('special_instructions')} />
+            <textarea
+              className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring resize-y"
+              placeholder="e.g. Bring own ladder, customer is on 3rd floor..."
+              rows={4}
+              {...register('special_instructions')}
+            />
           </div>
 
           <DialogFooter>

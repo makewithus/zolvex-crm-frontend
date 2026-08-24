@@ -18,6 +18,7 @@ import {
 export const BookingsList = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [filters, setFilters] = useState<FilterState>({});
+  const userRole = localStorage.getItem('userRole') ?? '';
   
   // Minimal pagination for now
   const [page, setPage] = useState(1);
@@ -165,9 +166,11 @@ export const BookingsList = () => {
                             <Link to={`/bookings/${booking.id}`}>View Details</Link>
                           </DropdownMenuItem>
                           <DropdownMenuSeparator />
-                          {booking.status !== 'Cancelled' && booking.status !== 'Completed' && (
-                            <DropdownMenuItem className="text-destructive">
-                              Cancel Booking
+                          {booking.status !== 'Cancelled' && booking.status !== 'Completed' && userRole !== 'Field Staff' && (
+                            <DropdownMenuItem asChild>
+                              <Link to={`/bookings/${booking.id}`} className="text-destructive">
+                                Cancel Booking
+                              </Link>
                             </DropdownMenuItem>
                           )}
                         </DropdownMenuContent>

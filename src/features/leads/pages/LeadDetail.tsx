@@ -133,7 +133,8 @@ export const LeadDetail = () => {
                   <option value="FollowUp">{formatEnumLabel("FollowUp")}</option>
                   <option value="Qualified">{formatEnumLabel("Qualified")}</option>
                   <option value="QuotationSent">{formatEnumLabel("QuotationSent")}</option>
-                  <option value="Booked">{formatEnumLabel("Booked")}</option>
+                  {/* 'Booked' is intentionally excluded — use the 'Convert to Booking' button instead,
+                      which runs the full booking workflow with date/time/pricing/GST validation. */}
                   <option value="Lost">{formatEnumLabel("Lost")}</option>
                 </select>
 
@@ -201,7 +202,13 @@ export const LeadDetail = () => {
                 <DialogContent>
                   <DialogHeader><DialogTitle>Add Note</DialogTitle></DialogHeader>
                   <div className="space-y-4 py-4">
-                    <Input placeholder="Type a note..." value={noteText} onChange={e => setNoteText(e.target.value)} />
+                    <textarea
+                      className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring resize-y"
+                      placeholder="Type a note..."
+                      rows={5}
+                      value={noteText}
+                      onChange={e => setNoteText(e.target.value)}
+                    />
                     <Button onClick={handleAddNote} disabled={!noteText.trim() || addNoteMutation.isPending} className="w-full">Submit Note</Button>
                   </div>
                 </DialogContent>

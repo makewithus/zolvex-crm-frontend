@@ -14,6 +14,7 @@ export const BookingDetail = () => {
   const createJob = useCreateJob();
   
   const [isCancelOpen, setIsCancelOpen] = useState(false);
+  const userRole = localStorage.getItem('userRole') ?? '';
 
   if (isLoading) {
     return <div className="flex h-[50vh] items-center justify-center">Loading booking details...</div>;
@@ -55,9 +56,12 @@ export const BookingDetail = () => {
                   {createJob.isPending ? 'Generating...' : 'Generate Job'}
                 </Button>
               )}
-              <Button variant="destructive" onClick={() => setIsCancelOpen(true)}>
-                Cancel Booking
-              </Button>
+              {/* Hide Cancel for Field Staff — backend enforces 403 but UI should not mislead */}
+              {userRole !== 'Field Staff' && (
+                <Button variant="destructive" onClick={() => setIsCancelOpen(true)}>
+                  Cancel Booking
+                </Button>
+              )}
             </>
           )}
         </div>

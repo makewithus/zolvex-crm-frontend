@@ -3,7 +3,8 @@ import { MainLayout } from '@/components/layouts/MainLayout';
 import { Dashboard } from '@/pages/Dashboard';
 import { LandingPage } from '@/pages/LandingPage';
 import { Login } from '@/features/auth';
-import { Navigate, useLocation } from 'react-router-dom';
+import { Navigate, useLocation, useNavigate } from 'react-router-dom';
+import { useEffect } from 'react';
 import { CitiesList } from '@/features/cities';
 import { UsersList } from '@/features/users';
 import { RolesList } from '@/features/roles';
@@ -36,6 +37,16 @@ import WhatsAppInbox from '@/features/whatsapp/pages/WhatsAppInbox';
 const PrivateRoute = ({ children }: { children: React.ReactNode }) => {
   const token = localStorage.getItem('token');
   const location = useLocation();
+  const navigate = useNavigate();
+
+  // Re-validate token on every mount to prevent bfcache from showing
+  // protected pages after logout (browser Back button issue).
+  useEffect(() => {
+    if (!localStorage.getItem('token')) {
+      navigate('/login', { replace: true });
+    }
+  }, [navigate]);
+
   if (!token) {
     if (location.pathname === '/') {
       return <LandingPage />;
