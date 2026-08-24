@@ -6,7 +6,8 @@ import { PageHeader } from '@/components/ui-custom/PageHeader';
 import { DataTable } from '@/components/ui-custom/DataTable';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogDescription, DialogFooter } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { ConfirmDialog } from '@/components/ui-custom/ConfirmDialog';
 import { FormGroup } from '@/components/ui-custom/FormGroup';
 import { EmptyState } from '@/components/ui-custom/EmptyState';
 import { toast } from 'sonner';
@@ -478,27 +479,16 @@ export default function FeedbackList() {
         </DialogContent>
       </Dialog>
 
-      {/* Delete Confirmation */}
-      <Dialog open={!!deletingFeedback} onOpenChange={(open) => !open && setDeletingFeedback(null)}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Delete Feedback?</DialogTitle>
-            <DialogDescription>
-              This will permanently remove the feedback from <strong>{deletingFeedback?.customer?.name || 'this customer'}</strong>. This action cannot be undone.
-            </DialogDescription>
-          </DialogHeader>
-          <DialogFooter className="mt-4">
-            <Button variant="outline" onClick={() => setDeletingFeedback(null)}>Cancel</Button>
-            <Button
-              variant="destructive"
-              onClick={() => deletingFeedback && deleteMutation.mutate(deletingFeedback.id)}
-              disabled={deleteMutation.isPending}
-            >
-              {deleteMutation.isPending ? 'Deleting...' : 'Delete'}
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+      <ConfirmDialog
+        isOpen={!!deletingFeedback}
+        onClose={() => setDeletingFeedback(null)}
+        onConfirm={() => deletingFeedback && deleteMutation.mutate(deletingFeedback.id)}
+        title="Delete Feedback?"
+        description={`Are you sure you want to delete this feedback from ${deletingFeedback?.customer?.name || 'this customer'}? This action cannot be undone.`}
+        confirmText="Delete"
+        isDestructive={true}
+        isPending={deleteMutation.isPending}
+      />
     </PageContainer>
   );
 }

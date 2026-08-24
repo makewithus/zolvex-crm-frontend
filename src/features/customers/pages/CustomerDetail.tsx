@@ -11,6 +11,7 @@ import { DetailCard } from '@/components/ui-custom/DetailCard';
 import { LoadingState } from '@/components/ui-custom/LoadingState';
 import { EmptyState } from '@/components/ui-custom/EmptyState';
 import { StatusBadge } from '@/components/ui-custom/StatusBadge';
+import { ConfirmDialog } from '@/components/ui-custom/ConfirmDialog';
 import { Section } from '@/components/ui-custom/Section';
 import { SectionHeader } from '@/components/ui-custom/SectionHeader';
 import { Button } from '@/components/ui/button';
@@ -59,6 +60,7 @@ export default function CustomerDetail() {
 
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [isAddressDialogOpen, setIsAddressDialogOpen] = useState(false);
+  const [addressToDelete, setAddressToDelete] = useState<string | null>(null);
   const [newAddress, setNewAddress] = useState({ label: 'Home', address: '', city: '', pincode: '', is_default: false });
 
   const addAddressMutation = useMutation({
@@ -75,7 +77,8 @@ export default function CustomerDetail() {
   const deleteAddressMutation = useMutation({
     mutationFn: (addressId: string) => api.delete(`/customers/${id}/addresses/${addressId}`),
     onSuccess: () => {
-      toast.success('Address removed');
+      toast.success('Address deleted');
+      setAddressToDelete(null);
       queryClient.invalidateQueries({ queryKey: ['customer-addresses', id] });
     },
     onError: () => toast.error('Failed to remove address')
@@ -260,7 +263,7 @@ export default function CustomerDetail() {
                               <Star className="h-3.5 w-3.5" />
                             </Button>
                           )}
-                          <Button size="icon" variant="ghost" className="h-7 w-7 text-destructive hover:text-destructive" onClick={() => deleteAddressMutation.mutate(addr.id)}>
+                          <Button size="icon" variant="ghost" className="h-7 w-7 text-destructive hover:text-destructive" onClick={() => setAddressToDelete(addr.id)}>
                             <Trash2 className="h-3.5 w-3.5" />
                           </Button>
                         </div>
@@ -415,6 +418,16 @@ export default function CustomerDetail() {
           </Section>
         </div>
       </div>
+      <ConfirmDialog
+        isOpen={!!addressToDelete}
+        onClose={() => setAddressToDelete(null)}
+        onConfirm={() => addressToDelete && deleteAddressMutation.mutate(addressToDelete)}
+        title="Delete Address?"
+        description="Are you sure you want to delete this saved address? This action cannot be undone."
+        confirmText="Delete"
+        isDestructive={true}
+        isPending={deleteAddressMutation.isPending}
+      />
     </PageContainer>
   );
 }

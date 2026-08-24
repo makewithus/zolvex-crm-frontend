@@ -10,6 +10,7 @@ import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { FormGroup } from '@/components/ui-custom/FormGroup';
 import { EmptyState } from '@/components/ui-custom/EmptyState';
+import { ConfirmDialog } from '@/components/ui-custom/ConfirmDialog';
 import { LoadingState } from '@/components/ui-custom/LoadingState';
 import { Plus, Trash2, ChevronDown, ChevronUp, ClipboardList, GripVertical } from 'lucide-react';
 import { toast } from 'sonner';
@@ -33,6 +34,7 @@ export default function ChecklistTemplatesPage() {
   const queryClient = useQueryClient();
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [isCreateOpen, setIsCreateOpen] = useState(false);
+  const [templateToDelete, setTemplateToDelete] = useState<any | null>(null);
 
   // Form state
   const [form, setForm] = useState({ name: '', description: '' });
@@ -64,6 +66,7 @@ export default function ChecklistTemplatesPage() {
     mutationFn: (id: string) => api.delete(`/checklists/${id}`),
     onSuccess: () => {
       toast.success('Template deactivated');
+      setTemplateToDelete(null);
       queryClient.invalidateQueries({ queryKey: ['checklist-templates'] });
     },
     onError: () => toast.error('Failed to deactivate template')
@@ -178,8 +181,7 @@ export default function ChecklistTemplatesPage() {
                     size="sm"
                     variant="ghost"
                     className="text-destructive hover:text-destructive h-7 text-xs"
-                    onClick={e => { e.stopPropagation(); deactivateMutation.mutate(template.id); }}
-                    disabled={deactivateMutation.isPending}
+                    onClick={e => { e.stopPropagation(); setTemplateToDelete(template); }}
                   >
                     <Trash2 className="h-3.5 w-3.5 mr-1" />Deactivate
                   </Button>
@@ -211,6 +213,17 @@ export default function ChecklistTemplatesPage() {
           ))}
         </div>
       )}
+      
+      <ConfirmDialog
+        isOpen={!!templateToDelete}
+        onClose={() => setTemplateToDelete(null)}
+        onConfirm={() => templateToDelete && deactivateMutation.mutate(templateToDelete.id)}
+        title="Deactivate Template?"
+        description={`Are you sure you want to deactivate the template "${templateToDelete?.name}"? This action cannot be undone.`}
+        confirmText="Deactivate"
+        isDestructive={true}
+        isPending={deactivateMutation.isPending}
+      />
     </PageContainer>
   );
 }

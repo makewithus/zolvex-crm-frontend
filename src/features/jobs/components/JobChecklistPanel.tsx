@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { apiClient as api } from '@/lib/axios';
+import { ConfirmDialog } from '@/components/ui-custom/ConfirmDialog';
 import { Button } from '@/components/ui/button';
 import { ClipboardList, Plus, Trash2, CheckCircle2 } from 'lucide-react';
 import { toast } from 'sonner';
@@ -16,6 +17,7 @@ export const JobChecklistPanel = ({ jobId, canApply, isFieldStaff }: JobChecklis
   const queryClient = useQueryClient();
   const [isApplying, setIsApplying] = useState(false);
   const [selectedTemplate, setSelectedTemplate] = useState('');
+  const [checklistToRemove, setChecklistToRemove] = useState<any | null>(null);
 
   // Fetch job checklists
   const { data: checklists, isLoading } = useQuery({
@@ -51,6 +53,7 @@ export const JobChecklistPanel = ({ jobId, canApply, isFieldStaff }: JobChecklis
     mutationFn: (checklistId: string) => api.delete(`/jobs/${jobId}/checklists/${checklistId}`),
     onSuccess: () => {
       toast.success('Checklist removed');
+      setChecklistToRemove(null);
       queryClient.invalidateQueries({ queryKey: ['job-checklists', jobId] });
     },
     onError: () => toast.error('Failed to remove checklist')
@@ -132,8 +135,7 @@ export const JobChecklistPanel = ({ jobId, canApply, isFieldStaff }: JobChecklis
                       variant="ghost" 
                       size="icon" 
                       className="h-7 w-7 text-slate-400 hover:text-destructive"
-                      onClick={() => removeMutation.mutate(cl.id)}
-                      disabled={removeMutation.isPending}
+                      onClick={() => setChecklistToRemove(cl)}
                     >
                       <Trash2 className="h-4 w-4" />
                     </Button>
@@ -176,6 +178,17 @@ export const JobChecklistPanel = ({ jobId, canApply, isFieldStaff }: JobChecklis
           })}
         </div>
       )}
+      
+      <ConfirmDialog
+        isOpen={!!checklistToRemove}
+        onClose={() => setChecklistToRemove(null)}
+        onConfirm={() => checklistToRemove && removeMutation.mutate(checklistToRemove.id)}
+        title="Remove Checklist?"
+        description={`Are you sure you want to remove the checklist "${checklistToRemove?.template?.name}" from this job? This action cannot be undone.`}
+        confirmText="Remove"
+        isDestructive={true}
+        isPending={removeMutation.isPending}
+      />
     </div>
   );
 };
