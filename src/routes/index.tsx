@@ -42,9 +42,24 @@ const PrivateRoute = ({ children }: { children: React.ReactNode }) => {
   // Re-validate token on every mount to prevent bfcache from showing
   // protected pages after logout (browser Back button issue).
   useEffect(() => {
-    if (!localStorage.getItem('token')) {
-      navigate('/login', { replace: true });
-    }
+    const checkToken = () => {
+      if (!localStorage.getItem('token')) {
+        navigate('/login', { replace: true });
+      }
+    };
+
+    checkToken();
+
+    // Handle bfcache restorations (when the user clicks the browser back button)
+    const handlePageShow = (event: PageTransitionEvent) => {
+      if (event.persisted) {
+        checkToken();
+      }
+    };
+    window.addEventListener('pageshow', handlePageShow);
+    return () => {
+      window.removeEventListener('pageshow', handlePageShow);
+    };
   }, [navigate]);
 
   if (!token) {

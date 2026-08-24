@@ -1,4 +1,5 @@
-import { Link } from 'react-router-dom';
+import { useEffect } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import {
   Star, Shield, CheckCircle2, Building2,
   Users, Briefcase, FileText, BarChart3, Settings, Calendar,
@@ -6,6 +7,24 @@ import {
 } from 'lucide-react';
 
 export const LandingPage = () => {
+  const navigate = useNavigate();
+
+  // If already logged in, prevent accessing landing page
+  useEffect(() => {
+    const checkToken = () => {
+      if (localStorage.getItem('token')) {
+        navigate('/', { replace: true });
+      }
+    };
+    checkToken();
+
+    const handlePageShow = (event: PageTransitionEvent) => {
+      if (event.persisted) checkToken();
+    };
+    window.addEventListener('pageshow', handlePageShow);
+    return () => window.removeEventListener('pageshow', handlePageShow);
+  }, [navigate]);
+
   return (
     <div className="min-h-screen bg-[#F8FAFC] text-slate-900 font-sans selection:bg-blue-100" style={{ overflow: 'auto', height: '100%' }}>
       

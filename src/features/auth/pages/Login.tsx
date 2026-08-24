@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -14,6 +14,22 @@ export const Login = () => {
   const navigate = useNavigate();
   const [errorMsg, setErrorMsg] = useState('');
   const loginMutation = useLogin();
+
+  // If already logged in, prevent accessing login page
+  useEffect(() => {
+    const checkToken = () => {
+      if (localStorage.getItem('token')) {
+        navigate('/', { replace: true });
+      }
+    };
+    checkToken();
+
+    const handlePageShow = (event: PageTransitionEvent) => {
+      if (event.persisted) checkToken();
+    };
+    window.addEventListener('pageshow', handlePageShow);
+    return () => window.removeEventListener('pageshow', handlePageShow);
+  }, [navigate]);
 
   const { register, handleSubmit, formState: { errors } } = useForm<LoginFormData>({
     resolver: zodResolver(loginSchema)
