@@ -108,7 +108,7 @@ export const LeadForm = () => {
                   <FormGroup label="City" error={form.formState.errors.city_id?.message as string}>
                     <select {...form.register('city_id')} className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 transition-colors shadow-sm">
                       <option value="">Select a city...</option>
-                      {citiesResponse?.data?.map((city: any) => (
+                      {citiesResponse?.data?.filter((city: any) => city.is_active || city.id === form.getValues('city_id')).map((city: any) => (
                         <option key={city.id} value={city.id}>{city.name}</option>
                       ))}
                     </select>
@@ -119,7 +119,7 @@ export const LeadForm = () => {
                   <FormGroup label="Service" error={form.formState.errors.service_id?.message as string}>
                     <select {...form.register('service_id')} className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 transition-colors shadow-sm">
                       <option value="">Select a service...</option>
-                      {servicesResponse?.data?.map((service: any) => (
+                      {servicesResponse?.data?.filter((service: any) => service.is_active || service.id === form.getValues('service_id')).map((service: any) => (
                         <option key={service.id} value={service.id}>{formatEnumLabel(service.name)}</option>
                       ))}
                     </select>

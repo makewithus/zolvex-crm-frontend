@@ -168,7 +168,7 @@ export const LeadList = () => {
           <FilterPopover 
             filters={filters}
             onFilterChange={f => { setFilters(f); setPage(1); }}
-            statusOptions={['New', 'Contacted', 'Qualified', 'QuotationSent', 'Negotiation', 'Booked', 'Lost']}
+            statusOptions={['New', 'Contacted', 'FollowUp', 'Qualified', 'QuotationSent', 'Negotiation', 'Booked', 'Lost']}
           />
         }
       />

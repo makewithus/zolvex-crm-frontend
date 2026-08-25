@@ -41,6 +41,7 @@ export const LeadDetail = () => {
   
   const [newStage, setNewStage] = useState<LeadStatus | ''>('');
   const [lostReasonText, setLostReasonText] = useState('');
+  const [followUpDate, setFollowUpDate] = useState('');
   const [assignedTo, setAssignedTo] = useState('');
   const [isConvertOpen, setIsConvertOpen] = useState(false);
 
@@ -85,12 +86,21 @@ export const LeadDetail = () => {
       updateData.lost_reason_id = reasonId;
     }
 
+    if (newStage === 'FollowUp') {
+      if (!followUpDate) {
+        toast.error('Please select a follow-up date and time');
+        return;
+      }
+      updateData.follow_up_date = new Date(followUpDate).toISOString();
+    }
+
     updateMutation.mutate({ id: lead.id, data: updateData }, {
       onSuccess: () => {
         toast.success('Stage updated successfully');
         setIsStageOpen(false);
         setNewStage('');
         setLostReasonText('');
+        setFollowUpDate('');
       },
       onError: (error: any) => {
         toast.error(error.response?.data?.message || 'Failed to update stage');
@@ -155,7 +165,26 @@ export const LeadDetail = () => {
                   </div>
                 )}
 
-                <Button onClick={handleUpdateStage} disabled={!newStage || (newStage === 'Lost' && !lostReasonText.trim()) || updateMutation.isPending || createLostReasonMutation.isPending} className="w-full">Confirm Transition</Button>
+                {newStage === 'FollowUp' && (
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium">Follow-up Date & Time <span className="text-destructive">*</span></label>
+                    <Input 
+                      type="datetime-local" 
+                      value={followUpDate} 
+                      onChange={e => setFollowUpDate(e.target.value)}
+                      className="bg-background"
+                      min={new Date().toISOString().slice(0, 16)}
+                    />
+                  </div>
+                )}
+
+                <Button 
+                  onClick={handleUpdateStage} 
+                  disabled={!newStage || (newStage === 'Lost' && !lostReasonText.trim()) || (newStage === 'FollowUp' && !followUpDate) || updateMutation.isPending || createLostReasonMutation.isPending} 
+                  className="w-full"
+                >
+                  Confirm Transition
+                </Button>
               </div>
             </DialogContent>
           </Dialog>

@@ -1,7 +1,7 @@
 import { Link, useLocation } from 'react-router-dom';
 import { 
   LayoutDashboard, Users, UserSquare2, CalendarDays, Briefcase, 
-  Settings2, ShieldCheck, Map, Grid, DollarSign, FileText, 
+  Settings2, ShieldCheck, Map, Grid, FileText, 
   CreditCard, PieChart, UsersIcon, Calendar, ClipboardList, Star, MessageCircle
 } from 'lucide-react';
 import { FEATURE_REGISTRY } from '@/config/features';
@@ -43,7 +43,6 @@ export const Sidebar = () => {
         { name: "Roles", route: "/roles", icon: ShieldCheck },
         { name: "Cities", route: "/cities", icon: Map },
         { name: "Services", route: "/services", icon: Grid },
-        { name: "Pricing Rules", route: "/pricing-rules", icon: DollarSign },
       ]
     },
     {
