@@ -30,7 +30,7 @@ export const PricingRuleEditDialog = ({ rule, open, onOpenChange }: PricingRuleE
   const { data: citiesResponse } = useCities();
   const cities = citiesResponse?.data || [];
 
-  const { register, handleSubmit, formState: { errors, isDirty }, reset } = useForm<UpdatePricingRuleFormData>({
+  const { register, handleSubmit, formState: { errors, isDirty }, reset, getValues } = useForm<UpdatePricingRuleFormData>({
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     resolver: zodResolver(updatePricingRuleSchema) as any,
     defaultValues: {
@@ -107,7 +107,7 @@ export const PricingRuleEditDialog = ({ rule, open, onOpenChange }: PricingRuleE
                 className="flex h-10 w-full rounded-md border border-input bg-muted px-3 py-2 text-sm ring-offset-background cursor-not-allowed"
               >
                 <option value="">Select a service...</option>
-                {services.map(s => <option key={s.id} value={s.id}>{formatEnumLabel(s.name)}</option>)}
+                {services.filter((s: any) => s.is_active || s.id === getValues('service_id')).map((s: any) => <option key={s.id} value={s.id}>{formatEnumLabel(s.name)}</option>)}
               </select>
             </FormGroup>
 
@@ -117,7 +117,7 @@ export const PricingRuleEditDialog = ({ rule, open, onOpenChange }: PricingRuleE
                 className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
               >
                 <option value="">Global Rule</option>
-                {cities.map(c => <option key={c.id} value={c.id}>{formatEnumLabel(c.name)}</option>)}
+                {cities.filter((c: any) => c.is_active || c.id === getValues('city_id')).map((c: any) => <option key={c.id} value={c.id}>{formatEnumLabel(c.name)}</option>)}
               </select>
             </FormGroup>
           </FormGrid>

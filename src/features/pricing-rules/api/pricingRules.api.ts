@@ -2,7 +2,7 @@ import { apiClient } from '@/lib/axios';
 import { PricingRulesResponse, CreatePricingRuleResponse } from '../types/pricingRule.types';
 import { PricingRuleFormData, UpdatePricingRuleFormData } from '../schemas/pricingRule.schema';
 
-export const getPricingRules = async (params?: { service_id?: string }): Promise<PricingRulesResponse> => {
+export const getPricingRules = async (params?: { service_id?: string; city_id?: string }): Promise<PricingRulesResponse> => {
   const response = await apiClient.get('/pricing-rules', { params });
   return response.data;
 };

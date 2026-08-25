@@ -6,10 +6,11 @@ import { useServices } from '../hooks/useServices';
 import { Service } from '../types/service.types';
 import { ServiceFormDialog } from '../components/ServiceFormDialog';
 import { Button } from '@/components/ui/button';
-import { Briefcase, Layers, MoreHorizontal, Edit } from 'lucide-react';
+import { Briefcase, Layers, MoreHorizontal, Edit, DollarSign } from 'lucide-react';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { useState, useMemo } from 'react';
 import { ServiceEditDialog } from '../components/ServiceEditDialog';
+import { ServicePricingDrawer } from '../components/ServicePricingDrawer';
 
 export const ServicesList = () => {
   const { data: servicesResponse, isLoading, isError, error } = useServices();
@@ -24,6 +25,7 @@ export const ServicesList = () => {
   const paginatedServices = services.slice((page - 1) * limit, page * limit);
   
   const [editingService, setEditingService] = useState<Service | null>(null);
+  const [pricingService, setPricingService] = useState<Service | null>(null);
 
   const columns: Column<Service>[] = [
     { 
@@ -83,6 +85,9 @@ export const ServicesList = () => {
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
+            <DropdownMenuItem className="cursor-pointer" onClick={() => setPricingService(row)}>
+              <DollarSign className="h-4 w-4 mr-2" /> Manage Pricing
+            </DropdownMenuItem>
             <DropdownMenuItem className="cursor-pointer" onClick={() => setEditingService(row)}>
               <Edit className="h-4 w-4 mr-2" /> Edit Service
             </DropdownMenuItem>
@@ -125,6 +130,11 @@ export const ServicesList = () => {
         service={editingService} 
         open={!!editingService} 
         onOpenChange={(open) => !open && setEditingService(null)} 
+      />
+      <ServicePricingDrawer
+        service={pricingService}
+        open={!!pricingService}
+        onOpenChange={(open) => !open && setPricingService(null)}
       />
     </PageContainer>
   );

@@ -64,7 +64,7 @@ export const PricingRuleFormDialog = ({ onSuccess }: { onSuccess?: () => void })
                 className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
               >
                 <option value="">Select a service...</option>
-                {services.map(s => <option key={s.id} value={s.id}>{formatEnumLabel(s.name)}</option>)}
+                {services.filter((s: any) => s.is_active).map((s: any) => <option key={s.id} value={s.id}>{formatEnumLabel(s.name)}</option>)}
               </select>
             </FormGroup>
 
@@ -74,7 +74,7 @@ export const PricingRuleFormDialog = ({ onSuccess }: { onSuccess?: () => void })
                 className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
               >
                 <option value="">Global Rule</option>
-                {cities.map(c => <option key={c.id} value={c.id}>{formatEnumLabel(c.name)}</option>)}
+                {cities.filter((c: any) => c.is_active).map((c: any) => <option key={c.id} value={c.id}>{formatEnumLabel(c.name)}</option>)}
               </select>
             </FormGroup>
           </FormGrid>
