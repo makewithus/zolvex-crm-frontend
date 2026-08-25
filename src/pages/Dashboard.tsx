@@ -90,30 +90,20 @@ export const Dashboard = () => {
 
   const leadsRes = useQuery({
     queryKey: ['dashboard', 'leads'],
-    queryFn: getLeads,
+    queryFn: () => getLeads({ limit: 5 }),
     staleTime: 60000,
   });
-  const latestLeads = (leadsRes.data?.data || [])
-    .sort((a: any, b: any) => {
-      const getLatestDate = (lead: any) => {
-        if (!lead.history || lead.history.length === 0) return 0;
-        return Math.max(...lead.history.map((h: any) => new Date(h.changed_at).getTime()));
-      };
-      return getLatestDate(b) - getLatestDate(a);
-    })
-    .slice(0, 5);
+  const latestLeads = leadsRes.data?.data || [];
   const leadsLoading = leadsRes.isLoading;
 
   const jobsQuery = useQuery({
     queryKey: ['dashboard', 'jobs'],
-    queryFn: () => getJobs({ include_booking: true }),
+    queryFn: () => getJobs({ include_booking: true, limit: 5, sortBy: 'updated_at', sortOrder: 'desc' }),
     staleTime: 60000,
   });
   const jobsList: any[] = jobsQuery.data || [];
   const jobsLoading = jobsQuery.isLoading;
-  const recentJobs = [...jobsList]
-    .sort((a: any, b: any) => new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime())
-    .slice(0, 5);
+  const recentJobs = jobsList;
 
   const getStatusColor = (status: string): 'success' | 'warning' | 'error' | 'info' | 'default' => {
     const s = status?.toLowerCase() || '';

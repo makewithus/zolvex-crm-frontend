@@ -4,10 +4,10 @@ import { PricingRuleFormData, UpdatePricingRuleFormData } from '../schemas/prici
 import { AxiosError } from 'axios';
 import { CreatePricingRuleResponse } from '../types/pricingRule.types';
 
-export const usePricingRules = () => {
+export const usePricingRules = (params?: { service_id?: string }) => {
   return useQuery({
-    queryKey: ['pricing-rules'],
-    queryFn: getPricingRules,
+    queryKey: ['pricing-rules', params],
+    queryFn: () => getPricingRules(params),
   });
 };
 

@@ -90,14 +90,14 @@ export const QuickEditJobDialog = ({ job, isOpen, onClose }: QuickEditJobDialogP
         </DialogHeader>
         <div className="space-y-4 py-4">
           <div className="space-y-2">
-            <Label>Technician</Label>
+            <Label>Technician / Field Staff</Label>
             <select 
               className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2" 
               value={techId} 
               onChange={e => setTechId(e.target.value)}
             >
               <option value="">Unassigned</option>
-              {usersResponse?.data?.filter((u: any) => u.role?.name === 'Field Staff').map((u: any) => (
+              {usersResponse?.data?.filter((u: any) => u.role?.name === 'Field Staff' || u.role?.name === 'Technician').map((u: any) => (
                 <option key={u.id} value={u.id}>{u.name}</option>
               ))}
             </select>

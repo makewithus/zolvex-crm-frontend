@@ -4,6 +4,7 @@ import { apiClient as api } from '../lib/axios';
 export interface AlertsSummary {
   openComplaints: number;
   newLeads: number;
+  dueFollowUps: number;
   unpaidInvoices: number;
   total: number;
 }

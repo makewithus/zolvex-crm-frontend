@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Bell, AlertCircle, FileText, UserPlus } from 'lucide-react';
+import { Bell, AlertCircle, FileText, UserPlus, Clock } from 'lucide-react';
 import { useAlerts } from '@/hooks/useAlerts';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuLabel } from '../ui/dropdown-menu';
 
@@ -44,6 +44,13 @@ export const NotificationBell = () => {
               <DropdownMenuItem className="cursor-pointer py-2 px-3 focus:bg-blue-50 focus:text-blue-700" onClick={() => navigate('/leads')}>
                 <UserPlus className="h-4 w-4 mr-2 text-blue-500" />
                 <div className="flex-1 font-medium">{alerts.newLeads} New Leads</div>
+              </DropdownMenuItem>
+            ) : null}
+            
+            {alerts?.dueFollowUps ? (
+              <DropdownMenuItem className="cursor-pointer py-2 px-3 focus:bg-purple-50 focus:text-purple-700" onClick={() => navigate('/leads?status=FollowUp')}>
+                <Clock className="h-4 w-4 mr-2 text-purple-500" />
+                <div className="flex-1 font-medium">{alerts.dueFollowUps} Follow-ups Due</div>
               </DropdownMenuItem>
             ) : null}
             

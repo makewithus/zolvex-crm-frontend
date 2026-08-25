@@ -19,6 +19,8 @@ export interface Lead {
   city_id?: string | null;
   service_id?: string | null;
   assigned_to?: string | null;
+  service_location?: string | null;
+  follow_up_date?: string | null;
   created_at: string;
   assignedTo?: {
     id: string;

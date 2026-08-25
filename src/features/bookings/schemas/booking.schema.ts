@@ -12,6 +12,7 @@ export const createBookingSchema = z.object({
   customer_id: z.string().uuid('Invalid customer ID'),
   city_id: z.string().uuid('Invalid city ID'),
   service_id: z.string().uuid('Invalid service ID'),
+  pricing_rule_id: z.string().uuid('Please select a pricing variant'),
   scheduled_date: z.string().min(1, 'Scheduled date is required'),
   slot: businessHoursSlot,
   
@@ -30,6 +31,7 @@ export const createBookingSchema = z.object({
 export type CreateBookingFormData = z.infer<typeof createBookingSchema>;
 
 export const convertLeadToBookingSchema = z.object({
+  pricing_rule_id: z.string().uuid('Please select a pricing variant'),
   scheduled_date: z.string().min(1, 'Scheduled date is required'),
   slot: businessHoursSlot,
   

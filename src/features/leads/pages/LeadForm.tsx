@@ -37,7 +37,7 @@ export const LeadForm = () => {
     resolver: zodResolver(isEdit ? leadUpdateSchema : leadFormSchema) as unknown as Resolver<LeadFormInput & LeadUpdateInput>,
     defaultValues: isEdit 
       ? { status: lead?.status, assigned_to: lead?.assigned_to || '' }
-      : { phone: '', name: '', source: 'Phone', city_id: '', service_id: '' }
+      : { phone: '', name: '', source: 'Phone', city_id: '', service_id: '', service_location: '', follow_up_date: '' }
   });
 
   useEffect(() => {
@@ -47,7 +47,9 @@ export const LeadForm = () => {
         assigned_to: lead.assigned_to || '',
         name: lead.name || '',
         city_id: lead.city_id || '',
-        service_id: lead.service_id || ''
+        service_id: lead.service_id || '',
+        service_location: lead.service_location || '',
+        follow_up_date: lead.follow_up_date ? new Date(lead.follow_up_date).toISOString().slice(0, 16) : ''
       });
     }
   }, [isEdit, lead, form]);
@@ -111,6 +113,9 @@ export const LeadForm = () => {
                       ))}
                     </select>
                   </FormGroup>
+                  <FormGroup label="Service Location / District" error={form.formState.errors.service_location?.message as string}>
+                    <Input {...form.register('service_location')} placeholder="e.g. South Delhi, Dwarka" />
+                  </FormGroup>
                   <FormGroup label="Service" error={form.formState.errors.service_id?.message as string}>
                     <select {...form.register('service_id')} className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 transition-colors shadow-sm">
                       <option value="">Select a service...</option>
@@ -140,6 +145,11 @@ export const LeadForm = () => {
                       ))}
                     </select>
                   </FormGroup>
+                  {form.watch('status') === 'FollowUp' && (
+                    <FormGroup label="Follow-up Date & Time" error={form.formState.errors.follow_up_date?.message as string} required>
+                      <Input type="datetime-local" {...form.register('follow_up_date')} />
+                    </FormGroup>
+                  )}
                 </>
               )}
             </FormGrid>

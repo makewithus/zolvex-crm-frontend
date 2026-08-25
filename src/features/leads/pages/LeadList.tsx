@@ -55,14 +55,6 @@ export const LeadList = () => {
       });
     }
 
-    // Sort
-    leads = [...leads].sort((a: any, b: any) => {
-      const getCreationTime = (lead: any) => lead.history?.find((h: any) => h.to_stage === 'New')?.changed_at || lead.created_at || 0;
-      const timeDiff = new Date(getCreationTime(b)).getTime() - new Date(getCreationTime(a)).getTime();
-      if (timeDiff !== 0) return timeDiff;
-      return (a.phone || '').localeCompare(b.phone || '');
-    });
-
     return leads;
   }, [leadsResponse, searchQuery, filters]);
 

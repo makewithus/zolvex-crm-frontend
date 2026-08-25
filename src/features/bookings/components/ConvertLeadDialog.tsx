@@ -5,6 +5,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useConvertLeadToBooking } from '../hooks/useBookings';
 import { convertLeadToBookingSchema, ConvertLeadToBookingFormData } from '../schemas/booking.schema';
+import { usePricingRules } from '@/features/pricing-rules/hooks/usePricingRules';
 import { Lead } from '@/features/leads/types/lead.types';
 import { useEffect, useState } from 'react';
 import { BUSINESS_HOURS } from '@/config/business-hours';
@@ -20,6 +21,10 @@ export const ConvertLeadDialog = ({ lead, isOpen, onClose }: Props) => {
   const convertMutation = useConvertLeadToBooking();
   const [apiError, setApiError] = useState<string>('');
 
+  const { data: pricingRulesResponse, isLoading: isLoadingRules } = usePricingRules(
+    lead?.service_id ? { service_id: lead.service_id } : undefined
+  );
+
   const form = useForm<any>({
     resolver: zodResolver(convertLeadToBookingSchema),
   });
@@ -34,13 +39,14 @@ export const ConvertLeadDialog = ({ lead, isOpen, onClose }: Props) => {
         slot: '10:00',
         address_line_1: '',
         address_line_2: '',
-        area: '',
+        area: lead?.service_location || '',
         landmark: '',
         city_name: lead?.city?.name || '',
         postal_code: '',
         country: 'India',
         notes: '',
         special_instructions: '',
+        pricing_rule_id: '',
       });
     }
   }, [isOpen, lead, reset]);
@@ -96,6 +102,31 @@ export const ConvertLeadDialog = ({ lead, isOpen, onClose }: Props) => {
           <div className="space-y-4 rounded-md border p-4 bg-muted/20">
             <h3 className="font-medium text-sm">Schedule</h3>
             <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2 col-span-2">
+                <label className="text-sm font-medium">Pricing Variant <span className="text-destructive">*</span></label>
+                <select 
+                  className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                  {...register('pricing_rule_id')}
+                  disabled={isLoadingRules}
+                >
+                  <option value="">Select Variant...</option>
+                  {pricingRulesResponse?.data?.map((rule: any) => {
+                    const labelParts = [];
+                    if (rule.bhk_type) labelParts.push(`BHK: ${rule.bhk_type}`);
+                    if (rule.tank_size) labelParts.push(`Tank: ${rule.tank_size}`);
+                    const variantText = labelParts.length > 0 ? ` (${labelParts.join(' | ')})` : ' (Base)';
+                    return (
+                      <option key={rule.id} value={rule.id}>
+                        ₹{rule.base_price}{variantText}
+                      </option>
+                    );
+                  })}
+                </select>
+                {errors.pricing_rule_id && <p className="text-xs text-destructive">{errors.pricing_rule_id.message as string}</p>}
+                {!isLoadingRules && pricingRulesResponse?.data?.length === 0 && (
+                  <p className="text-xs text-destructive font-medium mt-1">No pricing rules configured for this service. Booking is blocked.</p>
+                )}
+              </div>
               <div className="space-y-2">
                 <label className="text-sm font-medium">Date <span className="text-destructive">*</span></label>
                 <Input type="date" {...register('scheduled_date')} />

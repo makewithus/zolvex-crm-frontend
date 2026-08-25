@@ -2,8 +2,8 @@ import { apiClient } from '@/lib/axios';
 import { LeadsResponse, LeadResponse } from '../types/lead.types';
 import { LeadFormInput, LeadUpdateInput } from '../schemas/lead.schema';
 
-export const getLeads = async (): Promise<LeadsResponse> => {
-  const res = await apiClient.get('/leads');
+export const getLeads = async (params?: any): Promise<LeadsResponse> => {
+  const res = await apiClient.get('/leads', { params });
   return res.data;
 };
 
