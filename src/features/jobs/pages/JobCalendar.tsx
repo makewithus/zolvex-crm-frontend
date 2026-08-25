@@ -8,7 +8,7 @@ import { JOB_STATUS_COLORS } from '../constants/job-colors';
 import { format, parseISO, startOfDay, endOfDay } from 'date-fns';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { ChevronLeft, ChevronRight, Search, Globe, EyeOff, Eye } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Search, Globe, EyeOff, Eye, Calendar } from 'lucide-react';
 import { Job } from '../types/job.types';
 import { BUSINESS_HOURS } from '@/config/business-hours';
 
@@ -22,10 +22,9 @@ export const JobCalendar = () => {
 
   // Timezone indicator
   const userTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-  const isDev = import.meta.env.DEV;
 
   const [editingJob, setEditingJob] = useState<Job | null>(null);
-
+  const [selectedMobileLane, setSelectedMobileLane] = useState<string>('all');
   const [currentTime, setCurrentTime] = useState(new Date());
 
   useEffect(() => {
@@ -232,19 +231,54 @@ export const JobCalendar = () => {
             </div>
           </div>
         </div>
+
+        {/* Mobile Lane Selector */}
+        <div className="block sm:hidden w-full">
+          <label className="text-xs font-semibold text-slate-500 mb-1 block">Active Column / Lane</label>
+          <select
+            value={selectedMobileLane}
+            onChange={(e) => setSelectedMobileLane(e.target.value)}
+            className="flex h-9 w-full rounded-md border border-input bg-background px-3 py-1 text-sm shadow-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+          >
+            <option value="all">Show All Columns</option>
+            <option value="unassigned">Unassigned ({unassignedJobs.length})</option>
+            {lanes.map(lane => (
+              <option key={lane.id} value={lane.id}>
+                {lane.name} ({lane.jobs.filter(j => j.status !== 'Cancelled').length})
+              </option>
+            ))}
+          </select>
+        </div>
       </div>
 
       {/* KPI Cards */}
       <CalendarKPIs kpis={kpis} />
 
       {/* Calendar Grid */}
-      <div className="flex-1 overflow-auto bg-white border border-slate-200 rounded-lg shadow-sm">
+      <div className="flex-1 w-full overflow-auto bg-white border border-slate-200 rounded-lg shadow-sm">
         {isLoading ? (
           <div className="p-10 flex justify-center text-slate-500 text-sm">Loading calendar data…</div>
         ) : error ? (
           <div className="p-10 text-center text-red-500 text-sm">Failed to load calendar. Please try again.</div>
+        ) : activeJobCount === 0 ? (
+          <div className="flex flex-col items-center justify-center py-16 px-4 text-center h-[350px]">
+            <div className="h-12 w-12 rounded-full bg-slate-50 flex items-center justify-center mb-4 border border-slate-100">
+              <Calendar className="h-5 w-5 text-slate-400" />
+            </div>
+            <h3 className="text-sm font-semibold text-slate-700">No active jobs</h3>
+            <p className="text-xs text-slate-500 mt-1 max-w-xs">
+              There are no jobs scheduled for {format(parseISO(currentDateParam), 'EEEE, MMMM d')}.
+            </p>
+          </div>
         ) : (
-          <div className="flex" style={{ minWidth: `${80 + (1 + lanes.length) * 250}px` }}>
+          <div 
+            className="flex" 
+            style={{ 
+              minWidth: selectedMobileLane === 'all' 
+                ? `${80 + (1 + lanes.length) * 250}px` 
+                : '100%' 
+            }}
+          >
             {/* Time Axis — sticky left */}
             <div className="w-20 flex-shrink-0 border-r border-slate-200 bg-slate-50 sticky left-0 z-20">
               <div className="h-12 border-b border-slate-200" />
@@ -270,43 +304,12 @@ export const JobCalendar = () => {
             </div>
 
             {/* Unassigned Lane */}
-            <div className="flex-1 min-w-[250px] border-r border-slate-200 relative">
-              <div className="h-12 border-b border-slate-200 bg-slate-50 flex items-center justify-center font-semibold text-sm text-slate-700 sticky top-0 z-10 shadow-sm">
-                Unassigned ({unassignedJobs.length})
-              </div>
-
-              {/* Empty state banner */}
-              {activeJobCount === 0 && !isLoading && (
-                <div className="absolute top-16 left-1/2 -translate-x-1/2 whitespace-nowrap z-20 pointer-events-none">
-                  <div className="bg-slate-900 border border-slate-800 text-slate-100 text-sm px-4 py-2 rounded shadow-none text-center">
-                    <p>No active jobs for {format(parseISO(currentDateParam), 'EEEE, MMM d')}.</p>
-                    {isDev && <p className="text-xs text-slate-400 mt-0.5">Dev: Check timezone boundary if jobs exist.</p>}
-                  </div>
-                </div>
-              )}
-
-              <div className="relative" style={{ height: `${gridHeight}px` }}>
-                {hours.map(h => (
-                  <div key={h} className="absolute w-full border-t border-slate-100" style={{ top: `${(h - START_HOUR) * 60 * PIXELS_PER_MINUTE}px` }} />
-                ))}
-                {showCurrentTimeLine && (
-                  <div 
-                    className="absolute w-full border-t-2 border-red-500 z-20 pointer-events-none" 
-                    style={{ top: `${currentTimeTop}px` }} 
-                  >
-                    <div className="absolute -left-1 -top-1.5 w-3 h-3 bg-red-500 rounded-full"></div>
-                  </div>
-                )}
-                {unassignedJobs.map(renderJobCard)}
-              </div>
-            </div>
-
-            {/* Technician Lanes */}
-            {lanes.map(lane => (
-              <div key={lane.id} className="flex-1 min-w-[250px] border-r border-slate-200 relative">
+            {(selectedMobileLane === 'all' || selectedMobileLane === 'unassigned') && (
+              <div className="flex-1 min-w-[250px] border-r border-slate-200 relative">
                 <div className="h-12 border-b border-slate-200 bg-slate-50 flex items-center justify-center font-semibold text-sm text-slate-700 sticky top-0 z-10 shadow-sm">
-                  {lane.name} ({lane.jobs.filter(j => j.status !== 'Cancelled').length})
+                  Unassigned ({unassignedJobs.length})
                 </div>
+
                 <div className="relative" style={{ height: `${gridHeight}px` }}>
                   {hours.map(h => (
                     <div key={h} className="absolute w-full border-t border-slate-100" style={{ top: `${(h - START_HOUR) * 60 * PIXELS_PER_MINUTE}px` }} />
@@ -315,12 +318,37 @@ export const JobCalendar = () => {
                     <div 
                       className="absolute w-full border-t-2 border-red-500 z-20 pointer-events-none" 
                       style={{ top: `${currentTimeTop}px` }} 
-                    />
+                    >
+                      <div className="absolute -left-1 -top-1.5 w-3 h-3 bg-red-500 rounded-full"></div>
+                    </div>
                   )}
-                  {lane.jobs.map(renderJobCard)}
+                  {unassignedJobs.map(renderJobCard)}
                 </div>
               </div>
-            ))}
+            )}
+
+            {/* Technician Lanes */}
+            {lanes
+              .filter(lane => selectedMobileLane === 'all' || lane.id === selectedMobileLane)
+              .map(lane => (
+                <div key={lane.id} className="flex-1 min-w-[250px] border-r border-slate-200 relative">
+                  <div className="h-12 border-b border-slate-200 bg-slate-50 flex items-center justify-center font-semibold text-sm text-slate-700 sticky top-0 z-10 shadow-sm">
+                    {lane.name} ({lane.jobs.filter(j => j.status !== 'Cancelled').length})
+                  </div>
+                  <div className="relative" style={{ height: `${gridHeight}px` }}>
+                    {hours.map(h => (
+                      <div key={h} className="absolute w-full border-t border-slate-100" style={{ top: `${(h - START_HOUR) * 60 * PIXELS_PER_MINUTE}px` }} />
+                    ))}
+                    {showCurrentTimeLine && (
+                      <div 
+                        className="absolute w-full border-t-2 border-red-500 z-20 pointer-events-none" 
+                        style={{ top: `${currentTimeTop}px` }} 
+                      />
+                    )}
+                    {lane.jobs.map(renderJobCard)}
+                  </div>
+                </div>
+              ))}
           </div>
         )}
       </div>

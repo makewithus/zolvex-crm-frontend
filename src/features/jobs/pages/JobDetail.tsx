@@ -184,7 +184,7 @@ export const JobDetail = () => {
                   <div className="space-y-4 py-4">
                     <select className="flex h-10 w-full rounded border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50" value={assignedTo} onChange={e => setAssignedTo(e.target.value)}>
                       <option value="">Select Technician...</option>
-                      {usersResponse?.data?.map((u: any) => (
+                      {usersResponse?.data?.filter((u: any) => u.role?.name === 'Field Staff' || u.role?.name === 'Technician').map((u: any) => (
                         <option key={u.id} value={u.id}>{u.name} ({u.role?.name || 'User'})</option>
                       ))}
                     </select>

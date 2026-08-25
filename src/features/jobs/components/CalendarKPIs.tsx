@@ -22,9 +22,9 @@ export const CalendarKPIs = ({ kpis }: { kpis?: KPIData }) => {
   ];
 
   return (
-    <div className="grid grid-cols-4 md:grid-cols-7 gap-3 mb-5 flex-shrink-0">
+    <div className="flex sm:grid gap-3 overflow-x-auto pb-1.5 -mx-4 px-4 sm:mx-0 sm:px-0 sm:grid-cols-4 lg:grid-cols-7 mb-5 flex-shrink-0 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
       {cards.map(({ label, value, valueClass }) => (
-        <div key={label} className="bg-white px-4 py-3 rounded-lg shadow-sm border border-slate-200">
+        <div key={label} className="bg-white px-4 py-3 rounded-lg shadow-sm border border-slate-200 min-w-[125px] sm:min-w-0 flex-shrink-0 sm:flex-shrink">
           <p className="text-xs font-medium text-slate-500 truncate">{label}</p>
           <p className={`text-2xl font-bold ${valueClass}`}>{value}</p>
         </div>
