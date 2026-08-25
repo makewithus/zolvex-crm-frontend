@@ -32,19 +32,21 @@ export const BookingDetail = () => {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex items-center gap-4">
-        <Button variant="ghost" size="icon" onClick={() => navigate('/bookings')}>
-          <ArrowLeft className="h-5 w-5" />
-        </Button>
-        <div>
-          <div className="flex items-center gap-3">
-            <h1 className="text-2xl font-bold tracking-tight">{booking.booking_id}</h1>
-            <Badge variant="outline">{booking.status}</Badge>
+      <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
+        <div className="flex items-center gap-4 w-full sm:w-auto">
+          <Button variant="ghost" size="icon" onClick={() => navigate('/bookings')}>
+            <ArrowLeft className="h-5 w-5" />
+          </Button>
+          <div>
+            <div className="flex flex-wrap items-center gap-2 sm:gap-3">
+              <h1 className="text-xl sm:text-2xl font-bold tracking-tight">{booking.booking_id}</h1>
+              <Badge variant="outline">{booking.status}</Badge>
+            </div>
+            <p className="text-sm sm:text-base text-muted-foreground">{booking.service_name} in {booking.city_name}</p>
           </div>
-          <p className="text-muted-foreground">{booking.service_name} in {booking.city_name}</p>
         </div>
         
-        <div className="ml-auto flex items-center gap-2">
+        <div className="sm:ml-auto flex flex-wrap items-center gap-2 w-full sm:w-auto">
           {booking.status !== 'Cancelled' && booking.status !== 'Completed' && (
             <>
               {booking.status !== 'Assigned' && booking.status !== 'InProgress' && (
@@ -52,13 +54,14 @@ export const BookingDetail = () => {
                   variant="default" 
                   onClick={() => createJob.mutate({ bookingId: booking.id, priority: 'Normal' })}
                   disabled={createJob.isPending}
+                  className="flex-1 sm:flex-none"
                 >
                   {createJob.isPending ? 'Generating...' : 'Generate Job'}
                 </Button>
               )}
               {/* Hide Cancel for Field Staff — backend enforces 403 but UI should not mislead */}
               {userRole !== 'Field Staff' && (
-                <Button variant="destructive" onClick={() => setIsCancelOpen(true)}>
+                <Button variant="destructive" onClick={() => setIsCancelOpen(true)} className="flex-1 sm:flex-none">
                   Cancel Booking
                 </Button>
               )}

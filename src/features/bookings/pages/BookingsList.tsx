@@ -71,7 +71,8 @@ export const BookingsList = () => {
       </div>
 
       <div className="bg-white rounded-lg border shadow-sm overflow-hidden">
-        <div className="overflow-x-auto">
+        {/* Desktop Table View */}
+        <div className="hidden md:block overflow-x-auto">
           <table className="w-full text-sm text-left min-w-[640px]">
             <thead className="text-xs text-muted-foreground uppercase bg-muted/50 border-b">
               <tr>
@@ -181,6 +182,70 @@ export const BookingsList = () => {
               )}
             </tbody>
           </table>
+        </div>
+
+        {/* Mobile Card List View */}
+        <div className="block md:hidden divide-y divide-slate-100">
+          {isLoading ? (
+            <div className="p-6 text-center text-muted-foreground">
+              <div className="flex items-center justify-center gap-2 py-4">
+                <div className="h-4 w-4 animate-spin rounded-full border-2 border-primary border-t-transparent" />
+                Loading bookings...
+              </div>
+            </div>
+          ) : isError ? (
+            <div className="p-6 text-center text-destructive">
+              Failed to load bookings. Please try again.
+            </div>
+          ) : !data?.bookings?.length ? (
+            <div className="p-8 text-center flex flex-col items-center gap-2">
+              <CalendarIcon className="h-8 w-8 text-muted-foreground/50" />
+              <p className="text-muted-foreground">No bookings found</p>
+            </div>
+          ) : (
+            data.bookings.map((booking: any) => (
+              <div key={booking.id} className="p-4 space-y-3 hover:bg-slate-50/50 transition-colors">
+                <div className="flex items-center justify-between">
+                  <Link to={`/bookings/${booking.id}`} className="font-semibold text-primary hover:underline text-sm">
+                    {booking.booking_id}
+                  </Link>
+                  <Badge variant="secondary" className={`text-[10px] px-2 py-0.5 ${getStatusColor(booking.status)}`}>
+                    {booking.status}
+                  </Badge>
+                </div>
+                
+                <div className="space-y-2 text-xs text-slate-500">
+                  <div className="flex items-center gap-2">
+                    <UserIcon className="h-3.5 w-3.5 text-slate-400 flex-shrink-0" />
+                    <div>
+                      <span className="font-medium text-slate-700">{booking.customer_name || 'N/A'}</span>
+                      <span className="mx-1.5 text-slate-300">|</span>
+                      <span>{booking.customer_phone}</span>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <MapPinIcon className="h-3.5 w-3.5 text-slate-400 flex-shrink-0" />
+                    <span className="text-slate-700">{booking.service_name} <span className="text-slate-400">({booking.city_name})</span></span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <CalendarIcon className="h-3.5 w-3.5 text-slate-400 flex-shrink-0" />
+                    <span>{new Date(booking.scheduled_date).toLocaleDateString()} {booking.slot ? `· ${booking.slot}` : ''}</span>
+                  </div>
+                </div>
+
+                <div className="flex items-center justify-end gap-2 pt-1.5 border-t border-dashed border-slate-100">
+                  <Button variant="outline" size="sm" asChild className="h-8 text-xs px-3 shadow-none">
+                    <Link to={`/bookings/${booking.id}`}>View Details</Link>
+                  </Button>
+                  {booking.status !== 'Cancelled' && booking.status !== 'Completed' && userRole !== 'Field Staff' && (
+                    <Button variant="ghost" size="sm" asChild className="h-8 text-xs text-destructive hover:text-destructive hover:bg-destructive/10 px-3">
+                      <Link to={`/bookings/${booking.id}`}>Cancel</Link>
+                    </Button>
+                  )}
+                </div>
+              </div>
+            ))
+          )}
         </div>
         {/* Pagination Controls */}
         {(data?.total || 0) > 0 && (

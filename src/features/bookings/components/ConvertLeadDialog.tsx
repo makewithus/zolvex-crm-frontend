@@ -22,7 +22,7 @@ export const ConvertLeadDialog = ({ lead, isOpen, onClose }: Props) => {
   const [apiError, setApiError] = useState<string>('');
 
   const { data: pricingRulesResponse, isLoading: isLoadingRules } = usePricingRules(
-    lead?.service_id ? { service_id: lead.service_id } : undefined
+    lead?.service_id ? { service_id: lead.service_id, city_id: lead.city_id || undefined } : undefined
   );
 
   const form = useForm<any>({
@@ -112,6 +112,7 @@ export const ConvertLeadDialog = ({ lead, isOpen, onClose }: Props) => {
                   <option value="">Select Variant...</option>
                   {pricingRulesResponse?.data?.map((rule: any) => {
                     const labelParts = [];
+                    if (!rule.city_id) labelParts.push('Global');
                     if (rule.bhk_type) labelParts.push(`BHK: ${rule.bhk_type}`);
                     if (rule.tank_size) labelParts.push(`Tank: ${rule.tank_size}`);
                     const variantText = labelParts.length > 0 ? ` (${labelParts.join(' | ')})` : ' (Base)';
@@ -158,6 +159,10 @@ export const ConvertLeadDialog = ({ lead, isOpen, onClose }: Props) => {
             <div className="space-y-2">
               <label className="text-sm font-medium">Address Line 2</label>
               <Input placeholder="Street Name, Locality" {...register('address_line_2')} />
+            </div>
+            <div className="space-y-2">
+              <label className="text-sm font-medium">Area / District</label>
+              <Input placeholder="e.g. South Delhi, Dwarka" {...register('area')} />
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
