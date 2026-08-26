@@ -1,6 +1,6 @@
 import { useState, useMemo } from 'react';
 import { format, parseISO } from 'date-fns';
-import { Plus, Send, Check, X, Eye, MoreHorizontal, ChevronDown } from 'lucide-react';
+import { Plus, Send, Check, X, Eye, MoreHorizontal, FileText, IndianRupee } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useQuotes, useSendQuote, useRejectQuote } from '../hooks/useQuotes';
 import { QuoteFormDialog } from '../components/QuoteFormDialog';
@@ -13,7 +13,7 @@ import { PageHeader } from '@/components/ui-custom/PageHeader';
 import { PageContainer } from '@/components/ui-custom/PageContainer';
 import { DataTable, Column } from '@/components/ui-custom/DataTable';
 import { StatusBadge } from '@/components/ui-custom/StatusBadge';
-import { Card, CardContent } from '@/components/ui/card';
+import { StatCard } from '@/components/ui-custom/StatCard';
 
 const mapQuoteStatus = (status: QuoteStatus): 'success' | 'warning' | 'error' | 'info' | 'default' => {
   switch (status) {
@@ -175,18 +175,17 @@ export const QuoteList = () => {
 
       {/* KPI Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
-        <Card className="relative overflow-hidden transition-all shadow-sm">
-          <CardContent className="p-4">
-            <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Total Quotations</p>
-            <p className="text-2xl font-bold text-foreground mt-1.5">{quotes.length}</p>
-          </CardContent>
-        </Card>
-        <Card className="relative overflow-hidden transition-all shadow-sm">
-          <CardContent className="p-4">
-            <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Quotation Pipeline</p>
-            <p className="text-2xl font-bold text-foreground mt-1.5">₹{totalValue.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</p>
-          </CardContent>
-        </Card>
+        <StatCard 
+          title="Total Quotations"
+          value={quotes.length}
+          icon={<FileText className="h-4 w-4" />}
+        />
+        <StatCard 
+          title="Quotation Pipeline"
+          value={`₹${totalValue.toLocaleString('en-IN', { minimumFractionDigits: 2 })}`}
+          icon={<IndianRupee className="h-4 w-4" />}
+          trend="Total value of active quotations"
+        />
       </div>
 
       <DataTable
@@ -206,14 +205,13 @@ export const QuoteList = () => {
               id="filter-quote-status"
               value={statusFilter}
               onChange={(e) => { setStatusFilter(e.target.value); setPage(1); }}
-              className="w-full sm:w-auto pl-3 pr-8 py-2 border border-slate-200 rounded focus:outline-none focus:border-slate-400 focus:ring-0 text-sm appearance-none bg-white font-medium"
+              className="flex h-9 w-full sm:w-[150px] rounded-md border border-input bg-background px-3 py-1 text-sm shadow-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
             >
               <option value="">All Statuses</option>
               {['Draft', 'Sent', 'Viewed', 'Accepted', 'Rejected', 'Expired'].map(s => (
                 <option key={s} value={s}>{s}</option>
               ))}
             </select>
-            <ChevronDown className="w-4 h-4 text-slate-400 absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none" />
           </div>
         }
       />

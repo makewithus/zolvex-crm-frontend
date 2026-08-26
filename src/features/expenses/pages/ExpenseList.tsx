@@ -1,6 +1,6 @@
 import { useState, useMemo } from 'react';
 import { format, parseISO } from 'date-fns';
-import { Plus, Edit, Send, Trash2, CheckCircle2, XCircle, ExternalLink, Download, MoreHorizontal, ChevronDown } from 'lucide-react';
+import { Plus, Edit, Send, Trash2, CheckCircle2, XCircle, ExternalLink, Download, MoreHorizontal, Receipt, IndianRupee } from 'lucide-react';
 import { useExpenses, useDeleteExpense, useSubmitExpense, useApproveExpense, useRejectExpense, useDownloadExpensePdf } from '../hooks/useExpenses';
 import { ExpenseFormDialog } from '../components/ExpenseFormDialog';
 import { ConfirmDialog } from '@/components/ui-custom/ConfirmDialog';
@@ -12,7 +12,7 @@ import { PageHeader } from '@/components/ui-custom/PageHeader';
 import { PageContainer } from '@/components/ui-custom/PageContainer';
 import { DataTable, Column } from '@/components/ui-custom/DataTable';
 import { StatusBadge } from '@/components/ui-custom/StatusBadge';
-import { Card, CardContent } from '@/components/ui/card';
+import { StatCard } from '@/components/ui-custom/StatCard';
 
 const mapExpenseStatus = (status: ExpenseStatus): 'success' | 'warning' | 'error' | 'info' | 'default' => {
   switch (status) {
@@ -203,18 +203,17 @@ export const ExpenseList = () => {
 
       {/* KPI Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
-        <Card className="relative overflow-hidden transition-all shadow-sm">
-          <CardContent className="p-4">
-            <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Total Expenses</p>
-            <p className="text-2xl font-bold text-foreground mt-1.5">{expenses.length}</p>
-          </CardContent>
-        </Card>
-        <Card className="relative overflow-hidden transition-all shadow-sm">
-          <CardContent className="p-4">
-            <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Approved Amount</p>
-            <p className="text-2xl font-bold text-foreground mt-1.5">₹{totalApproved.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</p>
-          </CardContent>
-        </Card>
+        <StatCard 
+          title="Total Expenses"
+          value={expenses.length}
+          icon={<Receipt className="h-4 w-4" />}
+        />
+        <StatCard 
+          title="Approved Amount"
+          value={`₹${totalApproved.toLocaleString('en-IN', { minimumFractionDigits: 2 })}`}
+          icon={<IndianRupee className="h-4 w-4" />}
+          trend="Total value of approved expenses"
+        />
       </div>
 
       <DataTable
@@ -228,36 +227,34 @@ export const ExpenseList = () => {
         emptyStateTitle="No expenses found"
         emptyStateDescription="Create a new expense draft to get started."
         filterControls={
-          <div className="flex items-center gap-3">
-            <div className="relative w-full sm:w-auto">
-              <select
-                id="filter-expense-status"
-                value={statusFilter}
-                onChange={e => { setStatusFilter(e.target.value); setPage(1); }}
-                className="w-full sm:w-auto pl-3 pr-8 py-2 border border-slate-200 rounded focus:outline-none focus:border-slate-400 focus:ring-0 text-sm appearance-none bg-white font-medium"
-              >
-                <option value="">All Statuses</option>
-                <option value="Draft">Draft</option>
-                <option value="Submitted">Submitted</option>
-                <option value="Approved">Approved</option>
-                <option value="Rejected">Rejected</option>
-              </select>
-              <ChevronDown className="w-4 h-4 text-slate-400 absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none" />
-            </div>
-            <div className="relative w-full sm:w-auto">
-              <select
-                id="filter-expense-category"
-                value={categoryFilter}
-                onChange={e => { setCategoryFilter(e.target.value); setPage(1); }}
-                className="w-full sm:w-auto pl-3 pr-8 py-2 border border-slate-200 rounded focus:outline-none focus:border-slate-400 focus:ring-0 text-sm appearance-none bg-white font-medium"
-              >
-                <option value="">All Categories</option>
-                {['Supplies','Travel','Salaries','Marketing','Utilities','Maintenance','Other'].map(c => (
-                  <option key={c} value={c}>{c}</option>
-                ))}
-              </select>
-              <ChevronDown className="w-4 h-4 text-slate-400 absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none" />
-            </div>
+          <div className="flex items-center gap-3 w-full sm:w-auto">
+            <select
+              id="filter-expense-status"
+              value={statusFilter}
+              onChange={e => { setStatusFilter(e.target.value); setPage(1); }}
+              className="flex h-9 w-full sm:w-[150px] rounded-md border border-input bg-background px-3 py-1 text-sm shadow-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+            >
+              <option value="">All Statuses</option>
+              <option value="Draft">Draft</option>
+              <option value="Submitted">Submitted</option>
+              <option value="Approved">Approved</option>
+              <option value="Rejected">Rejected</option>
+            </select>
+            <select
+              id="filter-expense-category"
+              value={categoryFilter}
+              onChange={e => { setCategoryFilter(e.target.value); setPage(1); }}
+              className="flex h-9 w-full sm:w-[150px] rounded-md border border-input bg-background px-3 py-1 text-sm shadow-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+            >
+              <option value="">All Categories</option>
+              <option value="Supplies">Supplies</option>
+              <option value="Travel">Travel</option>
+              <option value="Salaries">Salaries</option>
+              <option value="Marketing">Marketing</option>
+              <option value="Utilities">Utilities</option>
+              <option value="Maintenance">Maintenance</option>
+              <option value="Other">Other</option>
+            </select>
           </div>
         }
       />
