@@ -6,6 +6,8 @@ export interface AlertsSummary {
   newLeads: number;
   dueFollowUps: number;
   unpaidInvoices: number;
+  pendingExpenses: number;
+  rejectedExpenses: number;
   total: number;
 }
 

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Bell, AlertCircle, FileText, UserPlus, Clock } from 'lucide-react';
+import { Bell, AlertCircle, FileText, UserPlus, Clock, Receipt, XCircle } from 'lucide-react';
 import { useAlerts } from '@/hooks/useAlerts';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuLabel } from '../ui/dropdown-menu';
 
@@ -58,6 +58,20 @@ export const NotificationBell = () => {
               <DropdownMenuItem className="cursor-pointer py-2 px-3 focus:bg-amber-50 focus:text-amber-700" onClick={() => navigate('/invoices')}>
                 <FileText className="h-4 w-4 mr-2 text-amber-500" />
                 <div className="flex-1 font-medium">{alerts.unpaidInvoices} Unpaid Invoices</div>
+              </DropdownMenuItem>
+            ) : null}
+
+            {alerts?.pendingExpenses ? (
+              <DropdownMenuItem className="cursor-pointer py-2 px-3 focus:bg-emerald-50 focus:text-emerald-700" onClick={() => navigate('/expenses?status=Submitted')}>
+                <Receipt className="h-4 w-4 mr-2 text-emerald-500" />
+                <div className="flex-1 font-medium">{alerts.pendingExpenses} Expenses Pending Approval</div>
+              </DropdownMenuItem>
+            ) : null}
+
+            {alerts?.rejectedExpenses ? (
+              <DropdownMenuItem className="cursor-pointer py-2 px-3 focus:bg-red-50 focus:text-red-700" onClick={() => navigate('/expenses?status=Rejected')}>
+                <XCircle className="h-4 w-4 mr-2 text-red-500" />
+                <div className="flex-1 font-medium">{alerts.rejectedExpenses} Rejected Expenses</div>
               </DropdownMenuItem>
             ) : null}
           </div>
