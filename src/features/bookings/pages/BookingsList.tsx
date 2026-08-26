@@ -3,7 +3,7 @@ import { useBookings } from '../hooks/useBookings';
 import { FilterPopover, FilterState } from '@/components/ui-custom/FilterPopover';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Link } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { CalendarIcon, MapPinIcon, MoreHorizontal, Search, UserIcon } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import {
@@ -23,6 +23,7 @@ export const BookingsList = () => {
   // Minimal pagination for now
   const [page, setPage] = useState(1);
   const limit = 10;
+  const navigate = useNavigate();
   
   const { data, isLoading, isError } = useBookings({ page, limit, booking_id: searchTerm || undefined, ...filters });
 
@@ -163,15 +164,13 @@ export const BookingsList = () => {
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end">
                           <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                          <DropdownMenuItem asChild>
-                            <Link to={`/bookings/${booking.id}`}>View Details</Link>
+                          <DropdownMenuItem onClick={() => navigate(`/bookings/${booking.id}`)}>
+                            View Details
                           </DropdownMenuItem>
                           <DropdownMenuSeparator />
                           {booking.status !== 'Cancelled' && booking.status !== 'Completed' && userRole !== 'Field Staff' && (
-                            <DropdownMenuItem asChild>
-                              <Link to={`/bookings/${booking.id}`} className="text-destructive">
-                                Cancel Booking
-                              </Link>
+                            <DropdownMenuItem className="text-destructive" onClick={() => navigate(`/bookings/${booking.id}`)}>
+                              Cancel Booking
                             </DropdownMenuItem>
                           )}
                         </DropdownMenuContent>
@@ -206,9 +205,9 @@ export const BookingsList = () => {
             data.bookings.map((booking: any) => (
               <div key={booking.id} className="p-4 space-y-3 hover:bg-slate-50/50 transition-colors">
                 <div className="flex items-center justify-between">
-                  <Link to={`/bookings/${booking.id}`} className="font-semibold text-primary hover:underline text-sm">
+                  <span className="font-semibold text-primary hover:underline text-sm cursor-pointer" onClick={() => navigate(`/bookings/${booking.id}`)}>
                     {booking.booking_id}
-                  </Link>
+                  </span>
                   <Badge variant="secondary" className={`text-[10px] px-2 py-0.5 ${getStatusColor(booking.status)}`}>
                     {booking.status}
                   </Badge>
@@ -234,12 +233,12 @@ export const BookingsList = () => {
                 </div>
 
                 <div className="flex items-center justify-end gap-2 pt-1.5 border-t border-dashed border-slate-100">
-                  <Button variant="outline" size="sm" asChild className="h-8 text-xs px-3 shadow-none">
-                    <Link to={`/bookings/${booking.id}`}>View Details</Link>
+                  <Button variant="outline" size="sm" className="h-8 text-xs px-3 shadow-none" onClick={() => navigate(`/bookings/${booking.id}`)}>
+                    View Details
                   </Button>
                   {booking.status !== 'Cancelled' && booking.status !== 'Completed' && userRole !== 'Field Staff' && (
-                    <Button variant="ghost" size="sm" asChild className="h-8 text-xs text-destructive hover:text-destructive hover:bg-destructive/10 px-3">
-                      <Link to={`/bookings/${booking.id}`}>Cancel</Link>
+                    <Button variant="ghost" size="sm" className="h-8 text-xs text-destructive hover:text-destructive hover:bg-destructive/10 px-3" onClick={() => navigate(`/bookings/${booking.id}`)}>
+                      Cancel
                     </Button>
                   )}
                 </div>
