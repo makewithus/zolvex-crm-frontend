@@ -96,3 +96,35 @@ export const getGSTReport = async (filters?: ReportFilters): Promise<{ gst: GSTS
   const { data } = await apiClient.get('/reports/gst', { params: buildParams(filters) });
   return data.data;
 };
+
+// ------------------------------------------------------------------
+// Finance Overview — new additive endpoint
+// ------------------------------------------------------------------
+
+export interface ExpenseSummary {
+  approved_expenses: number;
+  expense_count: number;
+}
+
+export interface QuotationSummary {
+  quotes_created: number;
+  quotes_sent: number;
+  quotes_accepted: number;
+  quotes_rejected: number;
+  pipeline_value: number;
+}
+
+export interface FinanceSummary {
+  revenue: RevenueSummary;
+  outstanding: OutstandingSummary;
+  collections: CollectionsSummary;
+  gst: GSTSummary;
+  expenses: ExpenseSummary;
+  quotations: QuotationSummary;
+  net_profit: number;
+}
+
+export const getFinanceSummary = async (filters?: ReportFilters): Promise<FinanceSummary> => {
+  const { data } = await apiClient.get('/reports/finance-summary', { params: buildParams(filters) });
+  return data.data;
+};

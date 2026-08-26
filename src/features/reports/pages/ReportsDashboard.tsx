@@ -93,10 +93,11 @@ export const ReportsDashboard: React.FC = () => {
         <h2 className="text-xs font-semibold text-muted-foreground/60 uppercase tracking-wider mb-3">Detailed Reports</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           {[
-            { label: 'Financial Report', desc: 'Revenue, Outstanding, Collections, GST', icon: DollarSign, link: '/reports/financial', show: canSeeFinancial },
-            { label: 'Operational Report', desc: 'Bookings and Jobs summary', icon: Calendar, link: '/reports/operational', show: true },
-            { label: 'Technician Report', desc: 'Productivity and utilization', icon: Briefcase, link: '/reports/technician', show: true },
-            { label: 'GST Report', desc: 'CGST, SGST, IGST breakdown', icon: BarChart3, link: '/reports/gst', show: canSeeFinancial },
+            { label: 'Finance Overview',    desc: 'Revenue, Expenses, Net Profit, Quotation Pipeline', icon: TrendingUp,  link: '/reports/finance-overview', show: canSeeFinancial },
+            { label: 'Financial Report',    desc: 'Revenue, Outstanding, Collections, GST',             icon: DollarSign,  link: '/reports/financial',       show: canSeeFinancial },
+            { label: 'Operational Report',  desc: 'Bookings and Jobs summary',                          icon: Calendar,    link: '/reports/operational',     show: true },
+            { label: 'Technician Report',   desc: 'Productivity and utilization',                       icon: Briefcase,   link: '/reports/technician',      show: true },
+            { label: 'GST Report',          desc: 'CGST, SGST, IGST breakdown',                        icon: BarChart3,   link: '/reports/gst',             show: canSeeFinancial },
           ].filter(c => c.show).map(card => (
             <Link key={card.link} to={card.link}>
               <Card className="hover:border-border hover:bg-muted/30 transition-colors shadow-sm cursor-pointer h-full border-border/60">

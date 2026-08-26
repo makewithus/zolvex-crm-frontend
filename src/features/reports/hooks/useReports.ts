@@ -5,6 +5,7 @@ import {
   getOperationalReport,
   getTechnicianReport,
   getGSTReport,
+  getFinanceSummary,
   ReportFilters,
 } from '../api/reports.api';
 
@@ -42,5 +43,12 @@ export const useGSTReport = (filters?: ReportFilters) =>
   useQuery({
     queryKey: ['reports', 'gst', filters],
     queryFn: () => getGSTReport(filters),
+    staleTime: STALE_TIME,
+  });
+
+export const useFinanceSummary = (filters?: ReportFilters) =>
+  useQuery({
+    queryKey: ['reports', 'finance-summary', filters],
+    queryFn: () => getFinanceSummary(filters),
     staleTime: STALE_TIME,
   });

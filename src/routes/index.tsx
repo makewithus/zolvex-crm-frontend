@@ -27,12 +27,16 @@ import { FinancialReport } from '@/features/reports/pages/FinancialReport';
 import { OperationalReport } from '@/features/reports/pages/OperationalReport';
 import { TechnicianReport } from '@/features/reports/pages/TechnicianReport';
 import { GSTReport } from '@/features/reports/pages/GSTReport';
+import { FinanceOverviewReport } from '@/features/reports/pages/FinanceOverviewReport';
 import { Settings } from '@/features/settings/pages/Settings';
 import ChecklistTemplates from '@/features/settings/pages/ChecklistTemplates';
 import ComplaintList from '@/features/complaints/pages/ComplaintList';
 import ComplaintDetail from '@/features/complaints/pages/ComplaintDetail';
 import FeedbackList from '@/features/feedback/pages/FeedbackList';
 import WhatsAppInbox from '@/features/whatsapp/pages/WhatsAppInbox';
+import { ExpenseList } from '@/features/expenses/pages/ExpenseList';
+import { QuoteList } from '@/features/quotes/pages/QuoteList';
+import { QuoteDetail } from '@/features/quotes/pages/QuoteDetail';
 
 const PrivateRoute = ({ children }: { children: React.ReactNode }) => {
   const token = localStorage.getItem('token');
@@ -110,12 +114,18 @@ export const AppRoutes = () => {
         <Route path="reports/operational" element={<OperationalReport />} />
         <Route path="reports/technician" element={<TechnicianReport />} />
         <Route path="reports/gst" element={<GSTReport />} />
+        <Route path="reports/finance-overview" element={<FinanceOverviewReport />} />
         <Route path="settings" element={<Settings />} />
         <Route path="settings/checklists" element={<ChecklistTemplates />} />
         <Route path="complaints" element={<ComplaintList />} />
         <Route path="complaints/:id" element={<ComplaintDetail />} />
         <Route path="feedback" element={<FeedbackList />} />
         <Route path="whatsapp" element={<WhatsAppInbox />} />
+        {/* Finance — Expense Module */}
+        <Route path="expenses" element={<ExpenseList />} />
+        {/* Finance — Quotation Module */}
+        <Route path="quotations" element={<QuoteList />} />
+        <Route path="quotations/:id" element={<QuoteDetail />} />
       </Route>
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
