@@ -6,6 +6,7 @@ export interface ReportFilters {
   city_id?: string;
   assigned_user_id?: string;
   status?: string;
+  service_id?: string;  // Additive: filter by service
 }
 
 export interface RevenueSummary {
@@ -60,6 +61,7 @@ const buildParams = (filters?: ReportFilters) => {
   if (filters?.city_id) params.city_id = filters.city_id;
   if (filters?.assigned_user_id) params.assigned_user_id = filters.assigned_user_id;
   if (filters?.status) params.status = filters.status;
+  if (filters?.service_id) params.service_id = filters.service_id;  // Additive
   return params;
 };
 

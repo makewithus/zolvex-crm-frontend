@@ -2,10 +2,11 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useFinancialReport, useGSTReport } from '../hooks/useReports';
 import { ReportFilters } from '../api/reports.api';
-import { DollarSign, TrendingUp, AlertCircle, Receipt, ChevronRight } from 'lucide-react';
+import { DollarSign, TrendingUp, AlertCircle, Receipt, ChevronRight, Filter } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { ExportMenu } from '../components/ExportMenu';
 import { subDays } from 'date-fns';
+import { useServices } from '@/features/services/hooks/useServices';
 
 const formatCurrency = (val: number) =>
   `₹${val.toLocaleString('en-IN', { maximumFractionDigits: 2 })}`;
@@ -41,9 +42,16 @@ const SummaryCard = ({
 
 export const FinancialReport: React.FC = () => {
   const [preset, setPreset] = useState(0);
+  const [serviceId, setServiceId] = useState<string>('');
+
+  // Load services for the filter dropdown — data shape: ServicesResponse { data: Service[] }
+  const { data: servicesData } = useServices();
+  const services: { id: string; name: string }[] = servicesData?.data ?? [];
+
   const filters: ReportFilters = {
     start_date: PRESETS[preset].start || undefined,
     end_date: PRESETS[preset].end || undefined,
+    service_id: serviceId || undefined,  // undefined = no filter = all services unchanged
   };
 
   const { data, isLoading } = useFinancialReport(filters);
@@ -69,7 +77,22 @@ export const FinancialReport: React.FC = () => {
         </div>
 
         {/* Actions */}
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-4 flex-wrap">
+          {/* Service Filter — additive; "All Services" = no filter */}
+          <div className="flex items-center gap-2">
+            <Filter className="w-4 h-4 text-gray-400" />
+            <select
+              id="financial-service-filter"
+              value={serviceId}
+              onChange={e => setServiceId(e.target.value)}
+              className="text-xs border border-slate-200 rounded px-2 py-1.5 bg-white text-gray-700 focus:outline-none focus:ring-1 focus:ring-slate-300"
+            >
+              <option value="">All Services</option>
+              {services?.map((s: any) => (
+                <option key={s.id} value={s.id}>{s.name}</option>
+              ))}
+            </select>
+          </div>
           {/* Date Presets */}
           <div className="flex items-center gap-1 bg-slate-100 p-1 rounded">
             {PRESETS.map((p, i) => (
